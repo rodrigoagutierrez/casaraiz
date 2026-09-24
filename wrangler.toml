@@ -1,0 +1,15 @@
+name = "casaraiz"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./public"
+not_found_handling = "single-page-application"
+
+# R2 (crea el bucket con: npx wrangler r2 bucket create casaraiz-fotos)
+# [[r2_buckets]]
+# binding = "FOTOS"
+# bucket_name = "casaraiz-fotos"
+
+[observability]
+enabled = true

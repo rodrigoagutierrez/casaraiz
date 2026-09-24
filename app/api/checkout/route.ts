@@ -1,0 +1,57 @@
+import { NextRequest, NextResponse } from "next/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
+import { db } from "@/shared/db/client";
+import { users } from "@/shared/db/schema";
+import { eq } from "drizzle-orm";
+import { PLANS, stripe, type PlanId } from "@/modules/billing/stripe";
+import { getOrCreateUser } from "@/modules/users/queries";
+import { getActivePriceId } from "@/modules/billing/plans";
+import { logAudit } from "@/modules/audit/log";
+
+// POST /api/checkout { plan: PlanId } -> { url } (Stripe Checkout, modo suscripción)
+export async function POST(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+
+  const { plan } = (await req.json()) as { plan: PlanId };
+  if (!plan || !(plan in PLANS)) return NextResponse.json({ error: "PLAN_INVALIDO" }, { status: 400 });
+
+  const price = (await getActivePriceId(plan)) ?? process.env[PLANS[plan].priceEnv];
+  if (!price) return NextResponse.json({ error: "PRECIO_NO_CONFIGURADO" }, { status: 503 });
+
+  const client = await clerkClient();
+  const cu = await client.users.getUser(userId);
+  const email = cu.emailAddresses[0]?.emailAddress ?? `${userId}@casaraiz.local`;
+
+  const user = await getOrCreateUser(userId, email, plan.startsWith("owner") ? "owner" : "renter");
+
+  let customerId = user.stripeCustomerId;
+  if (!customerId) {
+    const customer = await stripe.customers.create({ email, metadata: { clerkId: userId } });
+    customerId = customer.id;
+    await db.update(users).set({ stripeCustomerId: customerId }).where(eq(users.id, user.id));
+  }
+
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const session = await stripe.checkout.sessions.create({
+    mode: "subscription",
+    customer: customerId,
+    line_items: [{ price, quantity: 1 }],
+    success_url: `${site}/membresia/ok?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${site}/precios`,
+    metadata: { userId: user.id, plan, clerkId: userId },
+    subscription_data: { metadata: { userId: user.id, plan, clerkId: userId } },
+    // Tarjeta + SEPA para recurrente; Bizum solo one-off (no admite recurrente)
+    payment_method_types: ["card"],
+  });
+
+  await logAudit({
+    actorId: user.id,
+    targetUserId: user.id,
+    action: "checkout.started",
+    entity: "subscription",
+    meta: { plan, price },
+  });
+
+  return NextResponse.json({ url: session.url });
+}
