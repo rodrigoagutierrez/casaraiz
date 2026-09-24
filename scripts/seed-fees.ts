@@ -12,7 +12,7 @@ const TIERS = [
 const SETTINGS = [
   { key: "tariff_legend", value: "Precios con IVA incluido. Sin permanencia: cancela cuando quieras. El tramo se calcula por tus pisos publicados." },
   { key: "tariff_contact_label", value: "¿Más de 10 propiedades? Te hacemos plan a medida" },
-  { key: "tariff_contact_url", value: "mailto:hola@casaraiz.es?subject=Plan%20a%20medida" },
+  { key: "tariff_contact_url", value: "mailto:hola@casaraizalquiler.com?subject=Plan%20a%20medida" },
 ];
 
 async function main() {

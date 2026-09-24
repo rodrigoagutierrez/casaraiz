@@ -31,7 +31,7 @@ CasaRaiz conecta dueños e inquilinos para el alquiler temporal de vivienda (med
     title: "Política de privacidad",
     content: `POLÍTICA DE PRIVACIDAD — CASARAIZ (RGPD / LOPDGDD)
 
-Responsable: CasaRaiz. Contacto: hola@casaraiz.es.
+Responsable: CasaRaiz. Contacto: hola@casaraizalquiler.com.
 
 1. Datos que tratamos
 Identidad y contacto (email, teléfono), verificación DNI/NIE, anuncios y mensajes, datos de pago (gestionados por Stripe; no almacenamos tarjetas).
@@ -43,7 +43,7 @@ Identidad y contacto (email, teléfono), verificación DNI/NIE, anuncios y mensa
 
 3. Encargados: Clerk (identidad), Neon (alojamiento UE), Stripe (pagos), Brevo (emails).
 
-4. Derechos: acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a hola@casaraiz.es. Reclamación ante la AEPD.
+4. Derechos: acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a hola@casaraizalquiler.com. Reclamación ante la AEPD.
 
 5. Conservación: mientras dure la cuenta y los plazos fiscales (6 años).`,
   },

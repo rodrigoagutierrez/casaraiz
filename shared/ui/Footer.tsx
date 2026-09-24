@@ -28,6 +28,7 @@ export default function Footer() {
           <p className="font-semibold text-mar-900">{t["footer.casaRaiz"]}</p>
           <ul className="mt-3 space-y-2 text-mar-950/65">
             <li><Link href="/precios" className="hover:underline">{t["footer.comoFunciona"]}</Link></li>
+            <li><a href="mailto:hola@casaraizalquiler.com" className="hover:underline">hola@casaraizalquiler.com</a></li>
           </ul>
         </div>
         <div>
@@ -40,7 +41,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-mar-100 py-4 text-center text-xs text-mar-950/50">
-        {t["footer.copy"]}
+        {t["footer.copy"]} · <a href="mailto:soporte@casaraizalquiler.com" className="hover:underline">soporte@casaraizalquiler.com</a>
       </div>
     </footer>
   );

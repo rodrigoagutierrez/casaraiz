@@ -3,7 +3,7 @@
 
 export async function sendEmail(to: string, subject: string, text: string) {
   const key = process.env.BREVO_API_KEY;
-  const sender = process.env.BREVO_SENDER ?? "hola@casaraiz.es";
+  const sender = process.env.BREVO_SENDER ?? "hola@casaraizalquiler.com";
 
   if (!key) {
     console.log(`[email:stub] → ${to} | ${subject} | ${text.slice(0, 120)}`);

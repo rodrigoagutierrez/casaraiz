@@ -27,7 +27,7 @@ export async function getTariffSettings() {
   const [legend, contactLabel, contactUrl] = await Promise.all([
     getSetting("tariff_legend", "Precios con IVA incluido. Sin permanencia: cancela cuando quieras."),
     getSetting("tariff_contact_label", "¿Más de 10 propiedades?"),
-    getSetting("tariff_contact_url", "mailto:hola@casaraiz.es"),
+    getSetting("tariff_contact_url", "mailto:hola@casaraizalquiler.com"),
   ]);
   return { legend, contactLabel, contactUrl };
 }
