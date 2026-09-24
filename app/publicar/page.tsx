@@ -114,7 +114,7 @@ export default function PublicarPage() {
         <h1 className="text-3xl font-bold text-mar-950">Publica tu piso sin comisión</h1>
         <p className="mt-3 text-mar-950/65">Entra o crea tu cuenta para publicar. Necesitarás una suscripción de dueño.</p>
         <SignInButton mode="modal">
-          <button className="mt-6 rounded-full bg-coral-500 px-6 py-3 font-medium text-white hover:bg-coral-600">
+          <button className="mt-6 rounded-full bg-otono-600 px-6 py-3 font-medium text-white hover:bg-otono-700">
             Entrar / Crear cuenta
           </button>
         </SignInButton>
@@ -260,8 +260,8 @@ export default function PublicarPage() {
           )}
         </div>
 
-        {error && <p className="text-sm text-coral-700">{error}</p>}
-        <button disabled={saving} className="w-full rounded-full bg-coral-500 py-3 text-white font-medium hover:bg-coral-600 disabled:opacity-50">
+        {error && <p className="text-sm text-otono-700">{error}</p>}
+        <button disabled={saving} className="w-full rounded-full bg-otono-600 py-3 text-white font-medium hover:bg-otono-700 disabled:opacity-50">
           {saving ? "Publicando..." : "Publicar piso"}
         </button>
       </form>

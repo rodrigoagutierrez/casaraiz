@@ -58,7 +58,7 @@ export default async function AdminUsuarios({
                     <Link href={`/admin/usuarios/${u.id}`} className="underline">{u.email}</Link>
                   </td>
                   <td className="p-3">
-                    <span className={`rounded-full px-2 py-0.5 text-xs ${u.role === "owner" ? "bg-mar-100 text-mar-800" : "bg-coral-100 text-coral-700"}`}>
+                    <span className={`rounded-full px-2 py-0.5 text-xs ${u.role === "owner" ? "bg-mar-100 text-mar-800" : "bg-otono-100 text-otono-700"}`}>
                       {u.role === "owner" ? "Dueño" : "Inquilino"}
                     </span>
                   </td>

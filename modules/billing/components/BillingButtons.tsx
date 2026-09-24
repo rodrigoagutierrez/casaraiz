@@ -31,7 +31,7 @@ export function PlanButton({ plan, children }: { plan: PlanId; children: React.R
     <button
       onClick={go}
       disabled={loading}
-      className="w-full rounded-full bg-coral-500 py-3 text-white font-medium hover:bg-coral-600 disabled:opacity-50"
+      className="w-full rounded-full bg-otono-600 py-3 text-white font-medium hover:bg-otono-700 disabled:opacity-50"
     >
       {loading ? "Redirigiendo a Stripe..." : children}
     </button>

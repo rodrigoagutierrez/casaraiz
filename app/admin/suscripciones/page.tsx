@@ -36,7 +36,7 @@ export default async function AdminSubs() {
               <td className="p-3 font-medium text-mar-900">{s.email ?? "—"}</td>
               <td className="p-3">{s.plan}</td>
               <td className="p-3">
-                <span className={`rounded-full px-2 py-0.5 text-xs ${s.status === "active" ? "bg-green-100 text-green-800" : s.status === "past_due" ? "bg-coral-100 text-coral-700" : "bg-mar-100 text-mar-800"}`}>
+                <span className={`rounded-full px-2 py-0.5 text-xs ${s.status === "active" ? "bg-green-100 text-green-800" : s.status === "past_due" ? "bg-otono-100 text-otono-700" : "bg-mar-100 text-mar-800"}`}>
                   {s.status}
                 </span>
               </td>

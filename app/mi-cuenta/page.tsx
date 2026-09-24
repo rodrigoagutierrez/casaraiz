@@ -39,7 +39,7 @@ export default async function MiCuenta() {
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {!active && (
-            <Link href="/precios" className="rounded-full bg-coral-500 px-5 py-2 text-sm text-white hover:bg-coral-600">
+            <Link href="/precios" className="rounded-full bg-otono-600 px-5 py-2 text-sm text-white hover:bg-otono-700">
               Ver planes
             </Link>
           )}

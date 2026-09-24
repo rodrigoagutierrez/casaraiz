@@ -132,7 +132,7 @@ export default async function Home() {
             Inquilinos 9€/mes · Dueños 19€/mes o 149€/año. Lo que pagas es lo que cuesta.
           </p>
           <div className="mt-6 flex justify-center gap-3">
-            <Link href="/precios" className="rounded-full bg-coral-500 px-6 py-3 font-medium hover:bg-coral-600">
+            <Link href="/precios" className="rounded-full bg-otono-600 px-6 py-3 font-medium hover:bg-otono-700">
               Ver planes
             </Link>
             <Link href="/publicar" className="rounded-full border border-white/30 px-6 py-3 font-medium hover:bg-white/10">

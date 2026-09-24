@@ -43,7 +43,7 @@ export function DocEditor({ slug, title, content }: { slug: string; title: strin
         <button
           onClick={save}
           disabled={pending}
-          className="mt-3 rounded-full bg-coral-500 px-6 py-2 text-sm text-white hover:bg-coral-600 disabled:opacity-50"
+          className="mt-3 rounded-full bg-otono-600 px-6 py-2 text-sm text-white hover:bg-otono-700 disabled:opacity-50"
         >
           {pending ? "Guardando..." : "Guardar y publicar"}
         </button>

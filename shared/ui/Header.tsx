@@ -9,7 +9,7 @@ export default function Header() {
     <header className="sticky top-0 z-40 border-b border-mar-100 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
         <Link href="/" className="text-xl font-bold text-mar-900">
-          Casa<span className="text-coral-500">Raiz</span>
+          Casa<span className="text-otono-600">Raiz</span>
         </Link>
 
         <Link
@@ -21,14 +21,14 @@ export default function Header() {
           <span>Barrio</span>
           <span className="text-mar-200">|</span>
           <span>Habs.</span>
-          <span className="rounded-full bg-coral-500 p-1.5 text-white">⌕</span>
+          <span className="rounded-full bg-otono-600 p-1.5 text-white">⌕</span>
         </Link>
 
         <nav className="flex items-center gap-3 text-sm">
           <Link href="/buscar" className="hidden font-medium text-mar-900 sm:inline">Buscar</Link>
           <Link href="/mapa" className="hidden font-medium text-mar-900 sm:inline">Mapa</Link>
           <Link href="/publicar" className="hidden font-medium text-mar-900 sm:inline">Pon tu piso</Link>
-          <Link href="/precios" className="hidden font-medium text-coral-600 sm:inline">Precios</Link>
+          <Link href="/precios" className="hidden font-medium text-otono-700 sm:inline">Precios</Link>
           <Show when="signed-in">
             <Link href="/duenos" className="hidden font-medium text-mar-900 sm:inline">Mis pisos</Link>
             <Link href="/mi-cuenta" className="hidden font-medium text-mar-900 sm:inline">Mi cuenta</Link>
@@ -39,7 +39,7 @@ export default function Header() {
               <button className="font-medium text-mar-700">Entrar</button>
             </SignInButton>
             <SignUpButton mode="modal">
-              <button className="rounded-full bg-coral-500 px-4 py-1.5 font-medium text-white hover:bg-coral-600">
+              <button className="rounded-full bg-otono-600 px-4 py-1.5 font-medium text-white hover:bg-otono-700">
                 Crear cuenta
               </button>
             </SignUpButton>

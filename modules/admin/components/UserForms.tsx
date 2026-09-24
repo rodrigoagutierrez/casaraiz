@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { cancelSubscription, createCustomSubscription, grantComplimentary, updateUserData } from "../actions";
 
 const input = "w-full rounded-lg border border-mar-200 bg-white px-3 py-1.5 text-sm outline-none focus:border-mar-600";
-const btnCoral = "rounded-full bg-coral-500 px-5 py-2 text-sm text-white hover:bg-coral-600 disabled:opacity-50";
+const btnOtono = "rounded-full bg-otono-600 px-5 py-2 text-sm text-white hover:bg-otono-700 disabled:opacity-50";
 const btnDark = "rounded-full bg-mar-900 px-5 py-2 text-sm text-white hover:bg-mar-800 disabled:opacity-50";
 
 export function CancelSubButton({ stripeSubId }: { stripeSubId: string }) {
@@ -16,7 +16,7 @@ export function CancelSubButton({ stripeSubId }: { stripeSubId: string }) {
       <button
         disabled={pending}
         onClick={() => start(() => cancelSubscription(stripeSubId, reason || undefined))}
-        className="rounded-full border border-coral-200 px-3 py-1 text-xs text-coral-700 hover:bg-coral-100 disabled:opacity-50"
+        className="rounded-full border border-otono-200 px-3 py-1 text-xs text-otono-700 hover:bg-otono-100 disabled:opacity-50"
       >
         Cancelar
       </button>
@@ -124,7 +124,7 @@ export function CustomPriceForm({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="rounded-xl bg-coral-100/50 p-3">
+    <div className="rounded-xl bg-otono-100/50 p-3">
       <p className="text-sm font-medium text-mar-900">Suscripción especial (precio propio, factura por email)</p>
       <div className="mt-2 grid grid-cols-2 gap-2">
         <input type="number" min={1} value={eur} onChange={(e) => setEur(e.target.value)} className={input} />
@@ -135,7 +135,7 @@ export function CustomPriceForm({ userId }: { userId: string }) {
       </div>
       <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Motivo (obligatorio)" className={`${input} mt-2`} />
       {msg && <p className="mt-1 break-all text-xs text-mar-900">{msg}</p>}
-      <button onClick={go} disabled={pending} className={`${btnCoral} mt-2`}>Crear especial</button>
+      <button onClick={go} disabled={pending} className={`${btnOtono} mt-2`}>Crear especial</button>
     </div>
   );
 }

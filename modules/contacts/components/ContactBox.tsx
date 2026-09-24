@@ -14,7 +14,7 @@ export default function ContactBox({ propertyId }: { propertyId: string }) {
       <div>
         <p className="mt-1 text-mar-950/55">Entra para contactar al dueño directo.</p>
         <SignInButton mode="modal">
-          <button className="mt-3 rounded-full bg-coral-500 px-5 py-2 text-white hover:bg-coral-600">
+          <button className="mt-3 rounded-full bg-otono-600 px-5 py-2 text-white hover:bg-otono-700">
             Entrar para contactar
           </button>
         </SignInButton>
@@ -59,16 +59,16 @@ export default function ContactBox({ propertyId }: { propertyId: string }) {
         onChange={(e) => setMessage(e.target.value)}
       />
       {state === "need_membership" && (
-        <p className="mt-2 rounded-xl bg-coral-100 p-3 text-sm text-coral-700">
+        <p className="mt-2 rounded-xl bg-otono-100 p-3 text-sm text-otono-700">
           Necesitas membresía activa para contactar.{" "}
           <Link href="/precios" className="font-semibold underline">Ver planes desde 9€/mes</Link>
         </p>
       )}
-      {state === "error" && <p className="mt-2 text-sm text-coral-700">No se pudo enviar. Prueba de nuevo.</p>}
+      {state === "error" && <p className="mt-2 text-sm text-otono-700">No se pudo enviar. Prueba de nuevo.</p>}
       <button
         type="submit"
         disabled={state === "sending"}
-        className="mt-3 rounded-full bg-coral-500 px-5 py-2 text-white hover:bg-coral-600 disabled:opacity-50"
+        className="mt-3 rounded-full bg-otono-600 px-5 py-2 text-white hover:bg-otono-700 disabled:opacity-50"
       >
         {state === "sending" ? "Enviando..." : "Contactar"}
       </button>

@@ -6,7 +6,7 @@ import { CIUDADES_ES } from "@/modules/properties/geocode";
 
 function PinIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6b5b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#bc5f1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z" />
       <circle cx="12" cy="10" r="2.5" />
     </svg>
@@ -15,7 +15,7 @@ function PinIcon() {
 
 function TagIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6b5b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#bc5f1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 12l-8 8-9-9V4h7z" />
       <circle cx="7.5" cy="7.5" r="1.5" />
     </svg>
@@ -24,7 +24,7 @@ function TagIcon() {
 
 function UsersIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6b5b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#bc5f1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="9" cy="8" r="3.5" />
       <path d="M2.5 20a6.5 6.5 0 0 1 13 0" />
       <path d="M16 4.5a3.5 3.5 0 0 1 0 7" />
@@ -100,7 +100,7 @@ export default function SearchBar() {
       <button
         type="submit"
         aria-label="Buscar"
-        className="flex items-center justify-center rounded-2xl bg-coral-500 p-4 text-white hover:bg-coral-600 sm:rounded-full"
+        className="flex items-center justify-center rounded-2xl bg-otono-600 p-4 text-white hover:bg-otono-700 sm:rounded-full"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
           <circle cx="11" cy="11" r="7" />

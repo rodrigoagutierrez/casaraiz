@@ -31,7 +31,7 @@ export default async function Duenos() {
           </p>
         </div>
         {cap.canPublish ? (
-          <Link href="/publicar" className="rounded-full bg-coral-500 px-6 py-3 font-medium text-white hover:bg-coral-600">
+          <Link href="/publicar" className="rounded-full bg-otono-600 px-6 py-3 font-medium text-white hover:bg-otono-700">
             + Publicar piso
           </Link>
         ) : (

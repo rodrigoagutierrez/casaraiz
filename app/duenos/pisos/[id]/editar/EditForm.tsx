@@ -105,7 +105,7 @@ export default function EditForm({ initial }: { initial: Prop }) {
           ))}
         </select>
       </label>
-      {error && <p className="text-sm text-coral-700">{error}</p>}
+      {error && <p className="text-sm text-otono-700">{error}</p>}
       <button disabled={saving} className="w-full rounded-full bg-mar-900 py-3 text-white font-medium hover:bg-mar-800 disabled:opacity-50">
         {saving ? "Guardando..." : "Guardar cambios"}
       </button>

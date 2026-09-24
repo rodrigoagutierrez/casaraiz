@@ -40,10 +40,10 @@ export default async function PreciosPage() {
           return (
             <div
               key={c.plan}
-              className={`rounded-2xl border bg-white p-6 ${destacado ? "border-coral-500 shadow-lg" : "border-mar-100"}`}
+              className={`rounded-2xl border bg-white p-6 ${destacado ? "border-otono-600 shadow-lg" : "border-mar-100"}`}
             >
               {destacado && (
-                <span className="rounded-full bg-coral-100 px-3 py-1 text-xs font-medium text-coral-700">
+                <span className="rounded-full bg-otono-100 px-3 py-1 text-xs font-medium text-otono-700">
                   Más popular
                 </span>
               )}

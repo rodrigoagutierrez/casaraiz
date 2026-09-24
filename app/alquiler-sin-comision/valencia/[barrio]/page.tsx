@@ -52,7 +52,7 @@ export default async function BarrioPage({
       <h1 className="mt-4 text-3xl font-bold text-mar-950">{b.h1}</h1>
       <p className="mt-3 text-mar-950/65">{b.descripcion}</p>
       <p className="mt-3 text-sm">
-        <span className="rounded-full bg-coral-100 px-3 py-1 font-medium text-coral-700">
+        <span className="rounded-full bg-otono-100 px-3 py-1 font-medium text-otono-700">
           Ref 2hab: {b.precioRef}
         </span>
         <span className="ml-2 text-mar-950/55">{listings.length} publicados</span>
