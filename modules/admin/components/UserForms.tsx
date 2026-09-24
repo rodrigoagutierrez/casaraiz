@@ -139,3 +139,58 @@ export function CustomPriceForm({ userId }: { userId: string }) {
     </div>
   );
 }
+
+export function VerificationReview({ userId, status, docType, front, back }: { userId: string; status: string; docType: string | null; front: string | null; back: string | null }) {
+  const [reason, setReason] = useState("");
+  const [msg, setMsg] = useState<string | null>(null);
+  const [pending, start] = useTransition();
+
+  async function decide(approved: boolean) {
+    const { decideVerification } = await import("../actions");
+    setMsg(null);
+    start(async () => {
+      try {
+        await decideVerification(userId, approved, reason);
+        setMsg(approved ? "Verificado." : "Rechazado con motivo registrado.");
+        setReason("");
+      } catch (e) {
+        setMsg(`Error: ${e instanceof Error ? e.message : "desconocido"}`);
+      }
+    });
+  }
+
+  if (!front && !back) return <p className="mt-2 text-sm text-mar-950/55">Sin documentos subidos.</p>;
+
+  return (
+    <div className="mt-3">
+      <p className="text-sm text-mar-900">Documento: <strong>{docType ?? "—"}</strong> · estado: <strong>{status}</strong></p>
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        {[
+          { u: front, l: "Anverso" },
+          { u: back, l: "Reverso" },
+        ].map(({ u, l }) =>
+          u ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={l} src={u} alt={l} className="rounded-xl border border-mar-100" />
+          ) : null
+        )}
+      </div>
+      <input
+        value={reason}
+        onChange={(e) => setReason(e.target.value)}
+        placeholder="Motivo (obligatorio, queda registrado)"
+        className="mt-2 w-full rounded-lg border border-mar-200 bg-white px-3 py-1.5 text-sm outline-none focus:border-mar-600"
+      />
+      {msg && <p className="mt-1 text-xs text-mar-900">{msg}</p>}
+      <div className="mt-2 flex gap-2">
+        <button onClick={() => decide(true)} disabled={pending} className="rounded-full bg-green-700 px-5 py-1.5 text-sm text-white hover:bg-green-800 disabled:opacity-50">
+          Verificar
+        </button>
+        <button onClick={() => decide(false)} disabled={pending} className="rounded-full border border-otono-200 px-5 py-1.5 text-sm text-otono-700 hover:bg-otono-100 disabled:opacity-50">
+          Rechazar
+        </button>
+      </div>
+      <p className="mt-1 text-xs text-mar-950/50">Comprueba que foto, nombre y documento coinciden. En caso de duda, rechaza y pide reenvío.</p>
+    </div>
+  );
+}

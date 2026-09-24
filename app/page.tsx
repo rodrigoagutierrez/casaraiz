@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { db } from "@/shared/db/client";
 import { properties } from "@/shared/db/schema";
 import { desc, eq } from "drizzle-orm";
+import { getRatingsForProperties } from "@/modules/bookings/queries";
 import PropertyCard from "@/modules/properties/components/PropertyCard";
 import SearchBar from "@/modules/properties/components/SearchBar";
 import CategoryRow from "@/modules/properties/components/CategoryRow";
@@ -22,6 +23,8 @@ export default async function Home() {
   } catch {
     destacados = [];
   }
+
+  const ratings = await getRatingsForProperties(destacados.map((x) => x.id)).catch(() => new Map());
 
   return (
     <div className="font-sans">
@@ -62,7 +65,7 @@ export default async function Home() {
         {destacados.length > 0 ? (
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {destacados.map((p) => (
-              <PropertyCard key={p.id} p={{ slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos }} />
+              <PropertyCard key={p.id} p={{ slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos, rating: ratings.get(p.id) }} />
             ))}
           </div>
         ) : (

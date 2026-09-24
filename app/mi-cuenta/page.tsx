@@ -7,6 +7,7 @@ import { count, eq, or } from "drizzle-orm";
 import { getUserByClerkId, hasActiveSubscription, latestSubscription } from "@/modules/users/queries";
 import { PortalButton } from "@/modules/billing/components/BillingButtons";
 import { RoleSwitch } from "./RoleSwitch";
+import VerificationForm from "./VerificationForm";
 
 export default async function MiCuenta() {
   const { userId } = await auth();
@@ -29,6 +30,22 @@ export default async function MiCuenta() {
       <section className="mt-6 rounded-2xl border border-mar-100 bg-white p-5">
         <p className="font-semibold text-mar-900">Soy...</p>
         <div className="mt-3"><RoleSwitch role={me.role} /></div>
+      </section>
+
+      <section className="mt-4 rounded-2xl border border-mar-100 bg-white p-5">
+        <p className="font-semibold text-mar-900">Verificación de identidad</p>
+        {me.verificationStatus === "verified" ? (
+          <p className="mt-2 text-sm text-green-700">✓ Identidad verificada ({me.docType ?? "documento"}). Tus anuncios y contactos muestran el sello.</p>
+        ) : me.verificationStatus === "pending" ? (
+          <p className="mt-2 text-sm text-otono-700">En revisión (24-48h). Te avisaremos por email.</p>
+        ) : (
+          <>
+            {me.verificationStatus === "rejected" && (
+              <p className="mt-2 text-sm text-otono-700">No pudimos verificar tu documento. Vuelve a intentarlo con fotos nítidas.</p>
+            )}
+            <VerificationForm />
+          </>
+        )}
       </section>
 
       <section className="mt-4 rounded-2xl border border-mar-100 bg-white p-5">

@@ -4,7 +4,7 @@ import { db } from "@/shared/db/client";
 import { auditLogs, contacts, properties, subscriptions, users } from "@/shared/db/schema";
 import { desc, eq, or } from "drizzle-orm";
 import { stripe } from "@/modules/billing/stripe";
-import { UserEditForm, GrantForm, CustomPriceForm, CancelSubButton } from "@/modules/admin/components/UserForms";
+import { UserEditForm, GrantForm, CustomPriceForm, CancelSubButton, VerificationReview } from "@/modules/admin/components/UserForms";
 
 export default async function UserDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -67,6 +67,12 @@ export default async function UserDetail({ params }: { params: Promise<{ id: str
         <div className="mt-4 border-t border-mar-100 pt-4">
           <UserEditForm id={u.id} phone={u.phone ?? ""} role={u.role} dni={u.dniVerified} />
         </div>
+      </section>
+
+      {/* Verificación de identidad */}
+      <section className={card}>
+        <h2 className="font-semibold text-mar-900">Verificación de identidad</h2>
+        <VerificationReview userId={u.id} status={u.verificationStatus} docType={u.docType} front={u.docFrontUrl} back={u.docBackUrl} />
       </section>
 
       {/* Suscripciones */}

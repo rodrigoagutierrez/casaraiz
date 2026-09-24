@@ -6,6 +6,7 @@ export default defineConfig({
     "./modules/properties/schema.ts",
     "./modules/billing/schema.ts",
     "./modules/contacts/schema.ts",
+    "./modules/bookings/schema.ts",
     "./modules/content/schema.ts",
     "./modules/audit/schema.ts",
   ],

@@ -303,3 +303,23 @@ export async function saveTariffSettings(input: { legend: string; contactLabel: 
   revalidatePath("/admin/tarifas");
   revalidatePath("/precios");
 }
+
+export async function decideVerification(userId: string, approved: boolean, reason: string) {
+  const { actorId } = await adminActor();
+  if (!reason.trim()) throw new Error("El motivo es obligatorio");
+  await db
+    .update(users)
+    .set({ verificationStatus: approved ? "verified" : "rejected", dniVerified: approved })
+    .where(eq(users.id, userId));
+  await logAudit({
+    actorId,
+    targetUserId: userId,
+    action: "verification.decided",
+    entity: "user",
+    entityId: userId,
+    meta: { approved },
+    reason,
+  });
+  revalidatePath(`/admin/usuarios/${userId}`);
+  revalidatePath("/admin/usuarios");
+}

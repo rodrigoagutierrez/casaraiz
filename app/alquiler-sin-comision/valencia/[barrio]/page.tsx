@@ -5,6 +5,7 @@ import { db } from "@/shared/db/client";
 import { properties } from "@/shared/db/schema";
 import { and, desc, eq } from "drizzle-orm";
 import { BARRIOS_VALENCIA, getBarrio } from "@/modules/content/barrios";
+import { getRatingsForProperties } from "@/modules/bookings/queries";
 import PropertyCard from "@/modules/properties/components/PropertyCard";
 
 export function generateStaticParams() {
@@ -46,6 +47,8 @@ export default async function BarrioPage({
     listings = [];
   }
 
+  const ratings = await getRatingsForProperties(listings.map((x) => x.id)).catch(() => new Map());
+
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
       <Link href="/" className="text-sm text-mar-600">← CasaRaiz</Link>
@@ -61,7 +64,7 @@ export default async function BarrioPage({
       {listings.length > 0 ? (
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {listings.map((p) => (
-            <PropertyCard key={p.id} p={{ slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos }} />
+            <PropertyCard key={p.id} p={{ slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos, rating: ratings.get(p.id) }} />
           ))}
         </div>
       ) : (

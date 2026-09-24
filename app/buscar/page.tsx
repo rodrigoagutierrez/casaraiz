@@ -3,7 +3,9 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { db } from "@/shared/db/client";
 import { properties } from "@/shared/db/schema";
-import { and, asc, desc, eq, gte, ilike, isNull, lte, or, type SQL } from "drizzle-orm";
+import { reviews } from "@/modules/bookings/schema";
+import { and, asc, desc, eq, gte, ilike, isNull, lte, or, sql, type SQL } from "drizzle-orm";
+import { getRatingsForProperties } from "@/modules/bookings/queries";
 import PropertyCard from "@/modules/properties/components/PropertyCard";
 import FiltersBar from "@/modules/properties/components/FiltersBar";
 import CategoryRow from "@/modules/properties/components/CategoryRow";
@@ -32,22 +34,41 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
   if (m2 && Number(m2) > 0) filters.push(gte(properties.m2, Number(m2)));
   if (q) filters.push(or(ilike(properties.title, `%${q}%`), ilike(properties.description, `%${q}%`))!);
 
-  const order =
-    orden === "baratos" ? asc(properties.priceCents)
-    : orden === "caros" ? desc(properties.priceCents)
-    : orden === "grandes" ? desc(properties.m2)
-    : desc(properties.createdAt);
+  // Por defecto: mejores puntuadas primero (nota media de inquilinos), luego novedades
+  const ratingAvg = sql<number | null>`avg((coalesce(${reviews.servicio},0)+coalesce(${reviews.comunicacion},0)+coalesce(${reviews.entorno},0)) * 1.0 / nullif(
+    (case when ${reviews.servicio} is null then 0 else 1 end +
+     case when ${reviews.comunicacion} is null then 0 else 1 end +
+     case when ${reviews.entorno} is null then 0 else 1 end), 0))`;
 
   let rows: typeof properties.$inferSelect[] = [];
   try {
-    rows = await db.select().from(properties).where(and(...filters)).orderBy(order).limit(48);
+    if (!orden || orden === "destacados") {
+      const ranked = await db
+        .select({ p: properties, avg: ratingAvg })
+        .from(properties)
+        .leftJoin(reviews, and(eq(reviews.propertyId, properties.id), eq(reviews.kind, "to_owner")))
+        .where(and(...filters))
+        .groupBy(properties.id)
+        .orderBy(sql`${ratingAvg} desc nulls last`, desc(properties.createdAt))
+        .limit(48);
+      rows = ranked.map((r) => r.p);
+    } else {
+      const order =
+        orden === "baratos" ? asc(properties.priceCents)
+        : orden === "caros" ? desc(properties.priceCents)
+        : orden === "grandes" ? desc(properties.m2)
+        : desc(properties.createdAt);
+      rows = await db.select().from(properties).where(and(...filters)).orderBy(order).limit(48);
+    }
   } catch {
     rows = [];
   }
 
+  const ratings = await getRatingsForProperties(rows.map((x) => x.id)).catch(() => new Map());
+
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
-      <h1 className="text-3xl font-bold text-mar-950">Encuentra tu piso en Valencia</h1>
+      <h1 className="text-3xl font-bold text-mar-950">Encuentra tu temporal en España</h1>
       <Suspense>
         <CategoryRow />
         <FiltersBar />
@@ -63,7 +84,7 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
       {rows.length > 0 ? (
         <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {rows.map((p) => (
-            <PropertyCard key={p.id} p={{ slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos }} />
+            <PropertyCard key={p.id} p={{ slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos, rating: ratings.get(p.id) }} />
           ))}
         </div>
       ) : (

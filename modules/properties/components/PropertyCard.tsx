@@ -11,6 +11,7 @@ export type CardProp = {
   barrio: string;
   maxHuespedes: number;
   photos: string[];
+  rating?: { avg: number | null; count: number };
 };
 
 export default function PropertyCard({ p }: { p: CardProp }) {
@@ -29,6 +30,9 @@ export default function PropertyCard({ p }: { p: CardProp }) {
       <div className="p-4">
         <p className="truncate font-semibold text-mar-900">{p.title}</p>
         <p className="text-sm text-mar-950/55">{p.barrio} · {p.rooms} hab · {p.maxHuespedes} huésp.</p>
+        {p.rating && p.rating.count > 0 && p.rating.avg !== null && (
+          <p className="mt-0.5 text-sm"><span className="text-otono-600">★ {p.rating.avg.toFixed(1)}</span> <span className="text-mar-950/50">({p.rating.count})</span></p>
+        )}
         <p className="mt-1 font-bold text-mar-900">
           {eur(p.priceCents)}<span className="text-sm font-normal text-mar-950/55">/mes</span>
         </p>

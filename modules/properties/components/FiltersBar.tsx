@@ -17,7 +17,7 @@ export default function FiltersBar() {
   const [max, setMax] = useState(sp.get("max") ?? "");
   const [m2, setM2] = useState(sp.get("m2") ?? "");
   const [q, setQ] = useState(sp.get("q") ?? "");
-  const [orden, setOrden] = useState(sp.get("orden") ?? "nuevos");
+  const [orden, setOrden] = useState(sp.get("orden") ?? "destacados");
   const [desde, setDesde] = useState(sp.get("desde") ?? "");
   const [hasta, setHasta] = useState(sp.get("hasta") ?? "");
   const [huespedes, setHuespedes] = useState(sp.get("huespedes") ?? "");
@@ -37,7 +37,7 @@ export default function FiltersBar() {
     if (desde) p.set("desde", desde);
     if (hasta) p.set("hasta", hasta);
     if (huespedes) p.set("huespedes", huespedes);
-    if (orden !== "nuevos") p.set("orden", orden);
+    if (orden && orden !== "destacados") p.set("orden", orden);
     router.push(`/buscar?${p.toString()}`);
   }
 
@@ -94,6 +94,7 @@ export default function FiltersBar() {
         ))}
       </select>
       <select value={orden} onChange={(e) => setOrden(e.target.value)} className={f}>
+        <option value="destacados">Destacados</option>
         <option value="nuevos">Novedades</option>
         <option value="baratos">Más baratos</option>
         <option value="caros">Más caros</option>
