@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CIUDADES_ES } from "@/modules/properties/geocode";
+import { useI18n } from "@/modules/i18n/provider";
 
 function PinIcon() {
   return (
@@ -33,6 +34,7 @@ function UsersIcon() {
 }
 
 export default function SearchBar() {
+  const { t } = useI18n();
   const router = useRouter();
   const [city, setCity] = useState("");
   const [desde, setDesde] = useState("");
@@ -57,12 +59,12 @@ export default function SearchBar() {
       <label className="flex flex-1 items-center gap-3 px-5 py-2">
         <PinIcon />
         <span className="flex-1">
-          <span className="block text-sm font-semibold text-mar-950">Lugar</span>
+          <span className="block text-sm font-semibold text-mar-950">{t["search.lugar"]}</span>
           <input
             value={city}
             onChange={(e) => setCity(e.target.value)}
             list="ciudades-hero"
-            placeholder="Busca tu alquiler"
+            placeholder={t["search.lugarPlaceholder"]}
             className="w-full bg-transparent text-sm text-mar-950/60 outline-none placeholder:text-mar-950/60"
           />
           <datalist id="ciudades-hero">
@@ -75,7 +77,7 @@ export default function SearchBar() {
       <label className="flex flex-1 items-center gap-3 border-t border-mar-100 px-5 py-2 sm:border-l sm:border-t-0">
         <CalIcon />
         <span className="flex-1">
-          <span className="block text-sm font-semibold text-mar-950">Check-in / Check-out</span>
+          <span className="block text-sm font-semibold text-mar-950">{t["search.fechas"]}</span>
           <span className="flex items-center gap-1">
             <input
               type="date"
@@ -96,9 +98,9 @@ export default function SearchBar() {
       <label className="flex flex-1 items-center gap-3 border-t border-mar-100 px-5 py-2 sm:border-l sm:border-t-0">
         <UsersIcon />
         <span className="flex-1">
-          <span className="block text-sm font-semibold text-mar-950">Huéspedes</span>
+          <span className="block text-sm font-semibold text-mar-950">{t["search.huespedes"]}</span>
           <select value={huespedes} onChange={(e) => setHuespedes(e.target.value)} className="w-full cursor-pointer bg-transparent text-sm text-mar-950/60 outline-none">
-            <option value="">¿Cuántos?</option>
+            <option value="">{t["search.cuantos"]}</option>
             {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
               <option key={n} value={n}>{n}{n === 8 ? "+" : ""}</option>
             ))}

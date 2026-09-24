@@ -9,10 +9,13 @@ import PropertyCard from "@/modules/properties/components/PropertyCard";
 import SearchBar from "@/modules/properties/components/SearchBar";
 import CategoryRow from "@/modules/properties/components/CategoryRow";
 import { BARRIOS_VALENCIA } from "@/modules/content/barrios";
+import { getDict } from "@/modules/i18n/server";
 
 const TOP_BARRIOS = ["ruzafa", "benimaclet", "el-cabanyal", "campanar", "algiros", "pla-del-real"];
 
 export default async function Home() {
+  const t = await getDict();
+
   let destacados: typeof properties.$inferSelect[] = [];
   try {
     destacados = await db
@@ -43,10 +46,10 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65" />
           <div className="relative px-6 pb-20 pt-16 text-center sm:pb-24 sm:pt-24">
             <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight text-white sm:text-6xl">
-              Encuentra tu alquiler temporal
+              {t["hero.titulo"]}
             </h1>
             <p className="mx-auto mt-3 max-w-xl text-xl text-white/85 sm:text-2xl">
-              Sin intermediarios, sin comisiones
+              {t["hero.subtitulo"]}
             </p>
           </div>
           <div className="relative px-4 pb-8 sm:px-8">
@@ -65,8 +68,8 @@ export default async function Home() {
       {/* Destacados */}
       <section className="mx-auto max-w-6xl px-6 pt-12">
         <div className="flex items-end justify-between">
-          <h2 className="text-2xl font-semibold text-mar-950">Destacados esta semana</h2>
-          <Link href="/buscar" className="text-sm font-medium text-mar-700 underline">Ver todos</Link>
+          <h2 className="text-2xl font-semibold text-mar-950">{t["home.destacados"]}</h2>
+          <Link href="/buscar" className="text-sm font-medium text-mar-700 underline">{t["home.verTodos"]}</Link>
         </div>
         {destacados.length > 0 ? (
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -81,7 +84,7 @@ export default async function Home() {
 
       {/* Destinos */}
       <section className="mx-auto max-w-6xl px-6 pt-12">
-        <h2 className="text-2xl font-semibold text-mar-950">Destinos populares</h2>
+        <h2 className="text-2xl font-semibold text-mar-950">{t["home.destinos"]}</h2>
         <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-3">
           {["Valencia", "Madrid", "Barcelona", "Sevilla", "Málaga", "Bilbao"].map((c) => (
             <Link
@@ -90,7 +93,7 @@ export default async function Home() {
               className="rounded-2xl border border-mar-100 bg-white p-5 hover:border-mar-200 hover:shadow-lg"
             >
               <p className="font-semibold text-mar-900">{c}</p>
-              <p className="text-sm text-mar-950/55">Alquiler directo</p>
+              <p className="text-sm text-mar-950/55">{t["home.alquilerDirecto"]}</p>
             </Link>
           ))}
         </div>
@@ -98,7 +101,7 @@ export default async function Home() {
 
       {/* Barrios Valencia */}
       <section className="mx-auto max-w-6xl px-6 pt-12">
-        <h2 className="text-2xl font-semibold text-mar-950">Explora por barrio en Valencia</h2>
+        <h2 className="text-2xl font-semibold text-mar-950">{t["home.barrios"]}</h2>
         <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-3">
           {BARRIOS_VALENCIA.filter((b) => TOP_BARRIOS.includes(b.slug)).map((b) => (
             <Link
@@ -112,18 +115,18 @@ export default async function Home() {
           ))}
         </div>
         <Link href="/buscar" className="mt-4 inline-block text-sm font-medium text-mar-700 underline">
-          Ver los {BARRIOS_VALENCIA.length} barrios →
+          {t["home.verBarrios"].replace("{n}", String(BARRIOS_VALENCIA.length))}
         </Link>
       </section>
 
       {/* Cómo funciona */}
       <section className="mx-auto max-w-6xl px-6 pt-12">
-        <h2 className="text-2xl font-semibold text-mar-950">Cómo funciona</h2>
+        <h2 className="text-2xl font-semibold text-mar-950">{t["home.como"]}</h2>
         <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
           {[
-            { t: "1. Crea tu cuenta", d: "Gratis, como inquilino o dueño. Verifica tu DNI." },
-            { t: "2. Dueños activan su plan", d: "Por tramos según tus pisos. Sin permanencia ni letra pequeña." },
-            { t: "3. Contacta directo", d: "Inquilinos gratis: habla con el dueño, visita y firma. Cero comisiones." },
+            { t: t["home.como1t"], d: t["home.como1d"] },
+            { t: t["home.como2t"], d: t["home.como2d"] },
+            { t: t["home.como3t"], d: t["home.como3d"] },
           ].map((s) => (
             <div key={s.t} className="rounded-2xl border border-mar-100 bg-white p-5">
               <p className="font-semibold text-mar-900">{s.t}</p>
@@ -136,16 +139,16 @@ export default async function Home() {
       {/* Planes teaser */}
       <section className="mx-auto max-w-6xl px-6 pt-12">
         <div className="rounded-3xl bg-mar-900 p-8 text-center text-white sm:p-10">
-          <h2 className="text-2xl font-semibold">Una membresía, cero comisiones</h2>
+          <h2 className="text-2xl font-semibold">{t["home.planesTitulo"]}</h2>
           <p className="mx-auto mt-2 max-w-xl text-white/70">
-            Inquilinos gratis · Dueños desde 19€/mes. Lo que pagas es lo que cuesta.
+            {t["home.planesTexto"]}
           </p>
           <div className="mt-6 flex justify-center gap-3">
             <Link href="/precios" className="rounded-full bg-otono-600 px-6 py-3 font-medium hover:bg-otono-700">
-              Ver planes
+              {t["home.verPlanes"]}
             </Link>
             <Link href="/publicar" className="rounded-full border border-white/30 px-6 py-3 font-medium hover:bg-white/10">
-              Publicar mi piso
+              {t["home.publicarCta"]}
             </Link>
           </div>
         </div>
