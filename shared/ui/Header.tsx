@@ -12,18 +12,6 @@ export default function Header() {
           Casa<span className="text-otono-600">Raiz</span>
         </Link>
 
-        <Link
-          href="/buscar"
-          className="hidden items-center gap-2 rounded-full border border-mar-200 bg-white px-5 py-2 text-sm text-mar-950/70 shadow-sm hover:shadow-md md:flex"
-        >
-          <span className="font-medium text-mar-900">España</span>
-          <span className="text-mar-200">|</span>
-          <span>Barrio</span>
-          <span className="text-mar-200">|</span>
-          <span>Habs.</span>
-          <span className="rounded-full bg-otono-600 p-1.5 text-white">⌕</span>
-        </Link>
-
         <nav className="flex items-center gap-3 text-sm">
           <Link href="/buscar" className="hidden font-medium text-mar-900 sm:inline">Buscar</Link>
           <Link href="/mapa" className="hidden font-medium text-mar-900 sm:inline">Mapa</Link>
