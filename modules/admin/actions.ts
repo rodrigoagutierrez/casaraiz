@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { db } from "@/shared/db/client";
-import { legalDocs, plans, subscriptions, users } from "@/shared/db/schema";
+import { feeTiers, legalDocs, plans, siteSettings, subscriptions, users } from "@/shared/db/schema";
 import { requireAdmin } from "@/modules/auth/guard";
 import { getUserByClerkId } from "@/modules/users/queries";
 import { logAudit } from "@/modules/audit/log";
@@ -251,4 +251,55 @@ export async function saveDoc(slug: string, title: string, content: string) {
   await logAudit({ actorId, action: "doc.updated", entity: "legal_doc", entityId: slug, meta: { title } });
   revalidatePath("/admin/documentos");
   revalidatePath(`/legal/${slug}`);
+}
+
+export async function saveTier(input: { id?: string; minProps: number; maxProps: number | null; amountEur: number | null; label: string }) {
+  const { actorId } = await adminActor();
+  if (input.minProps < 1) throw new Error("Mínimo 1 propiedad");
+  if (input.maxProps !== null && input.maxProps < input.minProps) throw new Error("El máximo debe ser ≥ mínimo");
+  const values = {
+    minProps: input.minProps,
+    maxProps: input.maxProps,
+    amountCents: input.amountEur === null ? null : Math.round(input.amountEur * 100),
+    label: input.label,
+    updatedAt: new Date(),
+  };
+  if (input.id) {
+    await db.update(feeTiers).set(values).where(eq(feeTiers.id, input.id));
+  } else {
+    await db.insert(feeTiers).values({ ...values, active: true });
+  }
+  await logAudit({ actorId, action: "tariff.updated", entity: "fee_tier", entityId: input.id ?? "nuevo", meta: { ...values } });
+  revalidatePath("/admin/tarifas");
+  revalidatePath("/precios");
+}
+
+export async function toggleTier(id: string, active: boolean) {
+  await requireAdmin();
+  await db.update(feeTiers).set({ active }).where(eq(feeTiers.id, id));
+  revalidatePath("/admin/tarifas");
+  revalidatePath("/precios");
+}
+
+export async function deleteTier(id: string) {
+  await requireAdmin();
+  await db.delete(feeTiers).where(eq(feeTiers.id, id));
+  revalidatePath("/admin/tarifas");
+  revalidatePath("/precios");
+}
+
+export async function saveTariffSettings(input: { legend: string; contactLabel: string; contactUrl: string }) {
+  const { actorId } = await adminActor();
+  for (const [key, value] of Object.entries({
+    tariff_legend: input.legend,
+    tariff_contact_label: input.contactLabel,
+    tariff_contact_url: input.contactUrl,
+  })) {
+    const existing = await db.select().from(siteSettings).where(eq(siteSettings.key, key)).limit(1);
+    if (existing.length === 0) await db.insert(siteSettings).values({ key, value });
+    else await db.update(siteSettings).set({ value }).where(eq(siteSettings.key, key));
+  }
+  await logAudit({ actorId, action: "tariff.updated", entity: "site_settings", meta: { ...input } });
+  revalidatePath("/admin/tarifas");
+  revalidatePath("/precios");
 }

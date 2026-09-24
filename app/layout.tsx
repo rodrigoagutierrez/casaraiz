@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CasaRaiz | Alquiler sin comisión en España",
-  description: "Conectamos dueños e inquilinos sin comisiones en toda España. Paga una membresía y alquila directo.",
+  title: "CasaRaiz | Alquiler temporal sin comisión en España",
+  description: "Conectamos dueños e inquilinos para alquiler temporal en toda España. Inquilinos gratis, dueños con membresía.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

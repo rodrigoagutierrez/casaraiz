@@ -78,8 +78,8 @@ export default async function BarrioPage({
       <section className="mt-10">
         <h2 className="text-xl font-semibold text-mar-950">Preguntas frecuentes — {b.nombre}</h2>
         <ul className="mt-4 space-y-3 text-sm text-mar-950/70">
-          <li><strong className="text-mar-900">¿Hay comisión?</strong> No. Dueño e inquilino pagan solo su membresía CasaRaiz.</li>
-          <li><strong className="text-mar-900">¿Fianza?</strong> 1 mensualidad según LAU, se deposita en el organismo autonómico.</li>
+          <li><strong className="text-mar-900">¿Hay comisión?</strong> No. Solo los dueños pagan membresía; los inquilinos contactan gratis.</li>
+          <li><strong className="text-mar-900">¿Fianza?</strong> En alquiler de temporada (LAU), 2 mensualidades.</li>
           <li><strong className="text-mar-900">¿Contacto directo?</strong> Sí, con membresía activa y DNI verificado.</li>
         </ul>
       </section>

@@ -173,7 +173,7 @@ export default function PublicarPage() {
           onChange={(e) => set("description", e.target.value)}
           required
         />
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="text-sm text-mar-900">Precio €/mes
             <input type="number" className={`${inputCls} mt-1`}
               value={form.priceEur} onChange={(e) => set("priceEur", Number(e.target.value))} />
@@ -191,7 +191,7 @@ export default function PublicarPage() {
               value={form.baths} onChange={(e) => set("baths", Number(e.target.value))} />
           </label>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="text-sm text-mar-900">Ciudad
             <input
               className={`${inputCls} mt-1`}

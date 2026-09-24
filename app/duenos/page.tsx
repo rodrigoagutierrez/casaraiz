@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/shared/db/client";
@@ -51,8 +52,9 @@ export default async function Duenos() {
           {rows.map((p) => (
             <div key={p.id} className="overflow-hidden rounded-2xl bg-white shadow-sm">
               {p.photos[0] ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={p.photos[0]} alt={p.title} className="aspect-[16/9] w-full object-cover" />
+                <span className="relative block aspect-[16/9] w-full bg-mar-100">
+                  <Image src={p.photos[0]} alt={p.title} fill loading="lazy" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
+                </span>
               ) : (
                 <div className="flex aspect-[16/9] w-full items-center justify-center bg-mar-100 text-sm text-mar-700">Sin fotos</div>
               )}

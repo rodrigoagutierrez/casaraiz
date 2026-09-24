@@ -43,6 +43,13 @@
       "when": 1790239964362,
       "tag": "0005_nostalgic_mockingbird",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790244070447,
+      "tag": "0006_tan_doomsday",
+      "breakpoints": true
     }
   ]
 }

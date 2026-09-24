@@ -1,8 +1,8 @@
 import { db } from "@/shared/db/client";
-import { plans } from "./schema";
+import { feeTiers, plans } from "./schema";
 import { subscriptions } from "./schema";
 import { properties } from "@/modules/properties/schema";
-import { and, eq, gt, isNull, or } from "drizzle-orm";
+import { and, asc, eq, gt, isNull, or } from "drizzle-orm";
 import type { PlanId } from "./stripe";
 
 // El checkout y /precios usan el price activo en DB (gestionado desde /admin/precios).
@@ -40,10 +40,22 @@ export async function getPublishCapacity(userId: string): Promise<Capacity> {
   if (owned.length === 0) return { hasRights: false, limit: 0, used: 0, canPublish: false };
 
   const planRows = await db.select().from(plans);
+  const tiers = await db.select().from(feeTiers).where(eq(feeTiers.active, true)).orderBy(asc(feeTiers.minProps));
+  // El mensual va por tramos: límite = mayor tramo con precio (tramo abierto con precio = ilimitado)
+  const pricedTierMaxes = tiers.filter((t) => t.amountCents !== null).map((t) => t.maxProps);
+  const monthlyLimit: number | null = pricedTierMaxes.some((m) => m === null)
+    ? null
+    : Math.max(0, ...pricedTierMaxes.filter((m): m is number => m !== null));
+
   let limit: number | null = 0;
   for (const s of owned) {
-    const pl = planRows.find((x) => x.plan === s.plan);
-    const l = pl?.maxListings ?? 0;
+    let l: number | null;
+    if (s.plan === "owner_monthly") {
+      l = monthlyLimit;
+    } else {
+      const pl = planRows.find((x) => x.plan === s.plan);
+      l = pl?.maxListings ?? 0;
+    }
     if (l === null) {
       limit = null;
       break;

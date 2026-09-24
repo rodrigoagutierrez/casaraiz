@@ -15,6 +15,7 @@ export type AuditAction =
   | "subscription.granted"
   | "subscription.custom_created"
   | "plan.updated"
+  | "tariff.updated"
   | "doc.updated";
 
 export async function logAudit(input: {

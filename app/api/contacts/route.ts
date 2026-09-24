@@ -4,7 +4,7 @@ import { z } from "zod";
 import { db } from "@/shared/db/client";
 import { contacts, properties } from "@/shared/db/schema";
 import { and, desc, eq, or } from "drizzle-orm";
-import { getUserByClerkId, hasActiveSubscription } from "@/modules/users/queries";
+import { getUserByClerkId } from "@/modules/users/queries";
 import { logAudit } from "@/modules/audit/log";
 
 const contactSchema = z.object({
@@ -40,9 +40,7 @@ export async function POST(req: NextRequest) {
 
   const me = await getUserByClerkId(userId);
   if (!me) return NextResponse.json({ error: "SIN_PERFIL" }, { status: 404 });
-  if (!(await hasActiveSubscription(me.id))) {
-    return NextResponse.json({ error: "NEED_MEMBERSHIP" }, { status: 403 });
-  }
+  // Inquilinos gratis: basta con estar registrado. Publicar sigue exigiendo plan de dueño.
 
   const [prop] = await db.select().from(properties).where(eq(properties.id, parsed.data.propertyId)).limit(1);
   if (!prop || prop.status !== "active") {

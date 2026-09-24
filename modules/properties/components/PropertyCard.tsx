@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { eur } from "@/shared/utils/format";
 
 export type CardProp = {
@@ -16,8 +17,9 @@ export default function PropertyCard({ p }: { p: CardProp }) {
   return (
     <Link href={`/p/${p.slug}`} className="group overflow-hidden rounded-2xl bg-white shadow-sm hover:shadow-lg">
       {cover ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={cover} alt={p.title} loading="lazy" className="aspect-[4/3] w-full bg-mar-100 object-cover group-hover:scale-[1.02] transition" />
+        <span className="relative block aspect-[4/3] w-full bg-mar-100">
+          <Image src={cover} alt={p.title} fill loading="lazy" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-[1.02] transition" />
+        </span>
       ) : (
         <div className="flex aspect-[4/3] w-full items-center justify-center bg-mar-100 text-sm text-mar-700">
           Sin fotos

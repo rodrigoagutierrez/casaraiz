@@ -30,3 +30,19 @@ export const plans = pgTable("plans", {
   active: boolean("active").notNull().default(true),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const feeTiers = pgTable("fee_tiers", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  minProps: integer("min_props").notNull(),
+  maxProps: integer("max_props"),
+  amountCents: integer("amount_cents"),
+  label: text("label").notNull(),
+  active: boolean("active").notNull().default(true),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const siteSettings = pgTable("site_settings", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull().default(""),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});

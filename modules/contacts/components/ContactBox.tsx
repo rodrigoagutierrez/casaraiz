@@ -60,8 +60,8 @@ export default function ContactBox({ propertyId }: { propertyId: string }) {
       />
       {state === "need_membership" && (
         <p className="mt-2 rounded-xl bg-otono-100 p-3 text-sm text-otono-700">
-          Necesitas membresía activa para contactar.{" "}
-          <Link href="/precios" className="font-semibold underline">Ver planes desde 9€/mes</Link>
+          Necesitas una cuenta con membresía para contactar.{" "}
+          <Link href="/precios" className="font-semibold underline">Ver planes de dueño</Link>
         </p>
       )}
       {state === "error" && <p className="mt-2 text-sm text-otono-700">No se pudo enviar. Prueba de nuevo.</p>}

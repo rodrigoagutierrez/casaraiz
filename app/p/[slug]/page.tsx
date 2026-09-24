@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { db } from "@/shared/db/client";
 import { properties } from "@/shared/db/schema";
 import { eq } from "drizzle-orm";
+import Image from "next/image";
 import { eur } from "@/shared/utils/format";
 import { entornoLabel } from "@/modules/properties/entornos";
 import Map from "@/modules/properties/components/Map";
@@ -59,17 +60,20 @@ export default async function PisoPage({
       {photos.length > 0 ? (
         <>
           <div className="mt-5 hidden grid-cols-4 grid-rows-2 gap-2 overflow-hidden rounded-2xl sm:grid">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photos[0]} alt={p.title} className="col-span-2 row-span-2 h-full min-h-[320px] w-full object-cover" />
+            <span className="relative col-span-2 row-span-2 min-h-[320px]">
+              <Image src={photos[0]} alt={p.title} fill priority sizes="(max-width: 1024px) 100vw, 65vw" className="object-cover" />
+            </span>
             {photos.slice(1).map((u, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={u} src={u} alt={`${p.title} ${i + 2}`} className="h-40 w-full object-cover" />
+              <span key={u} className="relative h-40">
+                <Image src={u} alt={`${p.title} ${i + 2}`} fill loading="lazy" sizes="(max-width: 1024px) 50vw, 20vw" className="object-cover" />
+              </span>
             ))}
           </div>
           <div className="mt-5 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 sm:hidden">
             {photos.map((u, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={u} src={u} alt={`${p.title} ${i + 1}`} className="aspect-[4/3] w-[85%] shrink-0 snap-center rounded-2xl object-cover" />
+              <span key={u} className="relative aspect-[4/3] w-[85%] shrink-0 snap-center overflow-hidden rounded-2xl">
+                <Image src={u} alt={`${p.title} ${i + 1}`} fill loading="lazy" sizes="85vw" className="object-cover" />
+              </span>
             ))}
           </div>
         </>
@@ -114,8 +118,8 @@ export default async function PisoPage({
               <ContactBox propertyId={p.id} />
             </div>
             <div className="mt-4 rounded-xl bg-mar-50 p-3 text-xs text-mar-950/70">
-              <p><strong className="text-mar-900">RGPD:</strong> contacto visible con consentimiento y membresía.</p>
-              <p className="mt-1"><strong className="text-mar-900">LAU:</strong> fianza 1 mes, firma Signaturit.</p>
+              <p><strong className="text-mar-900">RGPD:</strong> contacto visible con consentimiento y cuenta registrada.</p>
+              <p className="mt-1"><strong className="text-mar-900">Temporada:</strong> fianza 2 meses (LAU), firma Signaturit.</p>
             </div>
           </div>
         </aside>

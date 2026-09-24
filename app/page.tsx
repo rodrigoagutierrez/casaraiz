@@ -34,7 +34,7 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65" />
           <div className="relative px-6 pb-20 pt-16 text-center sm:pb-24 sm:pt-24">
             <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight text-white sm:text-6xl">
-              Encuentra tu alquiler
+              Encuentra tu alquiler temporal
             </h1>
             <p className="mx-auto mt-3 max-w-xl text-xl text-white/85 sm:text-2xl">
               Sin intermediarios, sin comisiones
@@ -113,8 +113,8 @@ export default async function Home() {
         <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
           {[
             { t: "1. Crea tu cuenta", d: "Gratis, como inquilino o dueño. Verifica tu DNI." },
-            { t: "2. Activa tu membresía", d: "Desde 9€/mes. Sin permanencia ni letra pequeña." },
-            { t: "3. Contacta directo", d: "Habla con el dueño, visita y firma. Cero comisiones." },
+            { t: "2. Dueños activan su plan", d: "Por tramos según tus pisos. Sin permanencia ni letra pequeña." },
+            { t: "3. Contacta directo", d: "Inquilinos gratis: habla con el dueño, visita y firma. Cero comisiones." },
           ].map((s) => (
             <div key={s.t} className="rounded-2xl border border-mar-100 bg-white p-5">
               <p className="font-semibold text-mar-900">{s.t}</p>
@@ -129,7 +129,7 @@ export default async function Home() {
         <div className="rounded-3xl bg-mar-900 p-8 text-center text-white sm:p-10">
           <h2 className="text-2xl font-semibold">Una membresía, cero comisiones</h2>
           <p className="mx-auto mt-2 max-w-xl text-white/70">
-            Inquilinos 9€/mes · Dueños 19€/mes o 149€/año. Lo que pagas es lo que cuesta.
+            Inquilinos gratis · Dueños desde 19€/mes. Lo que pagas es lo que cuesta.
           </p>
           <div className="mt-6 flex justify-center gap-3">
             <Link href="/precios" className="rounded-full bg-otono-600 px-6 py-3 font-medium hover:bg-otono-700">
