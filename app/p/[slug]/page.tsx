@@ -5,6 +5,7 @@ import { db } from "@/shared/db/client";
 import { properties } from "@/shared/db/schema";
 import { eq } from "drizzle-orm";
 import { eur } from "@/shared/utils/format";
+import { entornoLabel } from "@/modules/properties/entornos";
 import Map from "@/modules/properties/components/Map";
 import ContactBox from "@/modules/contacts/components/ContactBox";
 
@@ -46,6 +47,13 @@ export default async function PisoPage({
       </Link>
       <h1 className="mt-2 text-3xl font-bold text-mar-950">{p.title}</h1>
       <p className="mt-1 text-sm text-mar-950/55">{p.rooms} hab · {p.baths} baños · {p.m2} m² · {p.city}</p>
+      {p.entorno && (
+        <p className="mt-2">
+          <span className="rounded-full bg-mar-100 px-3 py-1 text-xs font-medium text-mar-800">
+            Entorno: {entornoLabel(p.entorno)}
+          </span>
+        </p>
+      )}
 
       {/* Galería mosaico */}
       {photos.length > 0 ? (

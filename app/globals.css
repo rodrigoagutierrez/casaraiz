@@ -28,6 +28,13 @@
   --color-coral-500: #ff6b5b;
   --color-coral-600: #e85545;
   --color-coral-700: #c74536;
+
+  /* Naranja otoño */
+  --color-otono-100: #fae7d3;
+  --color-otono-200: #f3cda1;
+  --color-otono-500: #d4762a;
+  --color-otono-600: #bc5f1a;
+  --color-otono-700: #96500f;
 }
 
 body {

@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { db } from "@/shared/db/client";
 import { properties } from "@/shared/db/schema";
-import { and, desc, eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import PropertyCard from "@/modules/properties/components/PropertyCard";
 import SearchBar from "@/modules/properties/components/SearchBar";
+import CategoryRow from "@/modules/properties/components/CategoryRow";
 import { BARRIOS_VALENCIA } from "@/modules/content/barrios";
 
 const TOP_BARRIOS = ["ruzafa", "benimaclet", "el-cabanyal", "campanar", "algiros", "pla-del-real"];
@@ -14,7 +16,7 @@ export default async function Home() {
     destacados = await db
       .select()
       .from(properties)
-      .where(and(eq(properties.city, "Valencia"), eq(properties.status, "active")))
+      .where(eq(properties.status, "active"))
       .orderBy(desc(properties.createdAt))
       .limit(6);
   } catch {
@@ -24,16 +26,31 @@ export default async function Home() {
   return (
     <div className="font-sans">
       {/* Hero */}
-      <section className="bg-gradient-to-b from-mar-100 to-mar-50">
-        <div className="mx-auto max-w-3xl px-6 py-14 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-mar-950 sm:text-5xl">
-            Alquiler <span className="underline decoration-coral-500 decoration-4 underline-offset-4">sin comisión</span> en Valencia
-          </h1>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-mar-950/65">
-            Dueños e inquilinos directos. Una membresía, cero comisiones.
-          </p>
-          <SearchBar />
+      <section className="px-4 pt-4 sm:px-6">
+        <div
+          className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-mar-900"
+          style={{ backgroundImage: "url('https://picsum.photos/seed/casaraiz-valencia/1600/800')", backgroundSize: "cover", backgroundPosition: "center" }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65" />
+          <div className="relative px-6 pb-20 pt-16 text-center sm:pb-24 sm:pt-24">
+            <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight text-white sm:text-6xl">
+              Encuentra tu alquiler
+            </h1>
+            <p className="mx-auto mt-3 max-w-xl text-xl text-white/85 sm:text-2xl">
+              Sin intermediarios, sin comisiones
+            </p>
+          </div>
+          <div className="relative px-4 pb-8 sm:px-8">
+            <SearchBar />
+          </div>
         </div>
+      </section>
+
+      {/* Categorías */}
+      <section className="mx-auto max-w-6xl px-6 pt-6">
+        <Suspense>
+          <CategoryRow />
+        </Suspense>
       </section>
 
       {/* Destacados */}
@@ -53,9 +70,26 @@ export default async function Home() {
         )}
       </section>
 
-      {/* Barrios */}
+      {/* Destinos */}
       <section className="mx-auto max-w-6xl px-6 pt-12">
-        <h2 className="text-2xl font-semibold text-mar-950">Explora por barrio</h2>
+        <h2 className="text-2xl font-semibold text-mar-950">Destinos populares</h2>
+        <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-3">
+          {["Valencia", "Madrid", "Barcelona", "Sevilla", "Málaga", "Bilbao"].map((c) => (
+            <Link
+              key={c}
+              href={`/buscar?city=${encodeURIComponent(c)}`}
+              className="rounded-2xl border border-mar-100 bg-white p-5 hover:border-mar-200 hover:shadow-lg"
+            >
+              <p className="font-semibold text-mar-900">{c}</p>
+              <p className="text-sm text-mar-950/55">Alquiler directo</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Barrios Valencia */}
+      <section className="mx-auto max-w-6xl px-6 pt-12">
+        <h2 className="text-2xl font-semibold text-mar-950">Explora por barrio en Valencia</h2>
         <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-3">
           {BARRIOS_VALENCIA.filter((b) => TOP_BARRIOS.includes(b.slug)).map((b) => (
             <Link

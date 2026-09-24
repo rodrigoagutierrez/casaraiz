@@ -6,18 +6,21 @@ import { properties } from "@/shared/db/schema";
 import { and, asc, desc, eq, gte, ilike, lte, or, type SQL } from "drizzle-orm";
 import PropertyCard from "@/modules/properties/components/PropertyCard";
 import FiltersBar from "@/modules/properties/components/FiltersBar";
+import CategoryRow from "@/modules/properties/components/CategoryRow";
 
 export const metadata: Metadata = {
-  title: "Buscar alquiler sin comisión en Valencia | CasaRaiz",
-  description: "Filtra por barrio, habitaciones y precio. Contacto directo con dueños.",
+  title: "Buscar alquiler sin comisión en España | CasaRaiz",
+  description: "Filtra por ciudad, zona, habitaciones y precio. Contacto directo con dueños.",
 };
 
-type Params = { barrio?: string; habs?: string; baths?: string; min?: string; max?: string; m2?: string; q?: string; orden?: string };
+type Params = { city?: string; barrio?: string; entorno?: string; habs?: string; baths?: string; min?: string; max?: string; m2?: string; q?: string; orden?: string };
 
 export default async function Buscar({ searchParams }: { searchParams: Promise<Params> }) {
-  const { barrio, habs, baths, min, max, m2, q, orden } = await searchParams;
-  const filters: SQL[] = [eq(properties.city, "Valencia"), eq(properties.status, "active")];
-  if (barrio) filters.push(eq(properties.barrio, barrio));
+  const { city, barrio, entorno, habs, baths, min, max, m2, q, orden } = await searchParams;
+  const filters: SQL[] = [eq(properties.status, "active")];
+  if (city) filters.push(ilike(properties.city, `%${city}%`));
+  if (barrio) filters.push(ilike(properties.barrio, `%${barrio}%`));
+  if (entorno) filters.push(eq(properties.entorno, entorno));
   if (habs && Number(habs) > 0) filters.push(gte(properties.rooms, Number(habs)));
   if (baths && Number(baths) > 0) filters.push(gte(properties.baths, Number(baths)));
   if (min && Number(min) > 0) filters.push(gte(properties.priceCents, Math.round(Number(min) * 100)));
@@ -42,11 +45,13 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
     <main className="mx-auto max-w-6xl px-6 py-10">
       <h1 className="text-3xl font-bold text-mar-950">Encuentra tu piso en Valencia</h1>
       <Suspense>
+        <CategoryRow />
         <FiltersBar />
       </Suspense>
       <p className="mt-4 text-sm text-mar-950/55">
         {rows.length} resultado{rows.length === 1 ? "" : "s"}
-        {barrio ? <> en <Link href={`/alquiler-sin-comision/valencia/${barrio}`} className="font-medium text-mar-700 underline">{barrio}</Link></> : " en Valencia"}
+        {city ? ` en ${city}` : " en España"}
+        {barrio ? ` · zona ${barrio}` : ""}
         {" · "}<Link href="/mapa" className="font-medium text-mar-700 underline">ver en mapa</Link>
       </p>
       {rows.length > 0 ? (

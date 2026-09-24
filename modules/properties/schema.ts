@@ -21,6 +21,7 @@ export const properties = pgTable(
     address: text("address"),
     city: text("city").notNull().default("Valencia"),
     barrio: text("barrio").notNull(),
+    entorno: text("entorno"),
     slug: text("slug").notNull().unique(),
     lat: text("lat"),
     lng: text("lng"),

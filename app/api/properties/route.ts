@@ -6,17 +6,21 @@ import { createPropertySchema, slugify } from "@/modules/properties/validation";
 import { and, desc, eq } from "drizzle-orm";
 import { getOrCreateUser } from "@/modules/users/queries";
 import { getPublishCapacity } from "@/modules/billing/plans";
+import { geocodeSpain } from "@/modules/properties/geocode";
 import { logAudit } from "@/modules/audit/log";
 
 // GET /api/properties?barrio=ruzafa&city=Valencia&limit=20
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const barrio = searchParams.get("barrio") ?? undefined;
-  const city = searchParams.get("city") ?? "Valencia";
+  const city = searchParams.get("city") ?? undefined;
+  const entorno = searchParams.get("entorno") ?? undefined;
   const limit = Math.min(Number(searchParams.get("limit") ?? 20), 50);
 
-  const filters = [eq(properties.status, "active"), eq(properties.city, city)];
+  const filters = [eq(properties.status, "active")];
+  if (city) filters.push(eq(properties.city, city));
   if (barrio) filters.push(eq(properties.barrio, barrio));
+  if (entorno) filters.push(eq(properties.entorno, entorno));
 
   const rows = await db
     .select()
@@ -68,7 +72,8 @@ export async function POST(req: NextRequest) {
       m2: input.m2,
       address: input.address,
       city: input.city,
-      barrio: input.barrio,
+      barrio: input.barrio.trim().toLowerCase(),
+      entorno: input.entorno,
       slug: slugify(input.title),
       lat: input.lat,
       lng: input.lng,
@@ -76,6 +81,16 @@ export async function POST(req: NextRequest) {
       photos: input.photos,
     })
     .returning();
+
+  // Sitúa el piso en el mapa aunque el dueño no dé coords
+  if (!created.lat || !created.lng) {
+    const geo = await geocodeSpain(created.city, created.barrio);
+    if (geo) {
+      await db.update(properties).set({ lat: geo.lat, lng: geo.lng }).where(eq(properties.id, created.id));
+      created.lat = geo.lat;
+      created.lng = geo.lng;
+    }
+  }
 
   await logAudit({
     actorId: owner.id,

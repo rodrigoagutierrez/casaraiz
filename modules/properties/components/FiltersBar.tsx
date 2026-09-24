@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { BARRIOS_VALENCIA } from "@/modules/content/barrios";
+import { ENTORNOS } from "@/modules/properties/entornos";
+import { CIUDADES_ES } from "@/modules/properties/geocode";
 
 export default function FiltersBar() {
   const router = useRouter();
   const sp = useSearchParams();
   const [barrio, setBarrio] = useState(sp.get("barrio") ?? "");
+  const [city, setCity] = useState(sp.get("city") ?? "");
+  const [entorno, setEntorno] = useState(sp.get("entorno") ?? "");
   const [habs, setHabs] = useState(sp.get("habs") ?? "");
   const [baths, setBaths] = useState(sp.get("baths") ?? "");
   const [min, setMin] = useState(sp.get("min") ?? "");
@@ -20,6 +23,8 @@ export default function FiltersBar() {
     e.preventDefault();
     const p = new URLSearchParams();
     if (barrio) p.set("barrio", barrio);
+    if (city) p.set("city", city);
+    if (entorno) p.set("entorno", entorno);
     if (habs) p.set("habs", habs);
     if (baths) p.set("baths", baths);
     if (min) p.set("min", min);
@@ -34,10 +39,28 @@ export default function FiltersBar() {
 
   return (
     <form onSubmit={apply} className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-mar-100 bg-white p-3">
-      <select value={barrio} onChange={(e) => setBarrio(e.target.value)} className={f}>
-        <option value="">Todo Valencia</option>
-        {BARRIOS_VALENCIA.map((b) => (
-          <option key={b.slug} value={b.slug}>{b.nombre}</option>
+      <input
+        value={city}
+        onChange={(e) => setCity(e.target.value)}
+        list="ciudades-es-filter"
+        placeholder="Ciudad: Madrid..."
+        className={`${f} w-32`}
+      />
+      <datalist id="ciudades-es-filter">
+        {CIUDADES_ES.map((c) => (
+          <option key={c} value={c} />
+        ))}
+      </datalist>
+      <input
+        value={barrio}
+        onChange={(e) => setBarrio(e.target.value)}
+        placeholder="Zona: Malasaña..."
+        className={`${f} w-32`}
+      />
+      <select value={entorno} onChange={(e) => setEntorno(e.target.value)} className={f}>
+        <option value="">Entorno</option>
+        {ENTORNOS.map((t) => (
+          <option key={t.value} value={t.value}>{t.label}</option>
         ))}
       </select>
       <select value={habs} onChange={(e) => setHabs(e.target.value)} className={f}>

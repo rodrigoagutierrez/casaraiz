@@ -5,6 +5,7 @@ import { db } from "@/shared/db/client";
 import { properties } from "@/shared/db/schema";
 import { and, eq } from "drizzle-orm";
 import { getUserByClerkId } from "@/modules/users/queries";
+import { geocodeSpain } from "@/modules/properties/geocode";
 import { logAudit } from "@/modules/audit/log";
 
 const patchSchema = z.object({
@@ -16,6 +17,8 @@ const patchSchema = z.object({
   m2: z.number().int().min(15).max(1000).optional(),
   address: z.string().max(200).optional(),
   barrio: z.string().min(2).max(60).optional(),
+  city: z.string().min(2).max(80).optional(),
+  entorno: z.enum(["playa", "montana", "bosque", "ciudad", "rio"]).optional(),
   photos: z.array(z.string().url()).max(12).optional(),
   status: z.enum(["draft", "active", "rented"]).optional(),
 });
@@ -36,11 +39,25 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const parsed = patchSchema.safeParse(await req.json());
   if (!parsed.success) return NextResponse.json({ error: "DATOS_INVALIDOS" }, { status: 400 });
-  const { priceEur, ...rest } = parsed.data;
+  const { priceEur, city, barrio, ...rest } = parsed.data;
+
+  const patch: Record<string, unknown> = {
+    ...rest,
+    ...(priceEur !== undefined ? { priceCents: Math.round(priceEur * 100) } : {}),
+    ...(city !== undefined ? { city } : {}),
+    ...(barrio !== undefined ? { barrio: barrio.trim().toLowerCase() } : {}),
+  };
+  if (city !== undefined || barrio !== undefined) {
+    const geo = await geocodeSpain(city ?? prop.city, barrio ?? prop.barrio);
+    if (geo) {
+      patch.lat = geo.lat;
+      patch.lng = geo.lng;
+    }
+  }
 
   const [updated] = await db
     .update(properties)
-    .set({ ...rest, ...(priceEur !== undefined ? { priceCents: Math.round(priceEur * 100) } : {}) })
+    .set(patch)
     .where(and(eq(properties.id, id), eq(properties.ownerId, me.id)))
     .returning();
 

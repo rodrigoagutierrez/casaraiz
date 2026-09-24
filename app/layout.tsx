@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CasaRaiz | Alquiler sin comisión en Valencia",
-  description: "Conectamos dueños e inquilinos sin comisiones. Paga una membresía y alquila directo en Valencia.",
+  title: "CasaRaiz | Alquiler sin comisión en España",
+  description: "Conectamos dueños e inquilinos sin comisiones en toda España. Paga una membresía y alquila directo.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

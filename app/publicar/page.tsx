@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { BARRIOS_VALENCIA } from "@/modules/content/barrios";
+import { CIUDADES_ES } from "@/modules/properties/geocode";
+import { ENTORNOS } from "@/modules/properties/entornos";
 
 const inputCls = "w-full rounded-lg border border-mar-200 bg-white px-4 py-2 text-mar-950 outline-none focus:border-mar-600 focus:ring-2 focus:ring-mar-100";
 
@@ -34,7 +36,9 @@ export default function PublicarPage() {
     rooms: 2,
     baths: 1,
     m2: 70,
+    city: "Valencia",
     barrio: "ruzafa",
+    entorno: "ciudad",
     address: "",
   });
 
@@ -188,19 +192,48 @@ export default function PublicarPage() {
           </label>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <label className="text-sm text-mar-900">Barrio
-            <select className={`${inputCls} mt-1`}
-              value={form.barrio} onChange={(e) => set("barrio", e.target.value)}>
+          <label className="text-sm text-mar-900">Ciudad
+            <input
+              className={`${inputCls} mt-1`}
+              list="ciudades-es"
+              value={form.city}
+              onChange={(e) => set("city", e.target.value)}
+              required
+            />
+            <datalist id="ciudades-es">
+              {CIUDADES_ES.map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
+          </label>
+          <label className="text-sm text-mar-900">Barrio / Zona
+            <input
+              className={`${inputCls} mt-1`}
+              list="barrios-valencia"
+              value={form.barrio}
+              onChange={(e) => set("barrio", e.target.value)}
+              placeholder="Ruzafa, Malasaña..."
+              required
+            />
+            <datalist id="barrios-valencia">
               {BARRIOS_VALENCIA.map((b) => (
                 <option key={b.slug} value={b.slug}>{b.nombre}</option>
               ))}
-            </select>
-          </label>
-          <label className="text-sm text-mar-900">Dirección (opcional)
-            <input className={`${inputCls} mt-1`}
-              value={form.address} onChange={(e) => set("address", e.target.value)} />
+            </datalist>
           </label>
         </div>
+        <label className="text-sm text-mar-900">Dirección (opcional, ayuda a situarlo en el mapa)
+          <input className={`${inputCls} mt-1`}
+            value={form.address} onChange={(e) => set("address", e.target.value)} />
+        </label>
+        <label className="text-sm text-mar-900">Entorno (así te encuentran por Playa, Montaña...)
+          <select className={`${inputCls} mt-1`}
+            value={form.entorno} onChange={(e) => set("entorno", e.target.value)}>
+            {ENTORNOS.map((t) => (
+              <option key={t.value} value={t.value}>{t.label}</option>
+            ))}
+          </select>
+        </label>
 
         <div className="rounded-xl border border-mar-100 bg-mar-50 p-3">
           <p className="text-sm font-medium text-mar-900">Fotos ({photos.length})</p>

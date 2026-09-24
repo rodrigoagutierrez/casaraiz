@@ -16,7 +16,7 @@ export default function Header() {
           href="/buscar"
           className="hidden items-center gap-2 rounded-full border border-mar-200 bg-white px-5 py-2 text-sm text-mar-950/70 shadow-sm hover:shadow-md md:flex"
         >
-          <span className="font-medium text-mar-900">Valencia</span>
+          <span className="font-medium text-mar-900">España</span>
           <span className="text-mar-200">|</span>
           <span>Barrio</span>
           <span className="text-mar-200">|</span>

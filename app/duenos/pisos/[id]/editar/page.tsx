@@ -31,7 +31,9 @@ export default async function EditarPiso({ params }: { params: Promise<{ id: str
           baths: p.baths,
           m2: p.m2,
           address: p.address,
+          city: p.city,
           barrio: p.barrio,
+          entorno: p.entorno,
           photos: p.photos,
           status: p.status,
         }}

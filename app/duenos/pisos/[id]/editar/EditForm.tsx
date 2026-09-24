@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BARRIOS_VALENCIA } from "@/modules/content/barrios";
+import { ENTORNOS } from "@/modules/properties/entornos";
 
 type Prop = {
   id: string;
@@ -13,7 +13,9 @@ type Prop = {
   baths: number;
   m2: number;
   address: string | null;
+  city: string;
   barrio: string;
+  entorno: string | null;
   photos: string[];
   status: "draft" | "active" | "rented";
 };
@@ -32,6 +34,8 @@ export default function EditForm({ initial }: { initial: Prop }) {
     baths: initial.baths,
     m2: initial.m2,
     barrio: initial.barrio,
+    city: initial.city,
+    entorno: initial.entorno ?? "ciudad",
     address: initial.address ?? "",
     status: initial.status,
   });
@@ -80,13 +84,13 @@ export default function EditForm({ initial }: { initial: Prop }) {
         </label>
       </div>
       <div className="grid grid-cols-2 gap-3">
-        <label className="text-sm text-mar-900">Barrio
-          <select className={`${inputCls} mt-1`} value={form.barrio} onChange={(e) => set("barrio", e.target.value)}>
-            {BARRIOS_VALENCIA.map((b) => (
-              <option key={b.slug} value={b.slug}>{b.nombre}</option>
-            ))}
-          </select>
+        <label className="text-sm text-mar-900">Ciudad
+          <input className={`${inputCls} mt-1`} value={form.city} onChange={(e) => set("city", e.target.value)} required />
         </label>
+        <label className="text-sm text-mar-900">Barrio / Zona
+          <input className={`${inputCls} mt-1`} value={form.barrio} onChange={(e) => set("barrio", e.target.value)} required />
+        </label>
+      </div>
         <label className="text-sm text-mar-900">Estado
           <select className={`${inputCls} mt-1`} value={form.status} onChange={(e) => set("status", e.target.value)}>
             <option value="active">Activo (visible)</option>
@@ -94,7 +98,13 @@ export default function EditForm({ initial }: { initial: Prop }) {
             <option value="rented">Alquilado</option>
           </select>
         </label>
-      </div>
+      <label className="text-sm text-mar-900">Entorno
+        <select className={`${inputCls} mt-1`} value={form.entorno} onChange={(e) => set("entorno", e.target.value)}>
+          {ENTORNOS.map((t) => (
+            <option key={t.value} value={t.value}>{t.label}</option>
+          ))}
+        </select>
+      </label>
       {error && <p className="text-sm text-coral-700">{error}</p>}
       <button disabled={saving} className="w-full rounded-full bg-mar-900 py-3 text-white font-medium hover:bg-mar-800 disabled:opacity-50">
         {saving ? "Guardando..." : "Guardar cambios"}
