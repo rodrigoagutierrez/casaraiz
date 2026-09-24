@@ -32,7 +32,8 @@ export async function POST(req: NextRequest) {
     await db.update(users).set({ stripeCustomerId: customerId }).where(eq(users.id, user.id));
   }
 
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? (host ? `https://${host}` : "http://localhost:3000");
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customerId,
