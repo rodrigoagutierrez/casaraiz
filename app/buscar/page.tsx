@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { db } from "@/shared/db/client";
 import { properties } from "@/shared/db/schema";
-import { and, asc, desc, eq, gte, ilike, lte, or, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, isNull, lte, or, type SQL } from "drizzle-orm";
 import PropertyCard from "@/modules/properties/components/PropertyCard";
 import FiltersBar from "@/modules/properties/components/FiltersBar";
 import CategoryRow from "@/modules/properties/components/CategoryRow";
@@ -13,13 +13,17 @@ export const metadata: Metadata = {
   description: "Filtra por ciudad, zona, habitaciones y precio. Contacto directo con dueños.",
 };
 
-type Params = { city?: string; barrio?: string; entorno?: string; habs?: string; baths?: string; min?: string; max?: string; m2?: string; q?: string; orden?: string };
+type Params = { city?: string; barrio?: string; entorno?: string; habs?: string; baths?: string; min?: string; max?: string; m2?: string; q?: string; orden?: string; desde?: string; hasta?: string; huespedes?: string };
 
 export default async function Buscar({ searchParams }: { searchParams: Promise<Params> }) {
-  const { city, barrio, entorno, habs, baths, min, max, m2, q, orden } = await searchParams;
+  const { city, barrio, entorno, habs, baths, min, max, m2, q, orden, desde, hasta, huespedes } = await searchParams;
   const filters: SQL[] = [eq(properties.status, "active")];
   if (city) filters.push(ilike(properties.city, `%${city}%`));
   if (barrio) filters.push(ilike(properties.barrio, `%${barrio}%`));
+  if (huespedes && Number(huespedes) > 0) filters.push(gte(properties.maxHuespedes, Number(huespedes)));
+  // Ventana del dueño: solo pisos disponibles en las fechas pedidas (sin fechas = siempre disponible)
+  if (desde) filters.push(or(isNull(properties.disponibleHasta), gte(properties.disponibleHasta, desde))!);
+  if (hasta) filters.push(or(isNull(properties.disponibleDesde), lte(properties.disponibleDesde, hasta))!);
   if (entorno) filters.push(eq(properties.entorno, entorno));
   if (habs && Number(habs) > 0) filters.push(gte(properties.rooms, Number(habs)));
   if (baths && Number(baths) > 0) filters.push(gte(properties.baths, Number(baths)));
@@ -52,12 +56,14 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
         {rows.length} resultado{rows.length === 1 ? "" : "s"}
         {city ? ` en ${city}` : " en España"}
         {barrio ? ` · zona ${barrio}` : ""}
+        {desde || hasta ? ` · ${desde || "…"} → ${hasta || "…"}` : ""}
+        {huespedes ? ` · ${huespedes} huésp.` : ""}
         {" · "}<Link href="/mapa" className="font-medium text-mar-700 underline">ver en mapa</Link>
       </p>
       {rows.length > 0 ? (
         <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {rows.map((p) => (
-            <PropertyCard key={p.id} p={{ slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, photos: p.photos }} />
+            <PropertyCard key={p.id} p={{ slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos }} />
           ))}
         </div>
       ) : (

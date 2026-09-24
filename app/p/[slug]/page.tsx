@@ -47,7 +47,7 @@ export default async function PisoPage({
         ← {p.barrio}
       </Link>
       <h1 className="mt-2 text-3xl font-bold text-mar-950">{p.title}</h1>
-      <p className="mt-1 text-sm text-mar-950/55">{p.rooms} hab · {p.baths} baños · {p.m2} m² · {p.city}</p>
+      <p className="mt-1 text-sm text-mar-950/55">{p.rooms} hab · {p.baths} baños · {p.m2} m² · hasta {p.maxHuespedes} huésp. · {p.city}</p>
       {p.entorno && (
         <p className="mt-2">
           <span className="rounded-full bg-mar-100 px-3 py-1 text-xs font-medium text-mar-800">
@@ -91,9 +91,9 @@ export default async function PisoPage({
 
           <div className="mt-6 grid grid-cols-3 gap-3 text-center">
             {[
-              { v: `${p.rooms}`, l: "Habitaciones" },
+              { v: `${p.maxHuespedes}`, l: "Huéspedes" },
               { v: `${p.m2} m²`, l: "Superficie" },
-              { v: p.barrio, l: "Barrio" },
+              { v: p.disponibleDesde ? `${p.disponibleDesde}${p.disponibleHasta ? ` → ${p.disponibleHasta}` : ""}` : "Flexible", l: "Disponible" },
             ].map((f) => (
               <div key={f.l} className="rounded-2xl border border-mar-100 bg-white p-4">
                 <p className="font-bold capitalize text-mar-900">{f.v}</p>

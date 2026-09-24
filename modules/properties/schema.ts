@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, integer, smallint, jsonb, timestamp, pgEnum, index } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, integer, smallint, jsonb, timestamp, date, pgEnum, index } from "drizzle-orm/pg-core";
 import { users } from "../users/schema";
 
 export const statusEnum = pgEnum("property_status", ["draft", "active", "rented"]);
@@ -18,6 +18,9 @@ export const properties = pgTable(
     rooms: smallint("rooms").notNull(),
     baths: smallint("baths").notNull().default(1),
     m2: integer("m2").notNull(),
+    maxHuespedes: smallint("max_huespedes").notNull().default(2),
+    disponibleDesde: date("disponible_desde"),
+    disponibleHasta: date("disponible_hasta"),
     address: text("address"),
     city: text("city").notNull().default("Valencia"),
     barrio: text("barrio").notNull(),

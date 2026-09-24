@@ -36,6 +36,9 @@ export default function PublicarPage() {
     rooms: 2,
     baths: 1,
     m2: 70,
+    maxHuespedes: 4,
+    disponibleDesde: "",
+    disponibleHasta: "",
     city: "Valencia",
     barrio: "ruzafa",
     entorno: "ciudad",
@@ -74,10 +77,13 @@ export default function PublicarPage() {
     setSaving(true);
     setError(null);
     try {
+      const payload: Record<string, unknown> = { ...form, photos };
+      if (!payload.disponibleDesde) delete payload.disponibleDesde;
+      if (!payload.disponibleHasta) delete payload.disponibleHasta;
       const res = await fetch("/api/properties", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, city: "Valencia", photos }),
+        body: JSON.stringify(payload),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -189,6 +195,18 @@ export default function PublicarPage() {
           <label className="text-sm text-mar-900">Baños
             <input type="number" className={`${inputCls} mt-1`}
               value={form.baths} onChange={(e) => set("baths", Number(e.target.value))} />
+          </label>
+          <label className="text-sm text-mar-900">Huéspedes máx.
+            <input type="number" min={1} max={16} className={`${inputCls} mt-1`}
+              value={form.maxHuespedes} onChange={(e) => set("maxHuespedes", Number(e.target.value))} />
+          </label>
+          <label className="text-sm text-mar-900">Disponible desde
+            <input type="date" className={`${inputCls} mt-1`}
+              value={form.disponibleDesde} onChange={(e) => set("disponibleDesde", e.target.value)} />
+          </label>
+          <label className="text-sm text-mar-900">Disponible hasta (vacío = siempre)
+            <input type="date" className={`${inputCls} mt-1`}
+              value={form.disponibleHasta} onChange={(e) => set("disponibleHasta", e.target.value)} />
           </label>
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

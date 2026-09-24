@@ -14,6 +14,9 @@ type Prop = {
   m2: number;
   address: string | null;
   city: string;
+  maxHuespedes: number;
+  disponibleDesde: string | null;
+  disponibleHasta: string | null;
   barrio: string;
   entorno: string | null;
   photos: string[];
@@ -35,6 +38,9 @@ export default function EditForm({ initial }: { initial: Prop }) {
     m2: initial.m2,
     barrio: initial.barrio,
     city: initial.city,
+    maxHuespedes: initial.maxHuespedes,
+    disponibleDesde: initial.disponibleDesde ?? "",
+    disponibleHasta: initial.disponibleHasta ?? "",
     entorno: initial.entorno ?? "ciudad",
     address: initial.address ?? "",
     status: initial.status,
@@ -47,10 +53,16 @@ export default function EditForm({ initial }: { initial: Prop }) {
     setSaving(true);
     setError(null);
     try {
+      const payload = {
+        ...form,
+        photos: initial.photos,
+        disponibleDesde: form.disponibleDesde || null,
+        disponibleHasta: form.disponibleHasta || null,
+      };
       const res = await fetch(`/api/properties/${initial.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, photos: initial.photos }),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         setError("No se pudo guardar. Revisa los campos.");
@@ -79,10 +91,19 @@ export default function EditForm({ initial }: { initial: Prop }) {
         <label className="text-sm text-mar-900">Hab.
           <input type="number" className={`${inputCls} mt-1`} value={form.rooms} onChange={(e) => set("rooms", Number(e.target.value))} />
         </label>
-        <label className="text-sm text-mar-900">Baños
-          <input type="number" className={`${inputCls} mt-1`} value={form.baths} onChange={(e) => set("baths", Number(e.target.value))} />
-        </label>
-      </div>
+          <label className="text-sm text-mar-900">Baños
+            <input type="number" className={`${inputCls} mt-1`} value={form.baths} onChange={(e) => set("baths", Number(e.target.value))} />
+          </label>
+          <label className="text-sm text-mar-900">Huéspedes máx.
+            <input type="number" min={1} max={16} className={`${inputCls} mt-1`} value={form.maxHuespedes} onChange={(e) => set("maxHuespedes", Number(e.target.value))} />
+          </label>
+          <label className="text-sm text-mar-900">Disponible desde
+            <input type="date" className={`${inputCls} mt-1`} value={form.disponibleDesde} onChange={(e) => set("disponibleDesde", e.target.value)} />
+          </label>
+          <label className="text-sm text-mar-900">Disponible hasta (vacío = siempre)
+            <input type="date" className={`${inputCls} mt-1`} value={form.disponibleHasta} onChange={(e) => set("disponibleHasta", e.target.value)} />
+          </label>
+        </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <label className="text-sm text-mar-900">Ciudad
           <input className={`${inputCls} mt-1`} value={form.city} onChange={(e) => set("city", e.target.value)} required />

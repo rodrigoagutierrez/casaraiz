@@ -9,6 +9,7 @@ export type CardProp = {
   rooms: number;
   m2: number;
   barrio: string;
+  maxHuespedes: number;
   photos: string[];
 };
 
@@ -27,7 +28,7 @@ export default function PropertyCard({ p }: { p: CardProp }) {
       )}
       <div className="p-4">
         <p className="truncate font-semibold text-mar-900">{p.title}</p>
-        <p className="text-sm text-mar-950/55">{p.barrio} · {p.rooms} hab · {p.m2} m²</p>
+        <p className="text-sm text-mar-950/55">{p.barrio} · {p.rooms} hab · {p.maxHuespedes} huésp.</p>
         <p className="mt-1 font-bold text-mar-900">
           {eur(p.priceCents)}<span className="text-sm font-normal text-mar-950/55">/mes</span>
         </p>

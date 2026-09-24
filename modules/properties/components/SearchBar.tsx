@@ -13,11 +13,11 @@ function PinIcon() {
   );
 }
 
-function TagIcon() {
+function CalIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#bc5f1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 12l-8 8-9-9V4h7z" />
-      <circle cx="7.5" cy="7.5" r="1.5" />
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M3 10h18M8 3v4M16 3v4" />
     </svg>
   );
 }
@@ -35,19 +35,19 @@ function UsersIcon() {
 export default function SearchBar() {
   const router = useRouter();
   const [city, setCity] = useState("");
-  const [max, setMax] = useState("");
-  const [habs, setHabs] = useState("");
+  const [desde, setDesde] = useState("");
+  const [hasta, setHasta] = useState("");
+  const [huespedes, setHuespedes] = useState("");
 
   function go(e: React.FormEvent) {
     e.preventDefault();
     const q = new URLSearchParams();
     if (city) q.set("city", city);
-    if (max) q.set("max", max);
-    if (habs) q.set("habs", habs);
+    if (desde) q.set("desde", desde);
+    if (hasta) q.set("hasta", hasta);
+    if (huespedes) q.set("huespedes", huespedes);
     router.push(`/buscar?${q.toString()}`);
   }
-
-  const sel = "w-full bg-transparent text-sm text-mar-950/60 outline-none cursor-pointer";
 
   return (
     <form
@@ -73,27 +73,35 @@ export default function SearchBar() {
         </span>
       </label>
       <label className="flex flex-1 items-center gap-3 border-t border-mar-100 px-5 py-2 sm:border-l sm:border-t-0">
-        <TagIcon />
+        <CalIcon />
         <span className="flex-1">
-          <span className="block text-sm font-semibold text-mar-950">Precio máx.</span>
-          <select value={max} onChange={(e) => setMax(e.target.value)} className={sel}>
-            <option value="">¿Cuánto?</option>
-            <option value="1000">≤ 1.000€</option>
-            <option value="1300">≤ 1.300€</option>
-            <option value="1600">≤ 1.600€</option>
-            <option value="2000">≤ 2.000€</option>
-          </select>
+          <span className="block text-sm font-semibold text-mar-950">Check-in / Check-out</span>
+          <span className="flex items-center gap-1">
+            <input
+              type="date"
+              value={desde}
+              onChange={(e) => setDesde(e.target.value)}
+              className="w-full bg-transparent text-sm text-mar-950/60 outline-none"
+            />
+            <input
+              type="date"
+              value={hasta}
+              min={desde || undefined}
+              onChange={(e) => setHasta(e.target.value)}
+              className="w-full bg-transparent text-sm text-mar-950/60 outline-none"
+            />
+          </span>
         </span>
       </label>
       <label className="flex flex-1 items-center gap-3 border-t border-mar-100 px-5 py-2 sm:border-l sm:border-t-0">
         <UsersIcon />
         <span className="flex-1">
-          <span className="block text-sm font-semibold text-mar-950">Habitaciones</span>
-          <select value={habs} onChange={(e) => setHabs(e.target.value)} className={sel}>
-            <option value="">¿Cuántas?</option>
-            <option value="1">1+</option>
-            <option value="2">2+</option>
-            <option value="3">3+</option>
+          <span className="block text-sm font-semibold text-mar-950">Huéspedes</span>
+          <select value={huespedes} onChange={(e) => setHuespedes(e.target.value)} className="w-full cursor-pointer bg-transparent text-sm text-mar-950/60 outline-none">
+            <option value="">¿Cuántos?</option>
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+              <option key={n} value={n}>{n}{n === 8 ? "+" : ""}</option>
+            ))}
           </select>
         </span>
       </label>

@@ -18,6 +18,9 @@ export default function FiltersBar() {
   const [m2, setM2] = useState(sp.get("m2") ?? "");
   const [q, setQ] = useState(sp.get("q") ?? "");
   const [orden, setOrden] = useState(sp.get("orden") ?? "nuevos");
+  const [desde, setDesde] = useState(sp.get("desde") ?? "");
+  const [hasta, setHasta] = useState(sp.get("hasta") ?? "");
+  const [huespedes, setHuespedes] = useState(sp.get("huespedes") ?? "");
 
   function apply(e: React.FormEvent) {
     e.preventDefault();
@@ -31,6 +34,9 @@ export default function FiltersBar() {
     if (max) p.set("max", max);
     if (m2) p.set("m2", m2);
     if (q) p.set("q", q);
+    if (desde) p.set("desde", desde);
+    if (hasta) p.set("hasta", hasta);
+    if (huespedes) p.set("huespedes", huespedes);
     if (orden !== "nuevos") p.set("orden", orden);
     router.push(`/buscar?${p.toString()}`);
   }
@@ -79,6 +85,14 @@ export default function FiltersBar() {
       <input value={max} onChange={(e) => setMax(e.target.value)} type="number" min={0} placeholder="Máx €" className={f} />
       <input value={m2} onChange={(e) => setM2(e.target.value)} type="number" min={0} placeholder="Mín m²" className={f} />
       <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Palabra: ático, terraza..." className={`${f} col-span-2 sm:col-span-1 sm:min-w-40 sm:flex-1`} />
+      <input value={desde} onChange={(e) => setDesde(e.target.value)} type="date" title="Check-in" className={f} />
+      <input value={hasta} onChange={(e) => setHasta(e.target.value)} type="date" min={desde || undefined} title="Check-out" className={f} />
+      <select value={huespedes} onChange={(e) => setHuespedes(e.target.value)} className={f}>
+        <option value="">Huéspedes</option>
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+          <option key={n} value={n}>{n}{n === 8 ? "+" : ""}</option>
+        ))}
+      </select>
       <select value={orden} onChange={(e) => setOrden(e.target.value)} className={f}>
         <option value="nuevos">Novedades</option>
         <option value="baratos">Más baratos</option>
