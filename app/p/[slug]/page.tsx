@@ -57,14 +57,22 @@ export default async function PisoPage({
 
       {/* Galería mosaico */}
       {photos.length > 0 ? (
-        <div className="mt-5 grid grid-cols-4 grid-rows-2 gap-2 overflow-hidden rounded-2xl">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={photos[0]} alt={p.title} className="col-span-4 h-64 w-full object-cover sm:col-span-2 sm:row-span-2 sm:h-full sm:min-h-[320px]" />
-          {photos.slice(1).map((u, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img key={u} src={u} alt={`${p.title} ${i + 2}`} className="hidden h-40 w-full object-cover sm:block" />
-          ))}
-        </div>
+        <>
+          <div className="mt-5 hidden grid-cols-4 grid-rows-2 gap-2 overflow-hidden rounded-2xl sm:grid">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={photos[0]} alt={p.title} className="col-span-2 row-span-2 h-full min-h-[320px] w-full object-cover" />
+            {photos.slice(1).map((u, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={u} src={u} alt={`${p.title} ${i + 2}`} className="h-40 w-full object-cover" />
+            ))}
+          </div>
+          <div className="mt-5 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 sm:hidden">
+            {photos.map((u, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={u} src={u} alt={`${p.title} ${i + 1}`} className="aspect-[4/3] w-[85%] shrink-0 snap-center rounded-2xl object-cover" />
+            ))}
+          </div>
+        </>
       ) : (
         <div className="mt-5 flex h-56 items-center justify-center rounded-2xl bg-mar-100 text-sm text-mar-700">
           Este piso aún no tiene fotos

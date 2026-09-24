@@ -62,7 +62,7 @@ export default function CategoryRow() {
 
   return (
     <div className="flex items-center gap-4">
-      <div className="flex flex-1 items-start justify-between overflow-x-auto px-1 py-1">
+      <div className="flex flex-1 items-start justify-start gap-5 overflow-x-auto px-1 py-1 sm:justify-between sm:gap-2">
         {CATS.map((c) => {
           const on = active === c.match && c.match !== "";
           return (

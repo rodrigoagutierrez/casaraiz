@@ -35,16 +35,16 @@ export default function FiltersBar() {
     router.push(`/buscar?${p.toString()}`);
   }
 
-  const f = "rounded-full border border-mar-200 bg-white px-3 py-1.5 text-sm text-mar-950 outline-none focus:border-mar-600";
+  const f = "rounded-full border border-mar-200 bg-white px-3 py-2 text-sm text-mar-950 outline-none focus:border-mar-600 w-full sm:w-auto";
 
   return (
-    <form onSubmit={apply} className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-mar-100 bg-white p-3">
+    <form onSubmit={apply} className="mt-4 grid grid-cols-2 gap-2 rounded-2xl border border-mar-100 bg-white p-3 sm:flex sm:flex-wrap sm:items-center">
       <input
         value={city}
         onChange={(e) => setCity(e.target.value)}
         list="ciudades-es-filter"
         placeholder="Ciudad: Madrid..."
-        className={`${f} w-32`}
+        className={f}
       />
       <datalist id="ciudades-es-filter">
         {CIUDADES_ES.map((c) => (
@@ -55,7 +55,7 @@ export default function FiltersBar() {
         value={barrio}
         onChange={(e) => setBarrio(e.target.value)}
         placeholder="Zona: Malasaña..."
-        className={`${f} w-32`}
+        className={f}
       />
       <select value={entorno} onChange={(e) => setEntorno(e.target.value)} className={f}>
         <option value="">Entorno</option>
@@ -75,17 +75,17 @@ export default function FiltersBar() {
         <option value="1">1+</option>
         <option value="2">2+</option>
       </select>
-      <input value={min} onChange={(e) => setMin(e.target.value)} type="number" min={0} placeholder="Mín €" className={`${f} w-24`} />
-      <input value={max} onChange={(e) => setMax(e.target.value)} type="number" min={0} placeholder="Máx €" className={`${f} w-24`} />
-      <input value={m2} onChange={(e) => setM2(e.target.value)} type="number" min={0} placeholder="Mín m²" className={`${f} w-24`} />
-      <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Palabra: ático, terraza..." className={`${f} min-w-40 flex-1`} />
+      <input value={min} onChange={(e) => setMin(e.target.value)} type="number" min={0} placeholder="Mín €" className={f} />
+      <input value={max} onChange={(e) => setMax(e.target.value)} type="number" min={0} placeholder="Máx €" className={f} />
+      <input value={m2} onChange={(e) => setM2(e.target.value)} type="number" min={0} placeholder="Mín m²" className={f} />
+      <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Palabra: ático, terraza..." className={`${f} col-span-2 sm:col-span-1 sm:min-w-40 sm:flex-1`} />
       <select value={orden} onChange={(e) => setOrden(e.target.value)} className={f}>
         <option value="nuevos">Novedades</option>
         <option value="baratos">Más baratos</option>
         <option value="caros">Más caros</option>
         <option value="grandes">Más grandes</option>
       </select>
-      <button className="rounded-full bg-mar-900 px-5 py-1.5 text-sm text-white hover:bg-mar-800">Filtrar</button>
+      <button className="col-span-2 rounded-full bg-mar-900 px-5 py-2 text-sm text-white hover:bg-mar-800 sm:col-span-1 sm:py-1.5">Filtrar</button>
     </form>
   );
 }

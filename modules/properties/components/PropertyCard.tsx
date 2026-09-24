@@ -17,7 +17,7 @@ export default function PropertyCard({ p }: { p: CardProp }) {
     <Link href={`/p/${p.slug}`} className="group overflow-hidden rounded-2xl bg-white shadow-sm hover:shadow-lg">
       {cover ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={cover} alt={p.title} loading="lazy" className="aspect-[4/3] w-full object-cover group-hover:scale-[1.02] transition" />
+        <img src={cover} alt={p.title} loading="lazy" className="aspect-[4/3] w-full bg-mar-100 object-cover group-hover:scale-[1.02] transition" />
       ) : (
         <div className="flex aspect-[4/3] w-full items-center justify-center bg-mar-100 text-sm text-mar-700">
           Sin fotos
