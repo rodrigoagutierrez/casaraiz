@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import Image from "next/image";
 import { db } from "@/shared/db/client";
 import { properties } from "@/shared/db/schema";
 import { desc, eq } from "drizzle-orm";
@@ -30,10 +31,15 @@ export default async function Home() {
     <div className="font-sans">
       {/* Hero */}
       <section className="px-4 pt-4 sm:px-6">
-        <div
-          className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-mar-900"
-          style={{ backgroundImage: "url('https://picsum.photos/seed/casaraiz-valencia/1600/800')", backgroundSize: "cover", backgroundPosition: "center" }}
-        >
+        <div className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-mar-900">
+          <Image
+            src="/hero.jpg"
+            alt="Casa de alquiler temporal"
+            fill
+            priority
+            sizes="100vw"
+            className="kenburns object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65" />
           <div className="relative px-6 pb-20 pt-16 text-center sm:pb-24 sm:pt-24">
             <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight text-white sm:text-6xl">
