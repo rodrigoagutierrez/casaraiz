@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CasaRaiz
 
-## Getting Started
+Marketplace de **alquiler temporal** (media estancia) en toda España, **sin comisiones**. Conecta dueños e inquilinos directos: los inquilinos contactan gratis y los dueños pagan una membresía por tramos según el número de pisos que publican.
 
-First, run the development server:
+## Qué ofrece
+
+- **Búsqueda temporal**: lugar, fechas de check-in/check-out y número de huéspedes.
+- **Categorías por entorno**: Playa, Montaña, Bosque, Ciudad, Río (+ Mapa).
+- **Mapa** con todos los pisos (Leaflet + OpenStreetMap, sin coste).
+- **Reservas**: el inquilino solicita, el dueño acepta o rechaza.
+- **Valoraciones bidireccionales** (1–5 estrellas):
+  - Inquilino → Dueño: Servicio, Comunicación, Entorno.
+  - Dueño → Inquilino: Actitud.
+  - Se muestran en cada piso y la búsqueda ordena las mejores puntuadas primero.
+- **Verificación de identidad**: DNI/NIE o Pasaporte (anverso + reverso), revisado por el equipo.
+- **Panel de administración**: usuarios, suscripciones, tarifas por tramos y documentos legales editables.
+
+## Modelo de negocio
+
+- **Inquilinos**: gratis (solo necesitan cuenta verificada).
+- **Dueños**: planes por tramos (p. ej. 1–3 pisos, 4–10 pisos, 11+ a medida). Precio con IVA, pago recurrente con tarjeta o SEPA vía Stripe.
+- **Sin comisión por alquiler** entre partes.
+
+## Stack
+
+| Capa | Tecnología |
+|------|-----------|
+| Frontend/Backend | Next.js 16 (App Router, TypeScript) + Tailwind CSS 4 |
+| Base de datos | Neon Postgres (EU) + Drizzle ORM (+ PostGIS preparado) |
+| Autenticación | Clerk |
+| Pagos | Stripe (Billing + Tax IVA) |
+| Mapa | Leaflet + OpenStreetMap |
+| Email | Brevo (transaccional) |
+| Hosting | Vercel (dominio `casaraizalquiler.com`) |
+| Imágenes | R2/Cloudflare (pendiente de activar) |
+
+## Cómo ejecutar
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # rellena las claves (ver sección Variables)
+npm run db:migrate           # aplica migraciones a Neon
+npm run db:seed              # 12 pisos demo + owner demo
+npm run db:seed:admin        # planes + tramos de tarifa + documentos legales
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run dev            # servidor de desarrollo
+npm run build          # build de producción
+npm run lint           # ESLint
+npm run db:generate    # genera migración desde schema
+npm run db:migrate     # aplica migraciones
+npm run db:seed        # pisos demo (Valencia, Madrid, Barcelona, Sevilla)
+npm run db:seed:admin  # planes, tarifas, documentos legales
+npm run db:studio      # explorador visual de la BD
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Despliegue
 
-## Learn More
+Desplegado en Vercel. El dominio `casaraizalquiler.com` está en Hostinger con los nameservers apuntando a Vercel (`ns1/ns2.vercel-dns.com`). Autodeploy configurable conectando el repo en Vercel.
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx vercel --prod   # despliega (requiere sesión de Vercel)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Documentación
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **[docs/ARQUITECTURA.md](docs/ARQUITECTURA.md)** — arquitectura técnica: módulos, base de datos, API.
+- **[docs/GUIA_USO.md](docs/GUIA_USO.md)** — guía de uso para dueños, inquilinos y administrador.
 
-## Deploy on Vercel
+## Repositorios
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Público: `https://github.com/rodrigoagutierrez/casaraiz`
+- Privado: `https://github.com/rodrigoagutierrez/casaraiz-privado` (remoto `privado`)
