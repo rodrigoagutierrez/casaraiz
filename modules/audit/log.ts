@@ -19,6 +19,7 @@ export type AuditAction =
   | "booking.created"
   | "booking.decided"
   | "review.created"
+  | "review.reminder_sent"
   | "verification.submitted"
   | "verification.decided"
   | "doc.updated";
