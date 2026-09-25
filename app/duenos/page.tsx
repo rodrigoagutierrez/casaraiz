@@ -41,15 +41,20 @@ export default async function Duenos() {
               : "Sin suscripción de dueño: no puedes publicar"}
           </p>
         </div>
-        {cap.canPublish ? (
-          <Link href="/publicar" className="rounded-full bg-otono-600 px-6 py-3 font-medium text-white hover:bg-otono-700">
-            + Publicar piso
+        <div className="flex items-center gap-2">
+          <Link href="/duenos/informes" className="rounded-full border border-mar-200 bg-white px-5 py-2.5 text-sm font-medium text-mar-900 hover:bg-mar-50">
+            Informes
           </Link>
-        ) : (
-          <Link href="/precios" className="rounded-full bg-mar-900 px-6 py-3 font-medium text-white hover:bg-mar-800">
-            {cap.hasRights ? "Ampliar capacidad" : "Ver planes de dueño"}
-          </Link>
-        )}
+          {cap.canPublish ? (
+            <Link href="/publicar" className="rounded-full bg-otono-600 px-6 py-3 font-medium text-white hover:bg-otono-700">
+              + Publicar piso
+            </Link>
+          ) : (
+            <Link href="/precios" className="rounded-full bg-mar-900 px-6 py-3 font-medium text-white hover:bg-mar-800">
+              {cap.hasRights ? "Ampliar capacidad" : "Ver planes de dueño"}
+            </Link>
+          )}
+        </div>
       </div>
 
       {incoming.length > 0 && (
