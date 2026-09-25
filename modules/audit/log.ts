@@ -14,6 +14,7 @@ export type AuditAction =
   | "subscription.activated"
   | "subscription.canceled"
   | "subscription.granted"
+  | "subscription.manual_created"
   | "subscription.custom_created"
   | "plan.updated"
   | "tariff.updated"

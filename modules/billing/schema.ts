@@ -14,6 +14,7 @@ export const subscriptions = pgTable("subscriptions", {
   plan: planEnum("plan").notNull(),
   status: subStatusEnum("status").notNull().default("incomplete"),
   currentPeriodEnd: timestamp("current_period_end"),
+  kind: text("kind").notNull().default("standard"), // "standard" | "seasonal"
   origin: text("origin").notNull().default("stripe"),
   adminNote: text("admin_note"),
   createdAt: timestamp("created_at").defaultNow().notNull(),

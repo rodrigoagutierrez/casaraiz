@@ -1,0 +1,1 @@
+ALTER TABLE "subscriptions" ADD COLUMN "kind" text DEFAULT 'standard' NOT NULL;

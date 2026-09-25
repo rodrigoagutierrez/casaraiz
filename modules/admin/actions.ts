@@ -124,6 +124,54 @@ export async function grantComplimentary(
   revalidatePath("/admin/suscripciones");
 }
 
+// Añadir suscripción manual (p. ej. oferta de temporada con validez limitada)
+export async function createManualSubscription(input: {
+  email: string;
+  plan: "owner_monthly" | "owner_yearly";
+  kind: "standard" | "seasonal";
+  validUntil?: string; // fecha límite para ofertas de temporada
+  note?: string;
+}) {
+  const { actorId } = await adminActor();
+  const email = input.email.trim().toLowerCase();
+  if (!email) throw new Error("Indica el email del usuario");
+
+  const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  if (!user) throw new Error("No existe ningún usuario con ese email");
+
+  if (input.kind === "seasonal" && !input.validUntil) {
+    throw new Error("Una oferta de temporada necesita fecha de validez");
+  }
+
+  const currentPeriodEnd = input.kind === "seasonal" && input.validUntil ? new Date(`${input.validUntil}T23:59:59`) : null;
+
+  const [created] = await db
+    .insert(subscriptions)
+    .values({
+      userId: user.id,
+      plan: input.plan,
+      status: "active",
+      kind: input.kind,
+      currentPeriodEnd,
+      origin: "manual",
+      adminNote: input.note || (input.kind === "seasonal" ? "Oferta de temporada" : "Suscripción manual"),
+    })
+    .returning();
+
+  await logAudit({
+    actorId,
+    targetUserId: user.id,
+    action: "subscription.manual_created",
+    entity: "subscription",
+    entityId: created.id,
+    meta: { plan: input.plan, kind: input.kind, validUntil: input.validUntil ?? null },
+    reason: input.note,
+  });
+  revalidatePath("/admin/suscripciones");
+  revalidatePath(`/admin/usuarios/${user.id}`);
+  return created;
+}
+
 // Suscripción especial: precio propio en Stripe con factura (el usuario la paga por email)
 export async function createCustomSubscription(
   userId: string,
