@@ -1,31 +1,48 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
 import AdminLink from "@/modules/auth/components/AdminLink";
 import LanguageSwitcher from "@/modules/i18n/components/LanguageSwitcher";
+import CompactSearch from "@/modules/properties/components/CompactSearch";
 import { useI18n } from "@/modules/i18n/provider";
 
 export default function Header() {
   const { t } = useI18n();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 260);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-mar-100 bg-white/95 backdrop-blur">
+    <header
+      className={`sticky top-0 z-40 border-b bg-white/90 backdrop-blur transition-all duration-300 ${
+        scrolled ? "border-mar-100 shadow-sm" : "border-transparent"
+      }`}
+    >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
-        <Link href="/" aria-label="CasaRaiz" className="flex items-center">
+        <Link href="/" aria-label="CasaRaiz" className="flex shrink-0 items-center">
           <Image src="/logo.jpg" alt="CasaRaiz" width={96} height={52} priority className="h-auto w-28" />
         </Link>
 
-        <nav className="flex items-center gap-3 text-sm">
-          <Link href="/buscar" className="hidden font-medium text-mar-900 sm:inline">{t["nav.buscar"]}</Link>
-          <Link href="/mapa" className="hidden font-medium text-mar-900 sm:inline">{t["nav.mapa"]}</Link>
-          <Link href="/publicar" className="hidden font-medium text-mar-900 sm:inline">{t["nav.publicar"]}</Link>
-          <Link href="/precios" className="hidden font-medium text-otono-700 sm:inline">{t["nav.precios"]}</Link>
+        <CompactSearch visible={scrolled} />
+
+        <nav className="flex shrink-0 items-center gap-3 text-sm">
+          <Link href="/buscar" className="hidden font-medium text-mar-900 md:inline">{t["nav.buscar"]}</Link>
+          <Link href="/mapa" className="hidden font-medium text-mar-900 lg:inline">{t["nav.mapa"]}</Link>
+          <Link href="/publicar" className="hidden font-medium text-mar-900 lg:inline">{t["nav.publicar"]}</Link>
+          <Link href="/precios" className="hidden font-medium text-otono-700 md:inline">{t["nav.precios"]}</Link>
           <Show when="signed-in">
-            <Link href="/reservas" className="hidden font-medium text-mar-900 sm:inline">{t["nav.reservas"]}</Link>
-            <Link href="/chat" className="hidden font-medium text-mar-900 sm:inline">{t["nav.mensajes"]}</Link>
-            <Link href="/duenos" className="hidden font-medium text-mar-900 sm:inline">{t["nav.misPisos"]}</Link>
-            <Link href="/mi-cuenta" className="hidden font-medium text-mar-900 sm:inline">{t["nav.miCuenta"]}</Link>
+            <Link href="/reservas" className="hidden font-medium text-mar-900 lg:inline">{t["nav.reservas"]}</Link>
+            <Link href="/chat" className="hidden font-medium text-mar-900 lg:inline">{t["nav.mensajes"]}</Link>
+            <Link href="/duenos" className="hidden font-medium text-mar-900 lg:inline">{t["nav.misPisos"]}</Link>
+            <Link href="/mi-cuenta" className="hidden font-medium text-mar-900 lg:inline">{t["nav.miCuenta"]}</Link>
           </Show>
           <AdminLink />
           <LanguageSwitcher />
