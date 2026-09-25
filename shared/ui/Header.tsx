@@ -14,7 +14,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 260);
+    const onScroll = () => setScrolled(window.scrollY > 160);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -34,8 +34,8 @@ export default function Header() {
         <CompactSearch visible={scrolled} />
 
         <nav className="flex shrink-0 items-center gap-3 text-sm">
-          <Link href="/buscar" className="hidden font-medium text-mar-900 md:inline">{t["nav.buscar"]}</Link>
-          <Link href="/mapa" className="hidden font-medium text-mar-900 lg:inline">{t["nav.mapa"]}</Link>
+          <Link href="/buscar" className={`font-medium text-mar-900 ${scrolled ? "hidden" : "hidden md:inline"}`}>{t["nav.buscar"]}</Link>
+          <Link href="/mapa" className={`font-medium text-mar-900 ${scrolled ? "hidden" : "hidden lg:inline"}`}>{t["nav.mapa"]}</Link>
           <Link href="/publicar" className="hidden font-medium text-mar-900 lg:inline">{t["nav.publicar"]}</Link>
           <Link href="/precios" className="hidden font-medium text-otono-700 md:inline">{t["nav.precios"]}</Link>
           <Show when="signed-in">

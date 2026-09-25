@@ -19,17 +19,17 @@ export default function CompactSearch({ visible }: { visible: boolean }) {
   return (
     <form
       onSubmit={go}
-      className={`hidden flex-1 items-center justify-center transition-all duration-300 ease-out lg:flex ${
-        visible ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-3 opacity-0"
+      className={`hidden flex-1 items-center justify-center transition-all duration-300 ease-out md:flex ${
+        visible ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
       }`}
     >
-      <div className="flex items-center gap-1 rounded-full border border-mar-200 bg-white py-1.5 pl-3 pr-1.5 shadow-md transition-shadow hover:shadow-lg">
+      <div className="flex items-center gap-1 rounded-full border border-mar-200 bg-white py-1.5 pl-3 pr-1.5 shadow-md">
         <input
           value={city}
           onChange={(e) => setCity(e.target.value)}
           list="compact-cities"
           placeholder={t["search.lugarPlaceholder"]}
-          className="w-32 bg-transparent px-1 text-sm text-mar-950 outline-none placeholder:text-mar-950/50"
+          className="w-28 bg-transparent px-1 text-sm text-mar-950 outline-none placeholder:text-mar-950/50"
         />
         <datalist id="compact-cities">
           {CIUDADES_ES.map((c) => (
@@ -43,7 +43,7 @@ export default function CompactSearch({ visible }: { visible: boolean }) {
         <button
           type="submit"
           aria-label="Buscar"
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-otono-600 text-white transition-transform hover:scale-105"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-otono-600 text-white"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <circle cx="11" cy="11" r="7" />
