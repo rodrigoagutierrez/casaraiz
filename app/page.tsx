@@ -9,6 +9,7 @@ import PropertyCard from "@/modules/properties/components/PropertyCard";
 import SearchBar from "@/modules/properties/components/SearchBar";
 import CategoryRow from "@/modules/properties/components/CategoryRow";
 import { BARRIOS_VALENCIA } from "@/modules/content/barrios";
+import { CIUDADES } from "@/modules/content/ciudades";
 import { getDict } from "@/modules/i18n/server";
 import { JsonLd, organizationLd, websiteLd } from "@/modules/seo/JsonLd";
 
@@ -89,17 +90,20 @@ export default async function Home() {
       <section className="mx-auto max-w-6xl px-6 pt-12">
         <h2 className="text-2xl font-semibold text-mar-950">{t["home.destinos"]}</h2>
         <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-3">
-          {["Valencia", "Madrid", "Barcelona", "Sevilla", "Málaga", "Bilbao"].map((c) => (
+          {CIUDADES.slice(0, 6).map((c) => (
             <Link
-              key={c}
-              href={`/buscar?city=${encodeURIComponent(c)}`}
+              key={c.slug}
+              href={`/alquiler-temporal/${c.slug}`}
               className="rounded-2xl border border-mar-100 bg-white p-5 hover:border-mar-200 hover:shadow-lg"
             >
-              <p className="font-semibold text-mar-900">{c}</p>
-              <p className="text-sm text-mar-950/55">{t["home.alquilerDirecto"]}</p>
+              <p className="font-semibold text-mar-900">{c.nombre}</p>
+              <p className="text-sm text-mar-950/55">{c.precioRef}</p>
             </Link>
           ))}
         </div>
+        <Link href="/buscar" className="mt-4 inline-block text-sm font-medium text-mar-700 underline">
+          {t["home.verTodos"]}
+        </Link>
       </section>
 
       {/* Barrios Valencia */}

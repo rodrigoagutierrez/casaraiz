@@ -3,6 +3,7 @@ import { db } from "@/shared/db/client";
 import { properties } from "@/shared/db/schema";
 import { eq } from "drizzle-orm";
 import { BARRIOS_VALENCIA } from "@/modules/content/barrios";
+import { CIUDADES } from "@/modules/content/ciudades";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = "https://casaraizalquiler.com";
@@ -21,6 +22,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  const ciudades: MetadataRoute.Sitemap = CIUDADES.map((c) => ({
+    url: `${base}/alquiler-temporal/${c.slug}`,
+    changeFrequency: "weekly",
+    priority: 0.8,
+  }));
+
   let propRoutes: MetadataRoute.Sitemap = [];
   try {
     const rows = await db.select({ slug: properties.slug, updatedAt: properties.createdAt }).from(properties).where(eq(properties.status, "active")).limit(5000);
@@ -34,5 +41,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     propRoutes = [];
   }
 
-  return [...staticRoutes, ...barrios, ...propRoutes];
+  return [...staticRoutes, ...ciudades, ...barrios, ...propRoutes];
 }
