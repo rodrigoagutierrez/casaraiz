@@ -23,6 +23,11 @@ export async function generateMetadata({
   return {
     title: `${b.h1} | CasaRaiz Valencia`,
     description: `${b.descripcion} Precio ref: ${b.precioRef}.`,
+    alternates: { canonical: `/alquiler-sin-comision/valencia/${b.slug}` },
+    openGraph: {
+      title: b.h1,
+      description: b.descripcion,
+    },
   };
 }
 

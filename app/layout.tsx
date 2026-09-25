@@ -27,6 +27,9 @@ export const metadata: Metadata = {
   description: "Conectamos dueños e inquilinos para alquiler temporal en toda España, sin comisiones. Inquilinos gratis, dueños con membresía por tramos.",
   keywords: ["alquiler temporal", "sin comisión", "dueños directos", "España", "alquiler de temporada", "alternativa a Airbnb"],
   alternates: { canonical: "/" },
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+    : undefined,
   openGraph: {
     type: "website",
     locale: "es_ES",

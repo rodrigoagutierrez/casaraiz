@@ -101,7 +101,7 @@ export default async function Home() {
             </Link>
           ))}
         </div>
-        <Link href="/buscar" className="mt-4 inline-block text-sm font-medium text-mar-700 underline">
+        <Link href="/alquiler-temporal" className="mt-4 inline-block text-sm font-medium text-mar-700 underline">
           {t["home.verTodos"]}
         </Link>
       </section>
