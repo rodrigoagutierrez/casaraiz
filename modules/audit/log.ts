@@ -9,6 +9,7 @@ export type AuditAction =
   | "property.created"
   | "property.updated"
   | "contact.sent"
+  | "chat.started"
   | "checkout.started"
   | "subscription.activated"
   | "subscription.canceled"

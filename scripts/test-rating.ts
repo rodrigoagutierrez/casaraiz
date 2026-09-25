@@ -9,7 +9,7 @@ import { getPropertyRating, getUserRating, getPropertyReviews, myPendingReviews,
 
 async function main() {
   // 1. Usuarios de prueba
-  let [owner] = await db.select().from(users).where(eq(users.clerkId, "demo-owner-valencia")).limit(1);
+  const [owner] = await db.select().from(users).where(eq(users.clerkId, "demo-owner-valencia")).limit(1);
   let [renter] = await db.select().from(users).where(eq(users.clerkId, "demo-renter-test")).limit(1);
   if (!renter) {
     [renter] = await db.insert(users).values({ clerkId: "demo-renter-test", role: "renter", email: "renter.test@casaraiz.local" }).returning();
@@ -38,7 +38,7 @@ async function main() {
   console.log("✓ Ventana de valoración abierta:", w.opened, "· urgente(24h):", w.urgent);
 
   // 4. Valoración inquilino → dueño (servicio/comunicación/entorno)
-  const [rOwner] = await db.insert(reviews).values({
+  await db.insert(reviews).values({
     bookingId: booking.id,
     propertyId: prop.id,
     authorId: renter.id,
@@ -48,11 +48,11 @@ async function main() {
     comunicacion: 4,
     entorno: 5,
     comment: "Todo perfecto, mejor que las fotos.",
-  }).returning();
+  });
   console.log("✓ Review inquilino→dueño creada (5/4/5)");
 
   // 5. Valoración dueño → inquilino (actitud)
-  const [rRenter] = await db.insert(reviews).values({
+  await db.insert(reviews).values({
     bookingId: booking.id,
     propertyId: null,
     authorId: owner.id,
@@ -60,7 +60,7 @@ async function main() {
     kind: "to_renter",
     actitud: 5,
     comment: "Inquilino impecable.",
-  }).returning();
+  });
   console.log("✓ Review dueño→inquilino creada (actitud 5)");
 
   // 6. Verificar agregados

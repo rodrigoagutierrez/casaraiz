@@ -4,6 +4,7 @@ import { requireAdmin } from "@/modules/auth/guard";
 const NAV = [
   { href: "/admin", label: "Panel" },
   { href: "/admin/usuarios", label: "Usuarios" },
+  { href: "/admin/gestiones", label: "Gestiones" },
   { href: "/admin/suscripciones", label: "Suscripciones" },
   { href: "/admin/precios", label: "Precios" },
   { href: "/admin/tarifas", label: "Tarifas" },

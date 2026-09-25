@@ -9,6 +9,7 @@ import { eur } from "@/shared/utils/format";
 import { entornoLabel } from "@/modules/properties/entornos";
 import Map from "@/modules/properties/components/Map";
 import ContactBox from "@/modules/contacts/components/ContactBox";
+import ChatButton from "@/modules/chat/components/ChatButton";
 import BookingBox from "@/modules/bookings/components/BookingBox";
 import { Stars } from "@/modules/bookings/components/Stars";
 import { getPropertyRating, getPropertyReviews, getUserRating } from "@/modules/bookings/queries";
@@ -165,8 +166,9 @@ export default async function PisoPage({
               <BookingBox propertyId={p.id} maxHuespedes={p.maxHuespedes} />
             </div>
             <div className="mt-4 border-t border-mar-100 pt-4">
-              <p className="text-sm font-medium text-mar-900">¿Dudas? Contacta al dueño</p>
-              <ContactBox propertyId={p.id} />
+              <p className="text-sm font-medium text-mar-900">¿Dudas? Habla con el dueño</p>
+              <div className="mt-2"><ChatButton propertyId={p.id} /></div>
+              <div className="mt-2"><ContactBox propertyId={p.id} /></div>
             </div>
             <div className="mt-4 rounded-xl bg-mar-50 p-3 text-xs text-mar-950/70">
               <p><strong className="text-mar-900">RGPD:</strong> contacto visible con consentimiento y cuenta registrada.</p>

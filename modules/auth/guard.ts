@@ -14,10 +14,19 @@ export async function getAdminIdentity() {
   const cu = await client.users.getUser(userId);
   const email = cu.emailAddresses[0]?.emailAddress?.toLowerCase() ?? "";
   const role = (cu.publicMetadata as { role?: string })?.role;
-  if (role === "admin" || (email && allowlist().includes(email))) {
-    return { clerkId: userId, email };
+  if (role === "admin" || role === "superadmin" || (email && allowlist().includes(email))) {
+    return { clerkId: userId, email, role };
   }
   return null;
+}
+
+export async function requireSuperAdmin() {
+  const admin = await getAdminIdentity();
+  if (!admin || admin.role !== "superadmin") {
+    const { notFound } = await import("next/navigation");
+    notFound();
+  }
+  return admin!;
 }
 
 export async function requireAdmin() {

@@ -23,6 +23,7 @@ export default function Header() {
           <Link href="/precios" className="hidden font-medium text-otono-700 sm:inline">{t["nav.precios"]}</Link>
           <Show when="signed-in">
             <Link href="/reservas" className="hidden font-medium text-mar-900 sm:inline">{t["nav.reservas"]}</Link>
+            <Link href="/chat" className="hidden font-medium text-mar-900 sm:inline">{t["nav.mensajes"]}</Link>
             <Link href="/duenos" className="hidden font-medium text-mar-900 sm:inline">{t["nav.misPisos"]}</Link>
             <Link href="/mi-cuenta" className="hidden font-medium text-mar-900 sm:inline">{t["nav.miCuenta"]}</Link>
           </Show>
