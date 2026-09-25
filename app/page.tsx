@@ -10,6 +10,7 @@ import SearchBar from "@/modules/properties/components/SearchBar";
 import CategoryRow from "@/modules/properties/components/CategoryRow";
 import { BARRIOS_VALENCIA } from "@/modules/content/barrios";
 import { getDict } from "@/modules/i18n/server";
+import { JsonLd, organizationLd, websiteLd } from "@/modules/seo/JsonLd";
 
 const TOP_BARRIOS = ["ruzafa", "benimaclet", "el-cabanyal", "campanar", "algiros", "pla-del-real"];
 
@@ -32,6 +33,8 @@ export default async function Home() {
 
   return (
     <div className="font-sans">
+      <JsonLd data={organizationLd()} />
+      <JsonLd data={websiteLd()} />
       {/* Hero */}
       <section className="px-4 pt-4 sm:px-6">
         <div className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-mar-900">

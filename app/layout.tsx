@@ -19,8 +19,29 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CasaRaiz | Alquiler temporal sin comisión en España",
-  description: "Conectamos dueños e inquilinos para alquiler temporal en toda España. Inquilinos gratis, dueños con membresía.",
+  metadataBase: new URL("https://casaraizalquiler.com"),
+  title: {
+    default: "CasaRaiz | Alquiler temporal sin comisión en España",
+    template: "%s | CasaRaiz",
+  },
+  description: "Conectamos dueños e inquilinos para alquiler temporal en toda España, sin comisiones. Inquilinos gratis, dueños con membresía por tramos.",
+  keywords: ["alquiler temporal", "sin comisión", "dueños directos", "España", "alquiler de temporada", "alternativa a Airbnb"],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "es_ES",
+    url: "https://casaraizalquiler.com",
+    siteName: "CasaRaiz",
+    title: "CasaRaiz | Alquiler temporal sin comisión",
+    description: "Alquiler temporal directo entre dueños e inquilinos. Sin comisiones.",
+    images: [{ url: "/hero.jpg", width: 1920, height: 1313, alt: "CasaRaiz" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CasaRaiz | Alquiler temporal sin comisión",
+    description: "Dueños e inquilinos directos. Sin comisiones.",
+    images: ["/hero.jpg"],
+  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

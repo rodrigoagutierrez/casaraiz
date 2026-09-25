@@ -13,6 +13,7 @@ import ChatButton from "@/modules/chat/components/ChatButton";
 import BookingBox from "@/modules/bookings/components/BookingBox";
 import { Stars } from "@/modules/bookings/components/Stars";
 import { getPropertyRating, getPropertyReviews, getUserRating } from "@/modules/bookings/queries";
+import { JsonLd } from "@/modules/seo/JsonLd";
 
 export async function generateMetadata({
   params,
@@ -23,7 +24,17 @@ export async function generateMetadata({
   try {
     const [p] = await db.select().from(properties).where(eq(properties.slug, slug)).limit(1);
     if (!p) return {};
-    return { title: `${p.title} | CasaRaiz`, description: p.description.slice(0, 150) };
+    const price = p.priceCents / 100;
+    return {
+      title: `${p.title} en ${p.city} · ${price.toFixed(0)}€/noche`,
+      description: p.description.slice(0, 160),
+      alternates: { canonical: `/p/${p.slug}` },
+      openGraph: {
+        title: `${p.title} · ${price.toFixed(0)}€/noche | CasaRaiz`,
+        description: p.description.slice(0, 160),
+        images: p.photos[0] ? [{ url: p.photos[0] }] : [],
+      },
+    };
   } catch {
     return {};
   }
@@ -53,6 +64,49 @@ export default async function PisoPage({
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "LodgingBusiness",
+          name: p.title,
+          description: p.description,
+          image: p.photos,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: p.city,
+            addressRegion: p.barrio,
+            addressCountry: "ES",
+          },
+          amenityFeature: [
+            { "@type": "LocationFeatureSpecification", name: "Habitaciones", value: p.rooms },
+            { "@type": "LocationFeatureSpecification", name: "Huéspedes", value: p.maxHuespedes },
+            { "@type": "LocationFeatureSpecification", name: "Superficie (m²)", value: p.m2 },
+          ],
+          aggregateRating: rating.avg ? { "@type": "AggregateRating", ratingValue: rating.avg.toFixed(2), reviewCount: rating.count } : undefined,
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Offer",
+          price: (p.priceCents / 100).toFixed(2),
+          priceCurrency: "EUR",
+          url: `https://casaraizalquiler.com/p/${p.slug}`,
+          availability: p.status === "active" ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+          validFrom: p.disponibleDesde ?? undefined,
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "CasaRaiz", item: "https://casaraizalquiler.com" },
+            { "@type": "ListItem", position: 2, name: p.city, item: `https://casaraizalquiler.com/buscar?city=${encodeURIComponent(p.city)}` },
+            { "@type": "ListItem", position: 3, name: p.title },
+          ],
+        }}
+      />
       <Link href={`/alquiler-sin-comision/valencia/${p.barrio}`} className="text-sm text-mar-600">
         ← {p.barrio}
       </Link>
