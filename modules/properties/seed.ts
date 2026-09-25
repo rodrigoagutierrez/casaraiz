@@ -11,7 +11,7 @@ const DEMO_PROPERTIES = [
   {
     title: "Piso 2hab reformado en Ruzafa",
     description: "Exterior, balcón, amueblado. A 5 min del mercado de Ruzafa. Dueño directo.",
-    priceCents: 135000, rooms: 2, baths: 1, m2: 72,
+    priceCents: 9500, rooms: 2, baths: 1, m2: 72,
     barrio: "ruzafa", slug: "piso-2hab-reformado-ruzafa-1",
     entorno: "ciudad",
     lat: "39.4618", lng: "-0.3769",
@@ -20,7 +20,7 @@ const DEMO_PROPERTIES = [
   {
     title: "Ático con terraza en Ruzafa",
     description: "Ático 85m2 + terraza 20m2, ideal parejas. Sin amueblar.",
-    priceCents: 159000, rooms: 2, baths: 2, m2: 85,
+    priceCents: 12000, rooms: 2, baths: 2, m2: 85,
     barrio: "ruzafa", slug: "atico-terraza-ruzafa-2",
     entorno: "ciudad",
     lat: "39.4630", lng: "-0.3755",
@@ -29,7 +29,7 @@ const DEMO_PROPERTIES = [
   {
     title: "Estudio luminoso en Ruzafa para profesionales",
     description: "45m2, bajo consumo, fibra 1Gb. Disponible ya.",
-    priceCents: 95000, rooms: 1, baths: 1, m2: 45,
+    priceCents: 7000, rooms: 1, baths: 1, m2: 45,
     barrio: "ruzafa", slug: "estudio-luminoso-ruzafa-3",
     entorno: "ciudad",
     lat: "39.4605", lng: "-0.3778",
@@ -38,7 +38,7 @@ const DEMO_PROPERTIES = [
   {
     title: "Piso 3hab familiar en Benimaclet",
     description: "Junto a la UPV, plaza de la iglesia. Amueblado, admite estudiantes.",
-    priceCents: 115000, rooms: 3, baths: 1, m2: 90,
+    priceCents: 8500, rooms: 3, baths: 1, m2: 90,
     barrio: "benimaclet", slug: "piso-3hab-benimaclet-1",
     entorno: "ciudad",
     lat: "39.4867", lng: "-0.3637",
@@ -47,7 +47,7 @@ const DEMO_PROPERTIES = [
   {
     title: "Piso 2hab económico en Benimaclet",
     description: "Ideal primera vivienda o estudiantes. Metro línea 3 y 9.",
-    priceCents: 98000, rooms: 2, baths: 1, m2: 68,
+    priceCents: 7000, rooms: 2, baths: 1, m2: 68,
     barrio: "benimaclet", slug: "piso-2hab-benimaclet-2",
     entorno: "rio",
     lat: "39.4849", lng: "-0.3651",
@@ -56,7 +56,7 @@ const DEMO_PROPERTIES = [
   {
     title: "Bajo con patio en Benimaclet",
     description: "70m2 + patio 30m2, pet-friendly. Dueño directo.",
-    priceCents: 105000, rooms: 2, baths: 1, m2: 70,
+    priceCents: 7500, rooms: 2, baths: 1, m2: 70,
     barrio: "benimaclet", slug: "bajo-patio-benimaclet-3",
     entorno: "bosque",
     lat: "39.4880", lng: "-0.3620",
@@ -65,7 +65,7 @@ const DEMO_PROPERTIES = [
   {
     title: "Casa marinera en El Cabanyal",
     description: "Planta baja rehabilitada, 4 min playa. Aire acondicionado.",
-    priceCents: 140000, rooms: 3, baths: 2, m2: 95,
+    priceCents: 11000, rooms: 3, baths: 2, m2: 95,
     barrio: "el-cabanyal", slug: "casa-marinera-cabanyal-1",
     entorno: "playa",
     lat: "39.4668", lng: "-0.3302",
@@ -74,7 +74,7 @@ const DEMO_PROPERTIES = [
   {
     title: "Piso 2hab a 200m de la Malvarrosa",
     description: "Vistas lateral mar, ascensor, parking bici.",
-    priceCents: 129000, rooms: 2, baths: 1, m2: 70,
+    priceCents: 9500, rooms: 2, baths: 1, m2: 70,
     barrio: "el-cabanyal", slug: "piso-malvarrosa-cabanyal-2",
     entorno: "playa",
     lat: "39.4701", lng: "-0.3285",
@@ -83,7 +83,7 @@ const DEMO_PROPERTIES = [
   {
     title: "Apartamento 1hab El Cabanyal, ideal teletrabajo",
     description: "55m2, fibra, escritorio y balcón. Disponible larga estancia.",
-    priceCents: 110000, rooms: 1, baths: 1, m2: 55,
+    priceCents: 8000, rooms: 1, baths: 1, m2: 55,
     barrio: "el-cabanyal", slug: "apartamento-teletrabajo-cabanyal-3",
     entorno: "playa",
     lat: "39.4640", lng: "-0.3315",
@@ -92,7 +92,7 @@ const DEMO_PROPERTIES = [
   {
     title: "Piso 2hab en Malasaña, Madrid centro",
     description: "Exterior, amueblado, metro Tribunal. Dueño directo.",
-    priceCents: 165000, rooms: 2, baths: 1, m2: 65,
+    priceCents: 12000, rooms: 2, baths: 1, m2: 65,
     city: "Madrid",
     barrio: "malasaña", slug: "piso-malasaña-madrid-1",
     entorno: "ciudad",
@@ -102,7 +102,7 @@ const DEMO_PROPERTIES = [
   {
     title: "Apartamento en Eixample, Barcelona",
     description: "70m2 reformado, balcón, a 10 min de Sagrada Familia.",
-    priceCents: 158000, rooms: 2, baths: 1, m2: 70,
+    priceCents: 11500, rooms: 2, baths: 1, m2: 70,
     city: "Barcelona",
     barrio: "eixample", slug: "apartamento-eixample-barcelona-1",
     entorno: "ciudad",
@@ -112,7 +112,7 @@ const DEMO_PROPERTIES = [
   {
     title: "Casa con patio en Triana, Sevilla",
     description: "Planta baja con patio andaluz, aire acondicionado.",
-    priceCents: 125000, rooms: 3, baths: 2, m2: 95,
+    priceCents: 9000, rooms: 3, baths: 2, m2: 95,
     city: "Sevilla",
     barrio: "triana", slug: "casa-triana-sevilla-1",
     entorno: "rio",
@@ -145,6 +145,7 @@ async function main() {
     const existing = await db.select().from(properties).where(eq(properties.slug, p.slug));
     if (existing.length > 0) {
       const patch: Record<string, unknown> = {};
+      if (existing[0].priceCents !== p.priceCents) patch.priceCents = p.priceCents;
       if (existing[0].photos.length === 0 && "photos" in p && (p as { photos: string[] }).photos.length > 0) {
         patch.photos = (p as { photos: string[] }).photos;
       }

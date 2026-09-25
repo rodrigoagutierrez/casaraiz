@@ -14,7 +14,7 @@ export const properties = pgTable(
       .references(() => users.id),
     title: text("title").notNull(),
     description: text("description").notNull(),
-    priceCents: integer("price_cents").notNull(),
+    priceCents: integer("price_cents").notNull(), // precio POR NOCHE en céntimos
     rooms: smallint("rooms").notNull(),
     baths: smallint("baths").notNull().default(1),
     m2: integer("m2").notNull(),

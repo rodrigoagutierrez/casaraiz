@@ -43,7 +43,7 @@ export default function PropertiesMap({ pins }: { pins: Pin[] }) {
         });
         L.marker([lat, lng], { icon })
           .addTo(map as never)
-          .bindPopup(`<a href="/p/${esc(p.slug)}"><strong>${esc(p.title)}</strong><br>${eur(p.priceCents)}/mes</a>`);
+          .bindPopup(`<a href="/p/${esc(p.slug)}"><strong>${esc(p.title)}</strong><br>${eur(p.priceCents)}/noche</a>`);
         bounds.push([lat, lng]);
       }
       if (bounds.length > 1) (map as unknown as { fitBounds: (b: [number, number][]) => void }).fitBounds(bounds);

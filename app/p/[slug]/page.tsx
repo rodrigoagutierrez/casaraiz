@@ -158,7 +158,7 @@ export default async function PisoPage({
         <aside>
           <div className="rounded-2xl border border-mar-100 bg-white p-6 shadow-lg lg:sticky lg:top-20">
             <p className="text-2xl font-bold text-mar-900">
-              {eur(p.priceCents)}<span className="text-base font-normal text-mar-950/55">/mes</span>
+              {eur(p.priceCents)}<span className="text-base font-normal text-mar-950/55">/noche</span>
             </p>
             <p className="mt-1 text-xs text-mar-950/55">Sin comisiones · IVA incluido en membresía</p>
             <div className="mt-4 border-t border-mar-100 pt-4">

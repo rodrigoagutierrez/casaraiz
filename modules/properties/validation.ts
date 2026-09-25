@@ -3,7 +3,7 @@ import { z } from "zod";
 export const createPropertySchema = z.object({
   title: z.string().min(10).max(120),
   description: z.string().min(30).max(2000),
-  priceEur: z.number().min(200).max(15000),
+  priceEur: z.number().min(15).max(3000),
   rooms: z.number().int().min(0).max(12),
   baths: z.number().int().min(1).max(6).default(1),
   m2: z.number().int().min(15).max(1000),

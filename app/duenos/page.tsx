@@ -107,7 +107,7 @@ export default async function Duenos() {
                     {p.status === "active" ? "Activo" : p.status === "rented" ? "Alquilado" : "Borrador"}
                   </span>
                 </div>
-                <p className="mt-1 font-bold text-mar-900">{eur(p.priceCents)}<span className="text-sm font-normal text-mar-950/55">/mes</span></p>
+                <p className="mt-1 font-bold text-mar-900">{eur(p.priceCents)}<span className="text-sm font-normal text-mar-950/55">/noche</span></p>
                 <div className="mt-3 flex gap-2">
                   <Link href={`/duenos/pisos/${p.id}/editar`} className="rounded-full border border-mar-200 px-4 py-1.5 text-sm text-mar-900 hover:bg-mar-50">
                     Editar

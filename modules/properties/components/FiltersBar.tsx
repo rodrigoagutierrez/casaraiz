@@ -81,8 +81,8 @@ export default function FiltersBar() {
         <option value="1">1+</option>
         <option value="2">2+</option>
       </select>
-      <input value={min} onChange={(e) => setMin(e.target.value)} type="number" min={0} placeholder="Mín €" className={f} />
-      <input value={max} onChange={(e) => setMax(e.target.value)} type="number" min={0} placeholder="Máx €" className={f} />
+      <input value={min} onChange={(e) => setMin(e.target.value)} type="number" min={0} placeholder="€/noche mín" className={f} />
+      <input value={max} onChange={(e) => setMax(e.target.value)} type="number" min={0} placeholder="€/noche máx" className={f} />
       <input value={m2} onChange={(e) => setM2(e.target.value)} type="number" min={0} placeholder="Mín m²" className={f} />
       <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Palabra: ático, terraza..." className={`${f} col-span-2 sm:col-span-1 sm:min-w-40 sm:flex-1`} />
       <input value={desde} onChange={(e) => setDesde(e.target.value)} type="date" title="Check-in" className={f} />

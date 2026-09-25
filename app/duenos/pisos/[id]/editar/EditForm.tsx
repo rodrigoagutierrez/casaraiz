@@ -82,7 +82,7 @@ export default function EditForm({ initial }: { initial: Prop }) {
       <input className={inputCls} value={form.title} onChange={(e) => set("title", e.target.value)} required />
       <textarea className={inputCls} rows={4} value={form.description} onChange={(e) => set("description", e.target.value)} required />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <label className="text-sm text-mar-900">Precio €/mes
+        <label className="text-sm text-mar-900">Precio €/noche
           <input type="number" className={`${inputCls} mt-1`} value={form.priceEur} onChange={(e) => set("priceEur", Number(e.target.value))} />
         </label>
         <label className="text-sm text-mar-900">m²

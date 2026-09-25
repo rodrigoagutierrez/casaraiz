@@ -32,7 +32,7 @@ export default function PublicarPage() {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    priceEur: 1200,
+    priceEur: 90,
     rooms: 2,
     baths: 1,
     m2: 70,
@@ -180,7 +180,7 @@ export default function PublicarPage() {
           required
         />
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <label className="text-sm text-mar-900">Precio €/mes
+          <label className="text-sm text-mar-900">Precio €/noche
             <input type="number" className={`${inputCls} mt-1`}
               value={form.priceEur} onChange={(e) => set("priceEur", Number(e.target.value))} />
           </label>

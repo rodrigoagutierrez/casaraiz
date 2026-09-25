@@ -30,17 +30,25 @@ async function main() {
       const id = found.data[0].id;
       await client.users.updateUserMetadata(id, { publicMetadata: { role: u.role } });
       await client.users.updateUser(id, { password: PASSWORD });
-      console.log("✓ Ya existía (password reset):", u.email, "→ role", u.role);
+      const ea = found.data[0].emailAddresses.find((e) => e.emailAddress === u.email);
+      if (ea && ea.verification?.status !== "verified") {
+        await client.emailAddresses.updateEmailAddress(ea.id, { verified: true });
+      }
+      console.log("✓ Ya existía (password reset + email verificado):", u.email, "→ role", u.role);
       continue;
     }
-    await client.users.createUser({
+    const created = await client.users.createUser({
       emailAddress: [u.email],
       password: PASSWORD,
       firstName: u.first,
       lastName: u.last,
       publicMetadata: { role: u.role },
     });
-    console.log("✓ Creado:", u.email, "→ role", u.role);
+    const ea = created.emailAddresses.find((e) => e.emailAddress === u.email);
+    if (ea) {
+      await client.emailAddresses.updateEmailAddress(ea.id, { verified: true });
+    }
+    console.log("✓ Creado + email verificado:", u.email, "→ role", u.role);
   }
 
   console.log("\n=== CREDENCIALES DE PRUEBA ===");
