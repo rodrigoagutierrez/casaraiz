@@ -31,7 +31,9 @@ export default function Header() {
           <Image src="/logo.jpg" alt="CasaRaiz" width={96} height={52} priority className="h-auto w-28" />
         </Link>
 
-        <CompactSearch visible={scrolled} />
+        <div className="hidden min-w-0 flex-1 md:block">
+          <CompactSearch visible={scrolled} idSuffix="desk" />
+        </div>
 
         <nav className="flex shrink-0 items-center gap-3 text-sm">
           <Link href="/buscar" className={`font-medium text-mar-900 ${scrolled ? "hidden" : "hidden md:inline"}`}>{t["nav.buscar"]}</Link>
@@ -60,6 +62,15 @@ export default function Header() {
             <UserButton />
           </Show>
         </nav>
+      </div>
+      <div
+        className={`overflow-hidden transition-all duration-300 md:hidden ${
+          scrolled ? "max-h-20 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-4 pb-3">
+          <CompactSearch visible={scrolled} idSuffix="mob" />
+        </div>
       </div>
     </header>
   );
