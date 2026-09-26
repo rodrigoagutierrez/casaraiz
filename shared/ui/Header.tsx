@@ -37,7 +37,7 @@ export default function Header() {
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6">
         <Link href="/" aria-label="CasaRaiz" className="flex shrink-0 items-center">
-          <Image src="/logo.jpg" alt="CasaRaiz" width={96} height={52} priority className="h-auto w-24" />
+          <Image src="/logo.jpg" alt="CasaRaiz" width={96} height={52} className="h-auto w-24" />
         </Link>
 
         <div

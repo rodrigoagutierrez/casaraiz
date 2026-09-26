@@ -40,11 +40,12 @@ export default async function Home() {
       <section className="px-4 pt-4 sm:px-6">
         <div className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-mar-900">
           <Image
-            src="/hero.jpg"
+            src="/hero.avif"
             alt="Casa de alquiler temporal"
             fill
             priority
-            sizes="100vw"
+            fetchPriority="high"
+            sizes="(max-width: 768px) 100vw, 1152px"
             className="kenburns object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65" />

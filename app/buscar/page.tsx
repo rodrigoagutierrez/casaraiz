@@ -58,7 +58,7 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
         : orden === "caros" ? desc(properties.priceCents)
         : orden === "grandes" ? desc(properties.m2)
         : desc(properties.createdAt);
-      rows = await db.select().from(properties).where(and(...filters)).orderBy(order).limit(48);
+      rows = await db.select().from(properties).where(and(...filters))    .orderBy(order).limit(24);
     }
   } catch {
     rows = [];
