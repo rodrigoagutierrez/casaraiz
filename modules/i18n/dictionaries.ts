@@ -23,6 +23,7 @@ export const es = {  // Header / nav
   "search.fechas": "Check-in / Check-out",
   "search.huespedes": "Huéspedes",
   "search.cuantos": "¿Cuántos?",
+  "search.buscar": "Buscar",
 
   // Categorías
   "cat.todos": "Todos",
@@ -99,6 +100,7 @@ export const en: Dict = {
   "search.fechas": "Check-in / Check-out",
   "search.huespedes": "Guests",
   "search.cuantos": "How many?",
+  "search.buscar": "Search",
 
   // Categorías
   "cat.todos": "All",

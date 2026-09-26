@@ -71,7 +71,7 @@ export default async function Home() {
 
       {/* Destacados */}
       <section className="mx-auto max-w-6xl px-6 pt-12">
-        <div className="flex items-end justify-between">
+        <div className="flex flex-wrap items-end justify-between gap-2">
           <h2 className="text-2xl font-semibold text-mar-950">{t["home.destacados"]}</h2>
           <Link href="/buscar" className="text-sm font-medium text-mar-700 underline">{t["home.verTodos"]}</Link>
         </div>

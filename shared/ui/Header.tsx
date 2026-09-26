@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
@@ -12,9 +12,18 @@ import { useI18n } from "@/modules/i18n/provider";
 export default function Header() {
   const { t } = useI18n();
   const [scrolled, setScrolled] = useState(false);
+  const [city, setCity] = useState("");
+  const ticking = useRef(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 160);
+    const onScroll = () => {
+      if (ticking.current) return;
+      ticking.current = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 160);
+        ticking.current = false;
+      });
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -26,16 +35,20 @@ export default function Header() {
         scrolled ? "border-mar-100 shadow-sm" : "border-transparent"
       }`}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6">
         <Link href="/" aria-label="CasaRaiz" className="flex shrink-0 items-center">
-          <Image src="/logo.jpg" alt="CasaRaiz" width={96} height={52} priority className="h-auto w-28" />
+          <Image src="/logo.jpg" alt="CasaRaiz" width={96} height={52} priority className="h-auto w-24" />
         </Link>
 
-        <div className="hidden min-w-0 flex-1 md:block">
-          <CompactSearch visible={scrolled} idSuffix="desk" />
+        <div
+          className={`hidden min-w-0 transition-all duration-300 md:block ${
+            scrolled ? "flex-1 opacity-100" : "w-0 flex-none overflow-hidden opacity-0"
+          }`}
+        >
+          <CompactSearch visible={scrolled} idSuffix="desk" city={city} setCity={setCity} />
         </div>
 
-        <nav className="flex shrink-0 items-center gap-3 text-sm">
+        <nav className="flex shrink-0 items-center gap-2 text-sm sm:gap-3">
           <Link href="/buscar" className={`font-medium text-mar-900 ${scrolled ? "hidden" : "hidden md:inline"}`}>{t["nav.buscar"]}</Link>
           <Link href="/mapa" className={`font-medium text-mar-900 ${scrolled ? "hidden" : "hidden lg:inline"}`}>{t["nav.mapa"]}</Link>
           <Link href="/publicar" className="hidden font-medium text-mar-900 lg:inline">{t["nav.publicar"]}</Link>
@@ -67,9 +80,10 @@ export default function Header() {
         className={`overflow-hidden transition-all duration-300 md:hidden ${
           scrolled ? "max-h-20 opacity-100" : "max-h-0 opacity-0"
         }`}
+        aria-hidden={!scrolled}
       >
-        <div className="px-4 pb-3">
-          <CompactSearch visible={scrolled} idSuffix="mob" />
+        <div className="px-4 pb-3" inert={!scrolled ? true : undefined}>
+          <CompactSearch visible={scrolled} idSuffix="mob" city={city} setCity={setCity} />
         </div>
       </div>
     </header>

@@ -63,7 +63,7 @@ export default async function PisoPage({
   const photos = p.photos.slice(0, 5);
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-8">
+    <main className="mx-auto max-w-6xl px-6 py-8 pb-28 md:pb-8">
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -158,14 +158,14 @@ export default async function PisoPage({
           <h2 className="text-xl font-semibold text-mar-950">Sobre este piso</h2>
           <p className="mt-3 whitespace-pre-line text-mar-950/80">{p.description}</p>
 
-          <div className="mt-6 grid grid-cols-3 gap-3 text-center">
+          <div className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3 sm:text-center">
             {[
               { v: `${p.maxHuespedes}`, l: "Huéspedes" },
               { v: `${p.m2} m²`, l: "Superficie" },
               { v: p.disponibleDesde ? `${p.disponibleDesde}${p.disponibleHasta ? ` → ${p.disponibleHasta}` : ""}` : "Flexible", l: "Disponible" },
             ].map((f) => (
-              <div key={f.l} className="rounded-2xl border border-mar-100 bg-white p-4">
-                <p className="font-bold capitalize text-mar-900">{f.v}</p>
+              <div key={f.l} className="rounded-2xl border border-mar-100 bg-white p-3 text-sm sm:p-4 sm:text-base">
+                <p className="break-words font-bold capitalize text-mar-900">{f.v}</p>
                 <p className="text-xs text-mar-950/55">{f.l}</p>
               </div>
             ))}
@@ -209,7 +209,7 @@ export default async function PisoPage({
         </div>
 
         {/* Tarjeta sticky */}
-        <aside>
+        <aside id="reserva">
           <div className="rounded-2xl border border-mar-100 bg-white p-6 shadow-lg lg:sticky lg:top-20">
             <p className="text-2xl font-bold text-mar-900">
               {eur(p.priceCents)}<span className="text-base font-normal text-mar-950/55">/noche</span>
@@ -230,6 +230,18 @@ export default async function PisoPage({
             </div>
           </div>
         </aside>
+      </div>
+
+      {/* CTA fijo solo móvil */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-mar-100 bg-white/95 px-4 pt-2 backdrop-blur md:hidden" style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
+        <div className="flex items-center gap-3">
+          <p className="font-bold text-mar-900">
+            {eur(p.priceCents)}<span className="text-sm font-normal text-mar-950/55">/noche</span>
+          </p>
+          <a href="#reserva" className="flex h-12 flex-1 items-center justify-center rounded-full bg-otono-600 font-semibold text-white">
+            Solicitar reserva
+          </a>
+        </div>
       </div>
     </main>
   );

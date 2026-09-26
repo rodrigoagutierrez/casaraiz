@@ -65,7 +65,7 @@ export default function SearchBar() {
             onChange={(e) => setCity(e.target.value)}
             list="ciudades-hero"
             placeholder={t["search.lugarPlaceholder"]}
-            className="w-full bg-transparent text-sm text-mar-950/60 outline-none placeholder:text-mar-950/60"
+            className="h-11 w-full bg-transparent text-base text-mar-950/60 outline-none placeholder:text-mar-950/60 sm:h-auto sm:text-sm"
           />
           <datalist id="ciudades-hero">
             {CIUDADES_ES.map((c) => (
@@ -78,19 +78,21 @@ export default function SearchBar() {
         <CalIcon />
         <span className="flex-1">
           <span className="block text-sm font-semibold text-mar-950">{t["search.fechas"]}</span>
-          <span className="flex items-center gap-1">
+          <span className="flex flex-col gap-1 sm:flex-row sm:items-center">
             <input
               type="date"
               value={desde}
               onChange={(e) => setDesde(e.target.value)}
-              className="w-full bg-transparent text-sm text-mar-950/60 outline-none"
+              aria-label="Check-in"
+              className="h-11 w-full bg-transparent text-base text-mar-950/60 outline-none sm:h-auto sm:text-sm"
             />
             <input
               type="date"
               value={hasta}
               min={desde || undefined}
               onChange={(e) => setHasta(e.target.value)}
-              className="w-full bg-transparent text-sm text-mar-950/60 outline-none"
+              aria-label="Check-out"
+              className="h-11 w-full bg-transparent text-base text-mar-950/60 outline-none sm:h-auto sm:text-sm"
             />
           </span>
         </span>
@@ -99,7 +101,7 @@ export default function SearchBar() {
         <UsersIcon />
         <span className="flex-1">
           <span className="block text-sm font-semibold text-mar-950">{t["search.huespedes"]}</span>
-          <select value={huespedes} onChange={(e) => setHuespedes(e.target.value)} className="w-full cursor-pointer bg-transparent text-sm text-mar-950/60 outline-none">
+          <select value={huespedes} onChange={(e) => setHuespedes(e.target.value)} className="h-11 w-full cursor-pointer bg-transparent text-base text-mar-950/60 outline-none sm:h-auto sm:text-sm">
             <option value="">{t["search.cuantos"]}</option>
             {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
               <option key={n} value={n}>{n}{n === 8 ? "+" : ""}</option>
@@ -109,8 +111,8 @@ export default function SearchBar() {
       </label>
       <button
         type="submit"
-        aria-label="Buscar"
-        className="flex items-center justify-center rounded-2xl bg-otono-600 p-4 text-white hover:bg-otono-700 sm:rounded-full"
+        aria-label={t["search.buscar"]}
+        className="flex min-h-[48px] items-center justify-center rounded-2xl bg-otono-600 p-4 text-white hover:bg-otono-700 sm:rounded-full"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
           <circle cx="11" cy="11" r="7" />

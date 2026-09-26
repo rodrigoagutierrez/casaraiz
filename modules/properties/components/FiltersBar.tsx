@@ -21,6 +21,8 @@ export default function FiltersBar() {
   const [desde, setDesde] = useState(sp.get("desde") ?? "");
   const [hasta, setHasta] = useState(sp.get("hasta") ?? "");
   const [huespedes, setHuespedes] = useState(sp.get("huespedes") ?? "");
+  const [open, setOpen] = useState(false);
+  const activeCount = [barrio, city, entorno, habs, baths, min, max, m2, q, desde, hasta, huespedes].filter(Boolean).length;
 
   function apply(e: React.FormEvent) {
     e.preventDefault();
@@ -41,10 +43,22 @@ export default function FiltersBar() {
     router.push(`/buscar?${p.toString()}`);
   }
 
-  const f = "rounded-full border border-mar-200 bg-white px-3 py-2 text-sm text-mar-950 outline-none focus:border-mar-600 w-full sm:w-auto";
+  const f = "rounded-xl border border-mar-200 bg-white px-3 h-11 text-base text-mar-950 outline-none focus:border-mar-600 focus-visible:ring-2 focus-visible:ring-mar-600 w-full sm:w-auto sm:rounded-full sm:h-auto sm:py-1.5 sm:text-sm";
 
   return (
-    <form onSubmit={apply} className="mt-4 grid grid-cols-2 gap-2 rounded-2xl border border-mar-100 bg-white p-3 sm:flex sm:flex-wrap sm:items-center">
+    <div className="mt-4">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="flex h-11 w-full items-center justify-between rounded-xl border border-mar-200 bg-white px-4 text-sm font-medium text-mar-900 md:hidden"
+      >
+        <span>Filtros{activeCount > 0 ? ` · ${activeCount}` : ""}</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={`transition ${open ? "rotate-180" : ""}`}>
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+      <form onSubmit={apply} className={`grid grid-cols-2 gap-2 overflow-hidden bg-white transition-all duration-300 md:mt-4 md:flex md:max-h-none md:flex-wrap md:items-center md:rounded-2xl md:border md:border-mar-100 md:p-3 md:visible md:opacity-100 ${open ? "visible mt-2 max-h-[1200px] rounded-2xl border border-mar-100 p-3 opacity-100" : "invisible max-h-0 opacity-0"}`}>
       <input
         value={city}
         onChange={(e) => setCity(e.target.value)}
@@ -100,7 +114,8 @@ export default function FiltersBar() {
         <option value="caros">Más caros</option>
         <option value="grandes">Más grandes</option>
       </select>
-      <button className="col-span-2 rounded-full bg-mar-900 px-5 py-2 text-sm text-white hover:bg-mar-800 sm:col-span-1 sm:py-1.5">Filtrar</button>
+      <button className="col-span-2 h-12 rounded-full bg-mar-900 px-5 text-sm text-white hover:bg-mar-800 sm:col-span-1 sm:h-auto sm:py-1.5">Filtrar</button>
     </form>
+    </div>
   );
 }
