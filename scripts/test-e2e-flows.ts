@@ -71,8 +71,6 @@ async function main() {
   console.log("6. Valorar: ✓ media piso", Number(rating.avg).toFixed(2), "/ count", rating.count);
 
   // 6. VERIFICACIÓN (SuperAdmin ve la gestión)
-  const { default: _admin } = await import("@/modules/auth/guard").catch(() => ({ default: null }));
-  void _admin;
   console.log("7. Gestión visible en /admin/gestiones: ✓ (reserva+contacto+chat del dueño test)");
 
   console.log("\n=== LIMPIEZA ===");
