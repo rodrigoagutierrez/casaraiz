@@ -13,7 +13,7 @@ export function organizationLd() {
     "@type": "Organization",
     name: "CasaRaiz",
     url: "https://casaraizalquiler.com",
-    logo: "https://casaraizalquiler.com/logo.jpg",
+    logo: "https://casaraizalquiler.com/logo.png",
     sameAs: [],
     description: "Marketplace de alquiler temporal en España sin comisiones.",
   };
