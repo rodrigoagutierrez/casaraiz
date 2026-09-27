@@ -56,6 +56,7 @@ export default function Header() {
           <Show when="signed-in">
             <Link href="/reservas" className="hidden font-medium text-mar-900 lg:inline">{t["nav.reservas"]}</Link>
             <Link href="/chat" className="hidden font-medium text-mar-900 lg:inline">{t["nav.mensajes"]}</Link>
+            <Link href="/favoritos" className="hidden font-medium text-mar-900 lg:inline">{t["nav.favoritos"]}</Link>
             <Link href="/duenos" className="hidden font-medium text-mar-900 lg:inline">{t["nav.misPisos"]}</Link>
             <Link href="/mi-cuenta" className="hidden font-medium text-mar-900 lg:inline">{t["nav.miCuenta"]}</Link>
           </Show>

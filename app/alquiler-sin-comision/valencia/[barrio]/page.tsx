@@ -7,6 +7,9 @@ import { and, desc, eq } from "drizzle-orm";
 import { BARRIOS_VALENCIA, getBarrio } from "@/modules/content/barrios";
 import { getRatingsForProperties } from "@/modules/bookings/queries";
 import PropertyCard from "@/modules/properties/components/PropertyCard";
+import { auth } from "@clerk/nextjs/server";
+import { getUserByClerkId } from "@/modules/users/queries";
+import { getFavoriteIds } from "@/modules/properties/favorites";
 
 export function generateStaticParams() {
   return BARRIOS_VALENCIA.map((b) => ({ barrio: b.slug }));
@@ -31,6 +34,18 @@ export async function generateMetadata({
   };
 }
 
+async function getMyFavIds(): Promise<Set<string>> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return new Set<string>();
+    const me = await getUserByClerkId(userId).catch(() => undefined);
+    if (!me) return new Set<string>();
+    return await getFavoriteIds(me.id).catch(() => new Set<string>());
+  } catch {
+    return new Set<string>();
+  }
+}
+
 export default async function BarrioPage({
   params,
 }: {
@@ -53,6 +68,7 @@ export default async function BarrioPage({
   }
 
   const ratings = await getRatingsForProperties(listings.map((x) => x.id)).catch(() => new Map());
+  const favIds = await getMyFavIds();
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
@@ -69,7 +85,7 @@ export default async function BarrioPage({
       {listings.length > 0 ? (
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {listings.map((p) => (
-            <PropertyCard key={p.id} p={{ slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos, rating: ratings.get(p.id) }} />
+            <PropertyCard key={p.id} p={{ id: p.id, slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos, rating: ratings.get(p.id), fav: favIds.has(p.id) }} />
           ))}
         </div>
       ) : (

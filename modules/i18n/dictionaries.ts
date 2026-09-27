@@ -11,6 +11,7 @@ export const es = {  // Header / nav
   "nav.miCuenta": "Mi cuenta",
   "nav.reservas": "Reservas",
   "nav.mensajes": "Mensajes",
+  "nav.favoritos": "Favoritos",
   "nav.admin": "Admin",
 
   // Hero
@@ -88,6 +89,7 @@ export const en: Dict = {
   "nav.miCuenta": "My account",
   "nav.reservas": "Bookings",
   "nav.mensajes": "Messages",
+  "nav.favoritos": "Saved",
   "nav.admin": "Admin",
 
   // Hero

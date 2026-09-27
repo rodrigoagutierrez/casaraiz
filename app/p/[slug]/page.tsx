@@ -1,16 +1,20 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { auth } from "@clerk/nextjs/server";
 import { db } from "@/shared/db/client";
 import { properties } from "@/shared/db/schema";
 import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { eur } from "@/shared/utils/format";
+import { getUserByClerkId } from "@/modules/users/queries";
+import { getFavoriteIds } from "@/modules/properties/favorites";
 import { entornoLabel } from "@/modules/properties/entornos";
 import Map from "@/modules/properties/components/Map";
 import ContactBox from "@/modules/contacts/components/ContactBox";
 import ChatButton from "@/modules/chat/components/ChatButton";
 import BookingBox from "@/modules/bookings/components/BookingBox";
+import FavButton from "@/modules/properties/components/FavButton";
 import { Stars } from "@/modules/bookings/components/Stars";
 import { getPropertyRating, getPropertyReviews, getUserRating } from "@/modules/bookings/queries";
 import { JsonLd } from "@/modules/seo/JsonLd";
@@ -61,6 +65,15 @@ export default async function PisoPage({
   ]);
 
   const photos = p.photos.slice(0, 5);
+
+  let fav = false;
+  try {
+    const { userId } = await auth();
+    if (userId) {
+      const me = await getUserByClerkId(userId).catch(() => undefined);
+      if (me) fav = (await getFavoriteIds(me.id).catch(() => new Set<string>())).has(p.id);
+    }
+  } catch {}
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8 pb-28 md:pb-8">
@@ -211,9 +224,12 @@ export default async function PisoPage({
         {/* Tarjeta sticky */}
         <aside id="reserva">
           <div className="rounded-2xl border border-mar-100 bg-white p-6 shadow-lg lg:sticky lg:top-20">
-            <p className="text-2xl font-bold text-mar-900">
-              {eur(p.priceCents)}<span className="text-base font-normal text-mar-950/55">/noche</span>
-            </p>
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-2xl font-bold text-mar-900">
+                {eur(p.priceCents)}<span className="text-base font-normal text-mar-950/55">/noche</span>
+              </p>
+              <FavButton propertyId={p.id} initial={fav} />
+            </div>
             <p className="mt-1 text-xs text-mar-950/55">Sin comisiones · IVA incluido en membresía</p>
             <div className="mt-4 border-t border-mar-100 pt-4">
               <p className="text-sm font-medium text-mar-900">Tu estancia temporal</p>

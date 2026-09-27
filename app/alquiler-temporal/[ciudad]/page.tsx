@@ -8,6 +8,9 @@ import { CIUDADES, getCiudad } from "@/modules/content/ciudades";
 import PropertyCard from "@/modules/properties/components/PropertyCard";
 import { getRatingsForProperties } from "@/modules/bookings/queries";
 import { JsonLd } from "@/modules/seo/JsonLd";
+import { auth } from "@clerk/nextjs/server";
+import { getUserByClerkId } from "@/modules/users/queries";
+import { getFavoriteIds } from "@/modules/properties/favorites";
 
 export function generateStaticParams() {
   return CIUDADES.map((c) => ({ ciudad: c.slug }));
@@ -28,6 +31,18 @@ export async function generateMetadata({ params }: { params: Promise<{ ciudad: s
   };
 }
 
+async function getMyFavIds(): Promise<Set<string>> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return new Set<string>();
+    const me = await getUserByClerkId(userId).catch(() => undefined);
+    if (!me) return new Set<string>();
+    return await getFavoriteIds(me.id).catch(() => new Set<string>());
+  } catch {
+    return new Set<string>();
+  }
+}
+
 export default async function CiudadPage({ params }: { params: Promise<{ ciudad: string }> }) {
   const { ciudad } = await params;
   const c = getCiudad(ciudad);
@@ -46,6 +61,7 @@ export default async function CiudadPage({ params }: { params: Promise<{ ciudad:
   }
 
   const ratings = await getRatingsForProperties(rows.map((p) => p.id)).catch(() => new Map());
+  const favIds = await getMyFavIds();
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
@@ -85,7 +101,7 @@ export default async function CiudadPage({ params }: { params: Promise<{ ciudad:
       {rows.length > 0 ? (
         <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {rows.map((p) => (
-            <PropertyCard key={p.id} p={{ slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos, rating: ratings.get(p.id) }} />
+            <PropertyCard key={p.id} p={{ id: p.id, slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos, rating: ratings.get(p.id), fav: favIds.has(p.id) }} />
           ))}
         </div>
       ) : (

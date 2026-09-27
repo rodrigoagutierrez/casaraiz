@@ -64,10 +64,11 @@ export default async function MiCuenta() {
         </div>
       </section>
 
-      <section className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <section className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { href: "/duenos", t: "Mis pisos", d: `${np.n} publicados` },
           { href: "/buscar", t: "Buscar piso", d: "Como inquilino" },
+          { href: "/favoritos", t: "Favoritos", d: "Mis guardados" },
           { href: "/publicar", t: "Publicar", d: "Nuevo anuncio" },
         ].map((c) => (
           <Link key={c.href} href={c.href} className="rounded-2xl border border-mar-100 bg-white p-5 hover:shadow-lg">

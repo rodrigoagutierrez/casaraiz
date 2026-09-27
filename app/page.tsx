@@ -12,8 +12,23 @@ import { BARRIOS_VALENCIA } from "@/modules/content/barrios";
 import { CIUDADES } from "@/modules/content/ciudades";
 import { getDict } from "@/modules/i18n/server";
 import { JsonLd, organizationLd, websiteLd } from "@/modules/seo/JsonLd";
+import { auth } from "@clerk/nextjs/server";
+import { getUserByClerkId } from "@/modules/users/queries";
+import { getFavoriteIds } from "@/modules/properties/favorites";
 
 const TOP_BARRIOS = ["ruzafa", "benimaclet", "el-cabanyal", "campanar", "algiros", "pla-del-real"];
+
+async function getMyFavIds(): Promise<Set<string>> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return new Set<string>();
+    const me = await getUserByClerkId(userId).catch(() => undefined);
+    if (!me) return new Set<string>();
+    return await getFavoriteIds(me.id).catch(() => new Set<string>());
+  } catch {
+    return new Set<string>();
+  }
+}
 
 export default async function Home() {
   const t = await getDict();
@@ -31,6 +46,7 @@ export default async function Home() {
   }
 
   const ratings = await getRatingsForProperties(destacados.map((x) => x.id)).catch(() => new Map());
+  const favIds = await getMyFavIds();
 
   return (
     <div className="font-sans">
@@ -79,7 +95,7 @@ export default async function Home() {
         {destacados.length > 0 ? (
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {destacados.map((p) => (
-              <PropertyCard key={p.id} p={{ slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos, rating: ratings.get(p.id) }} />
+              <PropertyCard key={p.id} p={{ id: p.id, slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos, rating: ratings.get(p.id), fav: favIds.has(p.id) }} />
             ))}
           </div>
         ) : (
