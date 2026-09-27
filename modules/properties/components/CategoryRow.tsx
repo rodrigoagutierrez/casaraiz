@@ -18,7 +18,6 @@ export default function CategoryRow() {
   const active = sp.get("entorno") ?? "";
 
   const CATS = [
-    { label: t["cat.todos"], href: "/buscar", match: "", key: "todos", svg: icon(<><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.5-4.5" /></>) },
     { label: t["cat.playa"], href: "/buscar?entorno=playa", match: "playa", key: "playa", svg: icon(<><path d="M12 4a8 8 0 0 1 8 8H4a8 8 0 0 1 8-8z" /><path d="M12 12v6" /><path d="M9 20.5h6" /></>) },
     { label: t["cat.montana"], href: "/buscar?entorno=montana", match: "montana", key: "montana", svg: icon(<><path d="M2 20L9 6l3.5 6.5L15 9l7 11H2z" /><path d="M8.2 7.6l.8 1.4 1-1" /></>) },
     { label: t["cat.bosque"], href: "/buscar?entorno=bosque", match: "bosque", key: "bosque", svg: icon(<><path d="M12 2.5L18.5 12h-3.2L20 18.5H4L8.7 12H5.5z" /><path d="M12 18.5V21" /></>) },
