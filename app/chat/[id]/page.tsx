@@ -8,6 +8,8 @@ import { properties, users } from "@/shared/db/schema";
 import { eq } from "drizzle-orm";
 import ChatThread from "./ChatThread";
 
+import type { Metadata } from "next";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 export default async function ChatConversationPage({ params }: { params: Promise<{ id: string }> }) {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");

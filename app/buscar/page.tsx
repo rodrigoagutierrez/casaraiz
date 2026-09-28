@@ -14,8 +14,9 @@ import { getUserByClerkId } from "@/modules/users/queries";
 import { getFavoriteIds } from "@/modules/properties/favorites";
 
 export const metadata: Metadata = {
-  title: "Buscar alquiler sin comisión en España | CasaRaiz",
+  title: "Buscar alquiler sin comisión en España",
   description: "Filtra por ciudad, zona, habitaciones y precio. Contacto directo con dueños.",
+  alternates: { canonical: "/buscar" },
 };
 
 type Params = { city?: string; barrio?: string; entorno?: string; habs?: string; baths?: string; min?: string; max?: string; m2?: string; q?: string; orden?: string; desde?: string; hasta?: string; huespedes?: string };

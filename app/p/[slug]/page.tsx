@@ -35,7 +35,7 @@ export async function generateMetadata({
       description: p.description.slice(0, 160),
       alternates: { canonical: `/p/${p.slug}` },
       openGraph: {
-        title: `${p.title} · ${price.toFixed(0)}€/noche | CasaRaiz`,
+        title: `${p.title} · ${price.toFixed(0)}€/noche`,
         description: p.description.slice(0, 160),
         images: p.photos[0] ? [{ url: p.photos[0] }] : [],
       },
@@ -108,6 +108,27 @@ export default async function PisoPage({
             { "@type": "LocationFeatureSpecification", name: "Huéspedes", value: p.maxHuespedes },
             { "@type": "LocationFeatureSpecification", name: "Superficie (m²)", value: p.m2 },
           ],
+          aggregateRating: rating.avg ? { "@type": "AggregateRating", ratingValue: rating.avg.toFixed(2), reviewCount: rating.count } : undefined,
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "VacationRental",
+          name: p.title,
+          description: p.description.slice(0, 300),
+          url: `https://casaraizalquiler.com/p/${p.slug}`,
+          image: p.photos.slice(0, 5),
+          identifier: p.registroNumero ?? undefined,
+          latitude: p.lat ?? undefined,
+          longitude: p.lng ?? undefined,
+          containsPlace: {
+            "@type": "Accommodation",
+            occupancy: { "@type": "QuantitativeValue", maxValue: p.maxHuespedes },
+            numberOfBedrooms: p.rooms,
+            numberOfBathroomsTotal: p.baths,
+            floorSize: { "@type": "QuantitativeValue", value: p.m2, unitCode: "MTK" },
+          },
           aggregateRating: rating.avg ? { "@type": "AggregateRating", ratingValue: rating.avg.toFixed(2), reviewCount: rating.count } : undefined,
         }}
       />

@@ -7,6 +7,8 @@ import { eq } from "drizzle-orm";
 import { getUserByClerkId } from "@/modules/users/queries";
 import EditForm from "./EditForm";
 
+import type { Metadata } from "next";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 export default async function EditarPiso({ params }: { params: Promise<{ id: string }> }) {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");

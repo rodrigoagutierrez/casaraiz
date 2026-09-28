@@ -24,7 +24,7 @@ export async function generateMetadata({
   const b = getBarrio(barrio);
   if (!b) return {};
   return {
-    title: `${b.h1} | CasaRaiz Valencia`,
+    title: b.h1,
     description: `${b.descripcion} Precio ref: ${b.precioRef}.`,
     alternates: { canonical: `/alquiler-sin-comision/valencia/${b.slug}` },
     openGraph: {

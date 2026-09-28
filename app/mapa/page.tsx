@@ -5,8 +5,9 @@ import { and, desc, eq, isNotNull } from "drizzle-orm";
 import PropertiesMap from "@/modules/properties/components/PropertiesMap";
 
 export const metadata: Metadata = {
-  title: "Mapa de alquileres sin comisión en España | CasaRaiz",
+  title: "Mapa de alquileres sin comisión en España",
   description: "Explora los pisos de dueños directos sobre el mapa.",
+  alternates: { canonical: "/mapa" },
 };
 
 export default async function Mapa() {

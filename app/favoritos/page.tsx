@@ -6,6 +6,8 @@ import { getFavoriteProperties } from "@/modules/properties/favorites";
 import { getRatingsForProperties } from "@/modules/bookings/queries";
 import PropertyCard from "@/modules/properties/components/PropertyCard";
 
+import type { Metadata } from "next";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 export default async function FavoritosPage() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");

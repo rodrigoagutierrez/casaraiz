@@ -12,6 +12,8 @@ import ReviewForm from "@/modules/bookings/components/ReviewForm";
 import PayGarantiaButton from "./PayGarantiaButton";
 import { eur } from "@/shared/utils/format";
 
+import type { Metadata } from "next";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 const STATUS: Record<string, string> = {
   pending: "Pendiente de confirmación",
   confirmed: "Confirmada",

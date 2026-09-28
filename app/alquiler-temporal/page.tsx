@@ -4,7 +4,7 @@ import { CIUDADES } from "@/modules/content/ciudades";
 import { JsonLd } from "@/modules/seo/JsonLd";
 
 export const metadata: Metadata = {
-  title: "Alquiler temporal en España sin comisiones | CasaRaiz",
+  title: "Alquiler temporal en España sin comisiones",
   description: "Alquiler temporal directo con el dueño en las principales ciudades de España: Madrid, Barcelona, Valencia, Sevilla, Málaga y más. Sin comisiones.",
   alternates: { canonical: "/alquiler-temporal" },
 };

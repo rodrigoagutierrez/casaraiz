@@ -13,6 +13,8 @@ import { DecisionButtons } from "@/modules/bookings/components/DecisionButtons";
 import ReviewForm from "@/modules/bookings/components/ReviewForm";
 import { eur } from "@/shared/utils/format";
 
+import type { Metadata } from "next";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 export default async function Duenos() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");

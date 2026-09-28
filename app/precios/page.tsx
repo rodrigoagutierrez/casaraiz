@@ -5,8 +5,9 @@ import { getPublicPlans } from "@/modules/billing/plans";
 import { getFeeTiers, getTariffSettings } from "@/modules/billing/fees";
 
 export const metadata: Metadata = {
-  title: "Planes para dueños · Inquilinos gratis | CasaRaiz",
+  title: "Planes para dueños · Inquilinos gratis",
   description: "Alquiler temporal directo. Inquilinos gratis, dueños con planes por tramos.",
+  alternates: { canonical: "/precios" },
 };
 
 function eur(cents: number) {

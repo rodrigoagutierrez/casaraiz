@@ -9,6 +9,8 @@ import { PortalButton } from "@/modules/billing/components/BillingButtons";
 import { RoleSwitch } from "./RoleSwitch";
 import VerificationForm from "./VerificationForm";
 
+import type { Metadata } from "next";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 export default async function MiCuenta() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");

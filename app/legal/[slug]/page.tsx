@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const [d] = await db.select().from(legalDocs).where(eq(legalDocs.slug, slug)).limit(1);
-  return d ? { title: `${d.title} | CasaRaiz` } : {};
+  return d ? { title: d.title, alternates: { canonical: `/legal/${d.slug}` } } : {};
 }
 
 export default async function LegalPage({ params }: { params: Promise<{ slug: string }> }) {

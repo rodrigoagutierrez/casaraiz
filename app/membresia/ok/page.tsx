@@ -2,6 +2,8 @@ import Link from "next/link";
 import { stripe } from "@/modules/billing/stripe";
 import { upsertFromSubscription } from "@/modules/billing/subscription-sync";
 
+import type { Metadata } from "next";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 // GET /membresia/ok?session_id=... — confirma el pago y sincroniza la suscripción
 // (idempotente; el webhook hace lo mismo cuando está configurado)
 export default async function MembresiaOk({
