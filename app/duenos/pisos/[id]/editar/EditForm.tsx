@@ -14,6 +14,9 @@ type Prop = {
   m2: number;
   address: string | null;
   city: string;
+  registroNumero: string | null;
+  registroTipo: string;
+  referenciaCatastral: string | null;
   maxHuespedes: number;
   disponibleDesde: string | null;
   disponibleHasta: string | null;
@@ -38,6 +41,9 @@ export default function EditForm({ initial }: { initial: Prop }) {
     m2: initial.m2,
     barrio: initial.barrio,
     city: initial.city,
+    registroNumero: initial.registroNumero ?? "",
+    registroTipo: initial.registroTipo ?? "temporada",
+    referenciaCatastral: initial.referenciaCatastral ?? "",
     maxHuespedes: initial.maxHuespedes,
     disponibleDesde: initial.disponibleDesde ?? "",
     disponibleHasta: initial.disponibleHasta ?? "",
@@ -58,6 +64,7 @@ export default function EditForm({ initial }: { initial: Prop }) {
         photos: initial.photos,
         disponibleDesde: form.disponibleDesde || null,
         disponibleHasta: form.disponibleHasta || null,
+        referenciaCatastral: form.referenciaCatastral || null,
       };
       const res = await fetch(`/api/properties/${initial.id}`, {
         method: "PATCH",
@@ -65,7 +72,12 @@ export default function EditForm({ initial }: { initial: Prop }) {
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
-        setError("No se pudo guardar. Revisa los campos.");
+        const json = await res.json().catch(() => ({}));
+        setError(
+          json.error === "FALTA_REGISTRO"
+            ? "Falta el nº de Registro Único para activar el anuncio."
+            : "No se pudo guardar. Revisa los campos."
+        );
         return;
       }
       router.push("/duenos");
@@ -112,13 +124,28 @@ export default function EditForm({ initial }: { initial: Prop }) {
           <input className={`${inputCls} mt-1`} value={form.barrio} onChange={(e) => set("barrio", e.target.value)} required />
         </label>
       </div>
-        <label className="text-sm text-mar-900">Estado
-          <select className={`${inputCls} mt-1`} value={form.status} onChange={(e) => set("status", e.target.value)}>
-            <option value="active">Activo (visible)</option>
-            <option value="draft">Pausado (oculto)</option>
-            <option value="rented">Alquilado</option>
-          </select>
-        </label>
+        <label className="text-sm text-mar-900">Nº de registro *
+        <input className={`${inputCls} mt-1`} value={form.registroNumero}
+          onChange={(e) => set("registroNumero", e.target.value)} required />
+      </label>
+      <label className="text-sm text-mar-900">Modalidad
+        <select className={`${inputCls} mt-1`} value={form.registroTipo}
+          onChange={(e) => set("registroTipo", e.target.value)}>
+          <option value="temporada">Temporada (LAU art. 3)</option>
+          <option value="vut">Vivienda de uso turístico</option>
+        </select>
+      </label>
+      <label className="text-sm text-mar-900">Referencia catastral
+        <input className={`${inputCls} mt-1`} value={form.referenciaCatastral}
+          onChange={(e) => set("referenciaCatastral", e.target.value)} />
+      </label>
+      <label className="text-sm text-mar-900">Estado
+        <select className={`${inputCls} mt-1`} value={form.status} onChange={(e) => set("status", e.target.value)}>
+          <option value="active">Activo (visible)</option>
+          <option value="draft">Pausado (oculto)</option>
+          <option value="rented">Alquilado</option>
+        </select>
+      </label>
       <label className="text-sm text-mar-900">Entorno
         <select className={`${inputCls} mt-1`} value={form.entorno} onChange={(e) => set("entorno", e.target.value)}>
           {ENTORNOS.map((t) => (

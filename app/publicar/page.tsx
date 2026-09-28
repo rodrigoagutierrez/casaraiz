@@ -42,6 +42,9 @@ export default function PublicarPage() {
     city: "Valencia",
     barrio: "ruzafa",
     entorno: "ciudad",
+    registroNumero: "",
+    registroTipo: "temporada",
+    referenciaCatastral: "",
     address: "",
   });
 
@@ -80,6 +83,7 @@ export default function PublicarPage() {
       const payload: Record<string, unknown> = { ...form, photos };
       if (!payload.disponibleDesde) delete payload.disponibleDesde;
       if (!payload.disponibleHasta) delete payload.disponibleHasta;
+      if (!payload.referenciaCatastral) delete payload.referenciaCatastral;
       const res = await fetch("/api/properties", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -89,6 +93,10 @@ export default function PublicarPage() {
       if (!res.ok) {
         if (json.error === "NEED_OWNER_PLAN") {
           router.push("/precios");
+          return;
+        }
+        if (json.error === "FALTA_REGISTRO") {
+          setError("Falta el nº de Registro Único: sin él el anuncio queda como borrador.");
           return;
         }
         if (json.error === "LIMIT_REACHED") {
@@ -252,6 +260,33 @@ export default function PublicarPage() {
             ))}
           </select>
         </label>
+
+        <div className="rounded-xl border border-mar-100 bg-mar-50 p-4">
+          <p className="text-sm font-semibold text-mar-900">Registro Único de Arrendamientos (obligatorio)</p>
+          <p className="mt-1 text-xs text-mar-950/60">
+            Desde el 01/07/2025 todo alquiler de corta duración (incluida temporada) necesita nº de registro
+            para anunciarse (RD 1312/2024). Lo obtienes en el Registro de la Propiedad o en{" "}
+            <a href="https://sede.registradores.org" target="_blank" rel="noreferrer" className="underline">sede.registradores.org</a>{" "}
+            (27 €). Sin este número tu anuncio quedará como borrador.
+          </p>
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <label className="text-sm text-mar-900">Nº de registro *
+              <input className={`${inputCls} mt-1`} value={form.registroNumero}
+                onChange={(e) => set("registroNumero", e.target.value)} placeholder="Ej. NRA-..." required />
+            </label>
+            <label className="text-sm text-mar-900">Modalidad
+              <select className={`${inputCls} mt-1`} value={form.registroTipo}
+                onChange={(e) => set("registroTipo", e.target.value)}>
+                <option value="temporada">Temporada (LAU art. 3)</option>
+                <option value="vut">Vivienda de uso turístico</option>
+              </select>
+            </label>
+          </div>
+          <label className="mt-3 block text-sm text-mar-900">Referencia catastral (recomendada)
+            <input className={`${inputCls} mt-1`} value={form.referenciaCatastral}
+              onChange={(e) => set("referenciaCatastral", e.target.value)} placeholder="20 caracteres" />
+          </label>
+        </div>
 
         <div className="rounded-xl border border-mar-100 bg-mar-50 p-3">
           <p className="text-sm font-medium text-mar-900">Fotos ({photos.length})</p>

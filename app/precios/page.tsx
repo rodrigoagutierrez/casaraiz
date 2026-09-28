@@ -27,7 +27,8 @@ export default async function PreciosPage() {
       <h1 className="text-3xl font-bold text-mar-950">Inquilinos gratis. Dueños por tramos.</h1>
       <p className="mt-2 max-w-2xl text-mar-950/65">
         Buscar, filtrar y contactar es gratis para inquilinos. Los dueños pagan según sus pisos publicados,
-        sin comisiones por alquiler. Pago recurrente con tarjeta o SEPA (Stripe).
+        sin comisiones por alquiler. Pago recurrente con tarjeta o SEPA (Stripe). Desistimiento de 14 días
+        según TRLGDCU (ver Términos); tras el inicio del servicio, acceso hasta fin del periodo pagado.
       </p>
 
       <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">

@@ -120,6 +120,7 @@ export default async function PisoPage({
           url: `https://casaraizalquiler.com/p/${p.slug}`,
           availability: p.status === "active" ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
           validFrom: p.disponibleDesde ?? undefined,
+          identifier: p.registroNumero ?? undefined,
         }}
       />
       <JsonLd
@@ -152,6 +153,17 @@ export default async function PisoPage({
         <span className="text-mar-950/55">{p.city}{p.entorno ? ` · ${entornoLabel(p.entorno)}` : ""}</span>
       </div>
       <p className="mt-1 text-sm text-mar-950/55">{p.rooms} hab · {p.baths} baños · {p.m2} m² · hasta {p.maxHuespedes} huésp.</p>
+      <div className="mt-2">
+        {p.registroNumero ? (
+          <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
+            Nº Registro: {p.registroNumero}
+          </span>
+        ) : (
+          <span className="rounded-full bg-otono-100 px-3 py-1 text-xs font-semibold text-otono-700">
+            Registro en trámite
+          </span>
+        )}
+      </div>
 
       {/* Galería mosaico */}
       {photos.length > 0 ? (

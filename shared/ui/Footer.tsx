@@ -38,6 +38,9 @@ export default function Footer() {
             <li><Link href="/legal/terminos" className="hover:underline">{t["footer.terminos"]}</Link></li>
             <li><Link href="/legal/privacidad" className="hover:underline">{t["footer.privacidad"]}</Link></li>
             <li><Link href="/legal/conformidad" className="hover:underline">{t["footer.conformidad"]}</Link></li>
+            <li><Link href="/legal/aviso-legal" className="hover:underline">Aviso legal</Link></li>
+            <li><Link href="/legal/cookies" className="hover:underline">Cookies</Link></li>
+            <li><Link href="/legal/politica-resenas" className="hover:underline">Política de reseñas</Link></li>
           </ul>
         </div>
       </div>

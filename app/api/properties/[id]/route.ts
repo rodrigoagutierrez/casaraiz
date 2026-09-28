@@ -21,6 +21,9 @@ const patchSchema = z.object({
   address: z.string().max(200).optional(),
   barrio: z.string().min(2).max(60).optional(),
   city: z.string().min(2).max(80).optional(),
+  registroNumero: z.string().min(4).max(60).optional(),
+  registroTipo: z.enum(["temporada", "vut"]).optional(),
+  referenciaCatastral: z.string().max(30).nullable().optional(),
   entorno: z.enum(["playa", "montana", "bosque", "ciudad", "rio"]).optional(),
   photos: z.array(z.string().url()).max(12).optional(),
   status: z.enum(["draft", "active", "rented"]).optional(),
@@ -42,10 +45,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const parsed = patchSchema.safeParse(await req.json());
   if (!parsed.success) return NextResponse.json({ error: "DATOS_INVALIDOS" }, { status: 400 });
-  const { priceEur, city, barrio, ...rest } = parsed.data;
+  const { priceEur, city, barrio, registroNumero, ...rest } = parsed.data;
+
+  // Sin nº de Registro Único no se puede activar (RD 1312/2024 art. 6)
+  const nextRegistro = registroNumero !== undefined ? registroNumero.trim() : prop.registroNumero;
+  const nextStatus = (rest as { status?: string }).status ?? prop.status;
+  if (nextStatus === "active" && !nextRegistro) {
+    return NextResponse.json({ error: "FALTA_REGISTRO" }, { status: 400 });
+  }
 
   const patch: Record<string, unknown> = {
     ...rest,
+    ...(registroNumero !== undefined ? { registroNumero: registroNumero.trim() } : {}),
     ...(priceEur !== undefined ? { priceCents: Math.round(priceEur * 100) } : {}),
     ...(city !== undefined ? { city } : {}),
     ...(barrio !== undefined ? { barrio: barrio.trim().toLowerCase() } : {}),
