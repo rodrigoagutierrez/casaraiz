@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/shared/db/client";
-import { properties } from "@/shared/db/schema";
+import { properties, users } from "@/shared/db/schema";
 import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { eur } from "@/shared/utils/format";
@@ -16,7 +16,8 @@ import ChatButton from "@/modules/chat/components/ChatButton";
 import BookingBox from "@/modules/bookings/components/BookingBox";
 import FavButton from "@/modules/properties/components/FavButton";
 import { Stars } from "@/modules/bookings/components/Stars";
-import { getPropertyRating, getPropertyReviews, getUserRating } from "@/modules/bookings/queries";
+import { getPropertyRating, getPropertyReviews } from "@/modules/bookings/queries";
+import DescriptionBlock from "@/modules/properties/components/DescriptionBlock";
 import { JsonLd } from "@/modules/seo/JsonLd";
 
 export async function generateMetadata({
@@ -58,11 +59,23 @@ export default async function PisoPage({
   }
   if (!p) notFound();
 
-  const [rating, reviewList, ownerRating] = await Promise.all([
+  const [rating, reviewList, ownerRows] = await Promise.all([
     getPropertyRating(p.id).catch(() => ({ avg: null as number | null, count: 0 })),
     getPropertyReviews(p.id).catch(() => []),
-    getUserRating(p.ownerId, "to_owner").catch(() => ({ avg: null as number | null, count: 0 })),
+    db.select({ dniVerified: users.dniVerified }).from(users).where(eq(users.id, p.ownerId)).limit(1).catch(() => []),
   ]);
+  const ownerVerified = ownerRows[0]?.dniVerified ?? false;
+
+  const avgOf = (key: "servicio" | "comunicacion" | "entorno") => {
+    const vals = reviewList.map((r) => r[key]).filter((x): x is number => x !== null);
+    if (vals.length === 0) return null;
+    return vals.reduce((a, b) => a + b, 0) / vals.length;
+  };
+  const breakdown = [
+    { label: "Servicio", value: avgOf("servicio") },
+    { label: "Comunicación", value: avgOf("comunicacion") },
+    { label: "Entorno", value: avgOf("entorno") },
+  ];
 
   const photos = p.photos.slice(0, 5);
 
@@ -124,19 +137,21 @@ export default async function PisoPage({
         ← {p.barrio}
       </Link>
       <h1 className="mt-2 text-3xl font-bold text-mar-950">{p.title}</h1>
-      <div className="mt-1 flex flex-wrap items-center gap-2">
-        <Stars value={rating.avg} />
-        <span className="text-sm text-mar-950/55">({rating.count} valoraciones) · Dueño: </span>
-        <Stars value={ownerRating.avg} size="text-sm" />
-      </div>
-      <p className="mt-1 text-sm text-mar-950/55">{p.rooms} hab · {p.baths} baños · {p.m2} m² · hasta {p.maxHuespedes} huésp. · {p.city}</p>
-      {p.entorno && (
-        <p className="mt-2">
-          <span className="rounded-full bg-mar-100 px-3 py-1 text-xs font-medium text-mar-800">
-            Entorno: {entornoLabel(p.entorno)}
+      <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+        {rating.avg !== null && (
+          <span className="font-semibold text-mar-900">★ {rating.avg.toFixed(2)}</span>
+        )}
+        <a href="#valoraciones" className="font-medium text-mar-900 underline">
+          ({rating.count} valoraciones)
+        </a>
+        {ownerVerified && (
+          <span className="rounded-full bg-mar-100 px-2.5 py-0.5 text-xs font-semibold text-mar-800">
+            ✓ Dueño verificado
           </span>
-        </p>
-      )}
+        )}
+        <span className="text-mar-950/55">{p.city}{p.entorno ? ` · ${entornoLabel(p.entorno)}` : ""}</span>
+      </div>
+      <p className="mt-1 text-sm text-mar-950/55">{p.rooms} hab · {p.baths} baños · {p.m2} m² · hasta {p.maxHuespedes} huésp.</p>
 
       {/* Galería mosaico */}
       {photos.length > 0 ? (
@@ -169,7 +184,9 @@ export default async function PisoPage({
         {/* Info */}
         <div className="lg:col-span-2">
           <h2 className="text-xl font-semibold text-mar-950">Sobre este piso</h2>
-          <p className="mt-3 whitespace-pre-line text-mar-950/80">{p.description}</p>
+          <div className="mt-3">
+            <DescriptionBlock text={p.description} />
+          </div>
 
           <div className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3 sm:text-center">
             {[
@@ -187,9 +204,25 @@ export default async function PisoPage({
           <h2 className="mt-8 text-xl font-semibold text-mar-950">Ubicación</h2>
           <div className="mt-3"><Map lat={p.lat} lng={p.lng} title={p.title} /></div>
 
-          <h2 className="mt-8 text-xl font-semibold text-mar-950">
+          <h2 id="valoraciones" className="mt-8 flex items-center gap-2 text-xl font-semibold text-mar-950">
+            {rating.avg !== null && <span>★ {rating.avg.toFixed(2)}</span>}
             Valoraciones ({reviewList.length})
           </h2>
+          {breakdown.some((b) => b.value !== null) && (
+            <div className="mt-3 space-y-2 rounded-2xl border border-mar-100 bg-white p-4">
+              {breakdown.map((b) => (
+                <div key={b.label} className="flex items-center gap-3 text-sm">
+                  <span className="w-28 shrink-0 text-mar-900">{b.label}</span>
+                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-mar-100">
+                    <div className="h-full rounded-full bg-otono-600" style={{ width: `${((b.value ?? 0) / 5) * 100}%` }} />
+                  </div>
+                  <span className="w-8 shrink-0 text-right font-semibold text-mar-900">
+                    {b.value !== null ? b.value.toFixed(1) : "—"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
           {reviewList.length === 0 ? (
             <p className="mt-2 text-sm text-mar-950/55">Aún sin valoraciones. Sé el primero en puntuar tras tu estancia.</p>
           ) : (
@@ -219,6 +252,20 @@ export default async function PisoPage({
               ))}
             </ul>
           )}
+
+          <h2 className="mt-8 text-xl font-semibold text-mar-950">Cosas que debes saber</h2>
+          <ul className="mt-3 grid grid-cols-1 gap-2 text-sm sm:grid-cols-3">
+            {[
+              { t: "Sin comisiones", d: "Hablas directo con el dueño. Lo que ves es lo que pagas." },
+              { t: "Fianza 2 meses", d: "Contrato de temporada (LAU). El dueño la deposita en su comunidad." },
+              { t: "Contacto verificado", d: "Dueño con identidad verificada y valoraciones reales." },
+            ].map((c) => (
+              <li key={c.t} className="rounded-2xl border border-mar-100 bg-white p-4">
+                <p className="font-semibold text-mar-900">{c.t}</p>
+                <p className="mt-1 text-mar-950/65">{c.d}</p>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Tarjeta sticky */}
