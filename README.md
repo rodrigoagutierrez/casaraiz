@@ -7,18 +7,25 @@ Marketplace de **alquiler temporal** (media estancia) en toda España, **sin com
 - **Búsqueda temporal**: lugar, fechas de check-in/check-out y número de huéspedes.
 - **Categorías por entorno**: Playa, Montaña, Bosque, Ciudad, Río (+ Mapa).
 - **Mapa** con todos los pisos (Leaflet + OpenStreetMap, sin coste).
-- **Reservas**: el inquilino solicita, el dueño acepta o rechaza.
+- **Reservas**: el inquilino solicita, el dueño acepta o rechaza. Precio por noche.
+- **Chat** dueño↔inquilino estilo WhatsApp (texto + fotos comprimidas).
+- **Favoritos**: corazón en cada anuncio + página "Mis favoritos".
+- **Garantía CasaRaiz (opcional)**: canon único del inquilino vía Stripe, cobertura vía aseguradora colaboradora.
 - **Valoraciones bidireccionales** (1–5 estrellas):
   - Inquilino → Dueño: Servicio, Comunicación, Entorno.
   - Dueño → Inquilino: Actitud.
   - Se muestran en cada piso y la búsqueda ordena las mejores puntuadas primero.
 - **Verificación de identidad**: DNI/NIE o Pasaporte (anverso + reverso), revisado por el equipo.
-- **Panel de administración**: usuarios, suscripciones, tarifas por tramos y documentos legales editables.
+- **Nº de Registro Único obligatorio** (RD 1312/2024) visible en cada ficha.
+- **Bilingüe ES/EN** (selector en el header).
+- **Panel de administración**: usuarios, gestiones, suscripciones, tarifas por tramos, garantía, documentos legales e informes (con CSV).
+- **Panel del dueño**: mis pisos, reservas entrantes e informes de ocupación/ganancias.
 
 ## Modelo de negocio
 
 - **Inquilinos**: gratis (solo necesitan cuenta verificada).
 - **Dueños**: planes por tramos (p. ej. 1–3 pisos, 4–10 pisos, 11+ a medida). Precio con IVA, pago recurrente con tarjeta o SEPA vía Stripe.
+- **Garantía opcional**: canon único no reembolsable del inquilino (ruta aseguradora colaboradora).
 - **Sin comisión por alquiler** entre partes.
 
 ## Stack
@@ -56,6 +63,8 @@ npm run db:migrate     # aplica migraciones
 npm run db:seed        # pisos demo (Valencia, Madrid, Barcelona, Sevilla)
 npm run db:seed:admin  # planes, tarifas, documentos legales
 npm run db:studio      # explorador visual de la BD
+npx tsx scripts/seed-fees.ts         # tramos de tarifa + ajustes
+npx tsx scripts/seed-docs-temporal.ts # documentos legales (temporada)
 ```
 
 ## Despliegue

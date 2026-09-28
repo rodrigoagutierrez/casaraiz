@@ -35,14 +35,18 @@ Principio: **un dominio = un módulo**. Las rutas importan de `@/modules/*` y `@
 | Módulo | Responsabilidad | Archivos clave |
 |--------|----------------|----------------|
 | `users` | Usuarios (vinculados a Clerk), verificación | `schema.ts`, `queries.ts`, `actions.ts` |
-| `properties` | Inmuebles, búsqueda, mapa, geocoding | `schema.ts`, `validation.ts`, `geocode.ts`, `components/*` |
+| `properties` | Inmuebles, búsqueda, mapa, geocoding, favoritos | `schema.ts`, `validation.ts`, `geocode.ts`, `favorites.ts`, `components/*` (SearchBar, CompactSearch, PropertyCard, FavButton, FiltersBar, CategoryRow, Map, PropertiesMap, DescriptionBlock) |
 | `bookings` | Reservas y valoraciones | `schema.ts` (bookings + reviews), `queries.ts`, `components/*` |
-| `billing` | Planes, tramos de tarifa, Stripe | `schema.ts`, `stripe.ts`, `plans.ts`, `fees.ts`, `components/*` |
+| `billing` | Planes, tramos de tarifa, Stripe, garantía | `schema.ts`, `stripe.ts`, `plans.ts`, `fees.ts`, `guarantee.ts`, `components/*` |
 | `contacts` | Contacto inquilino↔dueño | `schema.ts`, `components/ContactBox.tsx` |
+| `chat` | Conversaciones y mensajes | `schema.ts`, `queries.ts`, `components/*` |
+| `reports` | Informes dueño/superadmin + CSV | `queries.ts`, `csv.ts` |
+| `seo` | Datos estructurados | `JsonLd.tsx` |
+| `i18n` | Diccionarios ES/EN, provider, switcher | `dictionaries.ts`, `provider.tsx`, `server.ts`, `components/LanguageSwitcher.tsx` |
 | `audit` | Log de auditoría | `schema.ts`, `log.ts` |
-| `auth` | Guard de admin | `guard.ts`, `components/AdminLink.tsx` |
+| `auth` | Guard admin/superadmin | `guard.ts`, `components/AdminLink.tsx` |
 | `admin` | Server actions + UI del panel | `actions.ts`, `components/*` |
-| `content` | Barrios, textos legales | `barrios.ts`, `legal-docs-seed.ts` |
+| `content` | Barrios, ciudades, textos legales | `barrios.ts`, `ciudades.ts`, `legal-docs-seed.ts` |
 | `notifications` | Email (Brevo) | `email.ts` |
 
 ## Base de datos (Neon + Drizzle)
@@ -56,11 +60,14 @@ Principio: **un dominio = un módulo**. Las rutas importan de `@/modules/*` y `@
 | Tabla | Descripción | Campos clave |
 |-------|-------------|--------------|
 | `users` | Usuario (espejo de Clerk) | `clerkId` (unique), `role`, `email`, `verificationStatus`, `docType`, `stripeCustomerId` |
-| `properties` | Inmueble | `ownerId`, `priceCents`, `rooms/baths/m2`, `maxHuespedes`, `disponibleDesde/Hasta`, `city/barrio/entorno`, `slug` (unique), `photos`, `status` |
-| `bookings` | Reserva | `propertyId`, `renterId`, `ownerId`, `checkin/checkout`, `guests`, `status` |
+| `properties` | Inmueble (**precio en €/noche**) | `ownerId`, `priceCents`, `rooms/baths/m2`, `maxHuespedes`, `disponibleDesde/Hasta`, `city/barrio/entorno`, `registroNumero/Tipo`, `referenciaCatastral`, `slug` (unique), `photos`, `status` |
+| `bookings` | Reserva | `propertyId`, `renterId`, `ownerId`, `checkin/checkout`, `guests`, `status`, `garantiaOptada/ImporteCents/Estado` |
 | `reviews` | Valoración | `bookingId`, `kind` (`to_owner/to_renter`), `servicio/comunicacion/entorno/actitud`, `comment` |
 | `contacts` | Mensaje de contacto | `propertyId`, `renterId`, `ownerId` |
-| `subscriptions` | Membresía | `userId`, `plan`, `status`, `currentPeriodEnd`, `stripeSubId` |
+| `favorites` | Favoritos | `userId`, `propertyId` |
+| `conversations` | Chat (1 por piso+inquilino) | `propertyId`, `renterId`, `ownerId` |
+| `messages` | Mensaje (texto o imagen comprimida) | `conversationId`, `senderId`, `readAt` |
+| `subscriptions` | Membresía | `userId`, `plan`, `status`, `kind` (`standard/seasonal`), `currentPeriodEnd`, `stripeSubId` |
 | `plans` | Planes fijos (anual) | `plan`, `amountCents`, `interval`, `stripePriceId`, `maxListings` |
 | `fee_tiers` | Tramos de tarifa (mensual) | `minProps`, `maxProps`, `amountCents`, `label` |
 | `site_settings` | Ajustes (leyenda, contacto) | `key`, `value` |
@@ -71,12 +78,19 @@ Principio: **un dominio = un módulo**. Las rutas importan de `@/modules/*` y `@
 
 | Ruta | Método | Descripción |
 |------|--------|-------------|
-| `/api/properties` | GET/POST | Listar (filtros ciudad/barrio/entorno) / crear (exige plan dueño) |
-| `/api/properties/[id]` | PATCH | Editar (solo dueño) |
-| `/api/bookings` | POST | Crear reserva |
+| `/api/properties` | GET/POST | Listar (filtros ciudad/barrio/entorno) / crear (exige plan dueño + NRA) |
+| `/api/properties/[id]` | PATCH | Editar (solo dueño; activar exige NRA → `FALTA_REGISTRO`) |
+| `/api/bookings` | POST | Crear reserva (acepta `garantia: true`, canon recalculado en servidor) |
 | `/api/bookings/[id]` | PATCH | Aceptar/rechazar reserva |
 | `/api/reviews` | POST | Crear valoración (post-checkout) |
 | `/api/contacts` | GET/POST | Contacto (inquilinos gratis) |
+| `/api/chat` | GET/POST | Listar conversaciones / crear conversación |
+| `/api/chat/[id]` | GET/POST | Mensajes / enviar (texto o imagen) |
+| `/api/favoritos` | GET/POST/DELETE | Listar / toggle / quitar favorito |
+| `/api/garantia/config` | GET | Config pública de la garantía (para cotizar) |
+| `/api/garantia/checkout` | POST | Checkout Stripe del canon (pago único) |
+| `/api/reports/owner` | GET | CSV de reservas/ganancias del dueño |
+| `/api/reports/subscriptions` | GET | CSV de suscripciones (solo admin) |
 | `/api/checkout` | POST | Stripe Checkout (precio por tramo si es mensual) |
 | `/api/portal` | POST | Stripe Customer Portal |
 | `/api/webhooks/stripe` | POST | Sincronizar suscripciones |
@@ -88,7 +102,7 @@ Principio: **un dominio = un módulo**. Las rutas importan de `@/modules/*` y `@
 ## Autenticación y roles
 
 - **Clerk** gestiona login (email/social). `proxy.ts` es el middleware que protege rutas/API.
-- **Admin**: determinado por `ADMIN_EMAILS` (env) o `publicMetadata.role === "admin"` en Clerk (`modules/auth/guard.ts`). `requireAdmin()` devuelve 404 si no es admin.
+- **Admin**: determinado por `ADMIN_EMAILS` (env) o `publicMetadata.role` (`admin`/`superadmin`) en Clerk (`modules/auth/guard.ts`). `requireAdmin()` y `requireSuperAdmin()` devuelven 404 si no corresponde.
 - **Verificación de identidad**: el usuario sube DNI/pasaporte (`/mi-cuenta`), queda `pending`, el admin aprueba/rechaza (`decideVerification`), activando `dniVerified`.
 
 ## Pagos (Stripe)
@@ -97,6 +111,7 @@ Principio: **un dominio = un módulo**. Las rutas importan de `@/modules/*` y `@
 - **Mensual por tramos**: `fee_tiers`; el checkout calcula el tramo según los pisos activos del dueño y crea un price inline (`price_data`), así no hay que pre-crear un price por tramo.
 - **IVA**: `tax_behavior: "inclusive"`.
 - **Suscripción**: `mode: "subscription"`, `payment_method_types: ["card"]` (SEPA/Bizum pendientes).
+- **Garantía CasaRaiz (ruta A)**: opt-in en la reserva; canon = % del total con mín/tope (`site_settings garantia_*`); cobro único vía `POST /api/garantia/checkout`; el webhook (`metadata.tipo=garantia`) marca `pagada`. La prima se remite a la aseguradora colaboradora; la fianza legal (2 meses) sigue obligatoria.
 - Sincronización: webhook (`/api/webhooks/stripe`) + fallback en `/membresia/ok`.
 
 ## Valoraciones
@@ -108,7 +123,7 @@ Principio: **un dominio = un módulo**. Las rutas importan de `@/modules/*` y `@
 
 ## Despliegue
 
-- **Vercel**, dominio `casaraizalquiler.com` (nameservers apuntando a Vercel).
+- **Vercel**, dominio `casaraizalquiler.com` (propagado y activo; nameservers en Vercel).
 - Env en Vercel (no en el repo). `NEXT_PUBLIC_SITE_URL` apunta al dominio.
 - CI: `.github/workflows/ci.yml` (lint + tsc + build) en push/PR/tag.
 - Repos: `casaraiz` (público, remoto `origin`) y `casaraiz-privado` (remoto `privado`).
