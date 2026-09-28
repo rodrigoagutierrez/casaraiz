@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, smallint, timestamp, date, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, smallint, integer, boolean, timestamp, date, pgEnum } from "drizzle-orm/pg-core";
 import { users } from "../users/schema";
 import { properties } from "../properties/schema";
 
@@ -19,6 +19,11 @@ export const bookings = pgTable("bookings", {
   checkout: date("checkout").notNull(),
   guests: smallint("guests").notNull(),
   status: bookingStatusEnum("status").notNull().default("pending"),
+  garantiaOptada: boolean("garantia_optada").notNull().default(false),
+  garantiaImporteCents: integer("garantia_importe_cents"),
+  garantiaEstado: text("garantia_estado").notNull().default("ninguna"),
+  garantiaStripeSession: text("garantia_stripe_session"),
+  garantiaPagadaAt: timestamp("garantia_pagada_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

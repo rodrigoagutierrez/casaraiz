@@ -19,6 +19,7 @@ export type AuditAction =
   | "plan.updated"
   | "tariff.updated"
   | "booking.created"
+  | "garantia.pagada"
   | "booking.decided"
   | "review.created"
   | "review.reminder_sent"

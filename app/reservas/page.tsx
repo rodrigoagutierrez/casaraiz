@@ -9,6 +9,8 @@ import { getUserByClerkId } from "@/modules/users/queries";
 import { myPendingReviews } from "@/modules/bookings/queries";
 import { DecisionButtons } from "@/modules/bookings/components/DecisionButtons";
 import ReviewForm from "@/modules/bookings/components/ReviewForm";
+import PayGarantiaButton from "./PayGarantiaButton";
+import { eur } from "@/shared/utils/format";
 
 const STATUS: Record<string, string> = {
   pending: "Pendiente de confirmación",
@@ -17,11 +19,12 @@ const STATUS: Record<string, string> = {
   canceled: "Cancelada",
 };
 
-export default async function Reservas() {
+export default async function Reservas({ searchParams }: { searchParams: Promise<{ garantia?: string }> }) {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
   const me = await getUserByClerkId(userId);
   if (!me) redirect("/sign-in");
+  const { garantia } = await searchParams;
 
   const rows = await db.select().from(bookings).where(eq(bookings.renterId, me.id)).orderBy(desc(bookings.createdAt)).limit(100);
   const props = await db.select().from(properties);
@@ -35,6 +38,12 @@ export default async function Reservas() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
       <h1 className="text-3xl font-bold text-mar-950">Mis reservas</h1>
+
+      {garantia === "ok" && (
+        <p className="mt-4 rounded-2xl bg-green-100 p-4 text-sm text-green-800">
+          ✓ Pago de la garantía recibido. Quedará activa al confirmarse.
+        </p>
+      )}
 
       {mine.length > 0 && (
         <section className="mt-6 rounded-2xl border border-otono-600 bg-otono-100/40 p-5">
@@ -67,6 +76,19 @@ export default async function Reservas() {
                 {p ? <Link href={`/p/${p.slug}`} className="underline">{p.title}</Link> : "Piso"}
               </p>
               <p className="mt-1 text-mar-950/65">{b.checkin} → {b.checkout} · {b.guests} huésp. · {STATUS[b.status]}</p>
+              {b.garantiaOptada && (
+                <p className="mt-1 text-mar-950/65">
+                  Garantía:{" "}
+                  {b.garantiaEstado === "pagada" ? (
+                    <span className="font-semibold text-green-700">✓ activa</span>
+                  ) : (
+                    <span>
+                      pendiente ({b.garantiaImporteCents ? eur(b.garantiaImporteCents) : "—"}){" "}
+                      {b.status === "confirmed" && <PayGarantiaButton bookingId={b.id} />}
+                    </span>
+                  )}
+                </p>
+              )}
               {b.status === "confirmed" && o && (
                 <p className="mt-1 text-mar-950/65">Dueño: {o.email}{o.phone ? ` · ${o.phone}` : ""}</p>
               )}

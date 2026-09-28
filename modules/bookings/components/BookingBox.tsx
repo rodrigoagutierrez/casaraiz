@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SignInButton, useUser } from "@clerk/nextjs";
 
@@ -12,14 +12,37 @@ const ERRORS: Record<string, string> = {
   ES_TU_PISO: "Es tu propio piso.",
 };
 
+type GarCfg = { nombre: string; pct: number; minCents: number; maxCents: number | null; texto: string };
+
+function eur(c: number) {
+  return new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(c / 100);
+}
+
 // Solicitud de reserva temporal (el dueño la confirma)
-export default function BookingBox({ propertyId, maxHuespedes }: { propertyId: string; maxHuespedes: number }) {
+export default function BookingBox({ propertyId, maxHuespedes, priceCents }: { propertyId: string; maxHuespedes: number; priceCents: number }) {
   const { isSignedIn } = useUser();
   const [checkin, setCheckin] = useState("");
   const [checkout, setCheckout] = useState("");
   const [guests, setGuests] = useState(2);
+  const [garantia, setGarantia] = useState(false);
+  const [cfg, setCfg] = useState<GarCfg | null>(null);
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [msg, setMsg] = useState("");
+
+  useEffect(() => {
+    fetch("/api/garantia/config")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (j?.activa) setCfg(j);
+      })
+      .catch(() => {});
+  }, []);
+
+  const nights =
+    checkin && checkout && checkout > checkin
+      ? Math.max(1, Math.round((new Date(checkout).getTime() - new Date(checkin).getTime()) / 86400000))
+      : 0;
+  const quote = cfg && nights > 0 ? Math.min(Math.max(Math.round(((nights * priceCents * cfg.pct) / 100)), cfg.minCents), cfg.maxCents ?? Infinity) : null;
 
   if (!isSignedIn) {
     return (
@@ -42,7 +65,7 @@ export default function BookingBox({ propertyId, maxHuespedes }: { propertyId: s
       const res = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ propertyId, checkin, checkout, guests }),
+        body: JSON.stringify({ propertyId, checkin, checkout, guests, garantia }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -84,6 +107,16 @@ export default function BookingBox({ propertyId, maxHuespedes }: { propertyId: s
         </select>
       </label>
       {msg && <p className="col-span-2 text-xs text-otono-700">{msg}</p>}
+      {cfg && (
+        <label className="col-span-2 flex cursor-pointer items-start gap-2 rounded-xl border border-mar-100 bg-mar-50 p-3">
+          <input type="checkbox" checked={garantia} onChange={(e) => setGarantia(e.target.checked)} className="mt-0.5" />
+          <span className="text-xs text-mar-900">
+            <strong>{cfg.nombre}{quote !== null ? ` (+${eur(quote)})` : ""}</strong>
+            <br />
+            <span className="text-mar-950/60">{cfg.texto}</span>
+          </span>
+        </label>
+      )}
       <button disabled={state === "sending"} className="col-span-2 rounded-full bg-mar-900 py-2 text-sm text-white hover:bg-mar-800 disabled:opacity-50">
         {state === "sending" ? "Enviando..." : "Solicitar reserva"}
       </button>

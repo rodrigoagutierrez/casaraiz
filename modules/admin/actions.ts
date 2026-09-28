@@ -8,6 +8,7 @@ import { requireAdmin } from "@/modules/auth/guard";
 import { getUserByClerkId } from "@/modules/users/queries";
 import { logAudit } from "@/modules/audit/log";
 import { stripe } from "@/modules/billing/stripe";
+import { saveGuaranteeSettings as persistGuaranteeSettings } from "@/modules/billing/guarantee";
 
 async function adminActor() {
   const admin = await requireAdmin();
@@ -336,8 +337,7 @@ export async function deleteTier(id: string) {
   revalidatePath("/precios");
 }
 
-export async function saveTariffSettings(input: { legend: string; contactLabel: string; contactUrl: string }) {
-  const { actorId } = await adminActor();
+export async function saveTariffSettings(input: { legend: string; contactLabel: string; contactUrl: string }) {  const { actorId } = await adminActor();
   for (const [key, value] of Object.entries({
     tariff_legend: input.legend,
     tariff_contact_label: input.contactLabel,
@@ -370,4 +370,14 @@ export async function decideVerification(userId: string, approved: boolean, reas
   });
   revalidatePath(`/admin/usuarios/${userId}`);
   revalidatePath("/admin/usuarios");
+}
+
+export async function saveGuaranteeSettings(input: Record<string, string>) {
+  const { actorId } = await adminActor();
+  const allowed = ["garantia_activa", "garantia_nombre", "garantia_pct", "garantia_min_cents", "garantia_max_cents", "garantia_texto"];
+  const clean: Record<string, string> = {};
+  for (const k of allowed) if (input[k] !== undefined) clean[k] = input[k];
+  await persistGuaranteeSettings(clean);
+  await logAudit({ actorId, action: "tariff.updated", entity: "guarantee_settings", meta: clean });
+  revalidatePath("/admin/garantia");
 }

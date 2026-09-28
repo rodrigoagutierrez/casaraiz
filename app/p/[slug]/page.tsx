@@ -292,7 +292,7 @@ export default async function PisoPage({
             <p className="mt-1 text-xs text-mar-950/55">Sin comisiones · IVA incluido en membresía</p>
             <div className="mt-4 border-t border-mar-100 pt-4">
               <p className="text-sm font-medium text-mar-900">Tu estancia temporal</p>
-              <BookingBox propertyId={p.id} maxHuespedes={p.maxHuespedes} />
+              <BookingBox propertyId={p.id} maxHuespedes={p.maxHuespedes} priceCents={p.priceCents} />
             </div>
             <div className="mt-4 border-t border-mar-100 pt-4">
               <p className="text-sm font-medium text-mar-900">¿Dudas? Habla con el dueño</p>

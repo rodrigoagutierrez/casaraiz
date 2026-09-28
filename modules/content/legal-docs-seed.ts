@@ -34,7 +34,9 @@ Si el alquiler constituye hospedaje turístico, el dueño debe darse de alta en 
 
 8. Valoraciones: solo de estancias verificadas, sin compensación, con derecho de réplica. Ver Política de Reseñas.
 
-9. Baja y expulsión por fraude, anuncios falsos o acoso, sin reembolso.`,
+9. Garantía CasaRaiz (opcional): el inquilino puede contratar un canon único no reembolsable (% del total, con mínimo y tope publicados) que cubre impagos y daños a través de nuestra aseguradora colaboradora. CasaRaiz actúa como distribuidor colaborador; cobertura, exclusiones y reclamaciones según la póliza. No sustituye la fianza legal (2 mensualidades).
+
+10. Baja y expulsión por fraude, anuncios falsos o acoso, sin reembolso.`,
   },
   {
     slug: "privacidad",

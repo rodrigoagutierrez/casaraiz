@@ -6,6 +6,7 @@ import { properties } from "@/shared/db/schema";
 import { bookings } from "@/modules/bookings/schema";
 import { and, desc, eq, or, sql } from "drizzle-orm";
 import { getUserByClerkId } from "@/modules/users/queries";
+import { getGuaranteeConfig, quoteGuarantee, stayNights } from "@/modules/billing/guarantee";
 import { logAudit } from "@/modules/audit/log";
 
 const createSchema = z.object({
@@ -13,6 +14,7 @@ const createSchema = z.object({
   checkin: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   checkout: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   guests: z.number().int().min(1).max(16),
+  garantia: z.boolean().optional(),
 });
 
 // GET /api/bookings — mis reservas (como inquilino y como dueño)
@@ -37,7 +39,7 @@ export async function POST(req: NextRequest) {
 
   const parsed = createSchema.safeParse(await req.json());
   if (!parsed.success) return NextResponse.json({ error: "DATOS_INVALIDOS" }, { status: 400 });
-  const { propertyId, checkin, checkout, guests } = parsed.data;
+  const { propertyId, checkin, checkout, guests, garantia } = parsed.data;
   if (checkout <= checkin) return NextResponse.json({ error: "FECHAS_INVALIDAS" }, { status: 400 });
 
   const me = await getUserByClerkId(userId);
@@ -65,9 +67,29 @@ export async function POST(req: NextRequest) {
     .limit(1);
   if (clash.length > 0) return NextResponse.json({ error: "NO_DISPONIBLE" }, { status: 409 });
 
+  // Canon de garantía: se recalcula en servidor (no se fía del cliente)
+  let garantiaImporte: number | null = null;
+  if (garantia) {
+    const cfg = await getGuaranteeConfig().catch(() => null);
+    if (cfg?.activa) {
+      garantiaImporte = quoteGuarantee(stayNights(checkin, checkout) * prop.priceCents, cfg);
+    }
+  }
+
   const [created] = await db
     .insert(bookings)
-    .values({ propertyId, renterId: me.id, ownerId: prop.ownerId, checkin, checkout, guests, status: "pending" })
+    .values({
+      propertyId,
+      renterId: me.id,
+      ownerId: prop.ownerId,
+      checkin,
+      checkout,
+      guests,
+      status: "pending",
+      ...(garantiaImporte !== null
+        ? { garantiaOptada: true, garantiaImporteCents: garantiaImporte, garantiaEstado: "pendiente_pago" }
+        : {}),
+    })
     .returning();
 
   await logAudit({
@@ -76,7 +98,7 @@ export async function POST(req: NextRequest) {
     action: "booking.created",
     entity: "booking",
     entityId: created.id,
-    meta: { propertyId, checkin, checkout, guests },
+    meta: { propertyId, checkin, checkout, guests, garantiaCents: garantiaImporte },
   });
 
   return NextResponse.json({ data: created }, { status: 201 });
