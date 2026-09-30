@@ -105,7 +105,7 @@ Notas:
 
 ## 7. Colores / tema
 
-Paleta en `app/globals.css` (`@theme`): **azul mar** (`--color-mar-*`, `#062640`–`#eff6fb`) y **naranja otoño** (`--color-otono-*`, acento `#bc5f1a`). Fondo `#f2f7fb`. No usar "coral" (desapareció). Logo: `public/logo.png` (header, con transparencia) + `app/icon.png` (favicon, recorte cuadrado). Hero: `public/hero.avif` (+ `hero.webp` fallback) con efecto Ken Burns **solo en desktop** (`.kenburns` en globals.css, respeta `prefers-reduced-motion`). Navbar sticky con buscador compacto al hacer scroll (segunda fila en móvil).
+Paleta en `app/globals.css` (`@theme`): **azul mar** (`--color-mar-*`, `#062640`–`#eff6fb`) y **naranja otoño** (`--color-otono-*`, acento `#bc5f1a`). Fondo `#f2f7fb`. No usar "coral" (desapareció). Logo: `public/logo.png` (header, con transparencia, tipografía Quicksand en la imagen) + `app/icon.png` (favicon monograma CR, recorte cuadrado); fuentes originales en `public/brand/*.svg`. Hero: `public/hero.avif` (+ `hero.webp` fallback) con efecto Ken Burns **solo en desktop** (`.kenburns` en globals.css, respeta `prefers-reduced-motion`). Navbar sticky con buscador compacto al hacer scroll (segunda fila en móvil).
 
 ## 8. Verificación de cambios
 
