@@ -26,8 +26,22 @@ export default function CategoryRow() {
     { label: t["cat.mapa"], href: "/mapa", match: "__mapa", key: "mapa", svg: icon(<><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></>) },
   ];
 
+  const filtrosBtn = (className: string) => (
+    <Link
+      href="/buscar"
+      className={`flex h-11 shrink-0 items-center gap-2 rounded-full bg-otono-600 px-4 py-2 text-sm font-medium text-white hover:bg-otono-700 sm:px-5 ${className}`}
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <path d="M4 8h10M18 8h2M4 16h2M10 16h10" />
+        <circle cx="16" cy="8" r="2" />
+        <circle cx="8" cy="16" r="2" />
+      </svg>
+      {t["cat.filtros"]}
+    </Link>
+  );
+
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-start gap-3">
       <div className="flex flex-1 snap-x snap-proximity scroll-px-4 items-start justify-start gap-4 overflow-x-auto px-1 py-2 sm:justify-between sm:gap-2 [scrollbar-width:thin]">
         {CATS.map((c) => {
           const on = active === c.match && c.match !== "";
@@ -36,7 +50,7 @@ export default function CategoryRow() {
               key={c.key}
               href={c.href}
               aria-current={on ? "true" : undefined}
-              className={`flex min-h-[64px] min-w-[60px] shrink-0 snap-start flex-col items-center justify-start gap-1.5 text-[11px] sm:text-xs ${
+              className={`flex min-h-[64px] shrink-0 snap-start flex-col items-center justify-start gap-1.5 text-[11px] sm:text-xs ${
                 on ? "font-bold text-otono-700" : "font-medium text-otono-700/80 hover:text-otono-700"
               }`}
             >
@@ -51,18 +65,9 @@ export default function CategoryRow() {
             </Link>
           );
         })}
+        {filtrosBtn("mt-[3px] hidden sm:flex")}
       </div>
-      <Link
-        href="/buscar"
-        className="ml-1 flex h-11 shrink-0 items-center gap-2 rounded-full bg-otono-600 px-4 py-2 text-sm font-medium text-white hover:bg-otono-700 sm:ml-3 sm:px-5"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <path d="M4 8h10M18 8h2M4 16h2M10 16h10" />
-          <circle cx="16" cy="8" r="2" />
-          <circle cx="8" cy="16" r="2" />
-        </svg>
-        {t["cat.filtros"]}
-      </Link>
+      {filtrosBtn("ml-1 mt-[11px] sm:hidden")}
     </div>
   );
 }
