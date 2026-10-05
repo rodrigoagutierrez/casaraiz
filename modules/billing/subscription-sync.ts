@@ -2,7 +2,7 @@ import Stripe from "stripe";
 import { db } from "@/shared/db/client";
 import { subscriptions } from "./schema";
 import { eq } from "drizzle-orm";
-import { mapSubStatus, type PlanId } from "./stripe";
+import { mapSubStatus, subPeriodEnd, type PlanId } from "./stripe";
 import { logAudit } from "@/modules/audit/log";
 
 // Idempotente: lo usan el webhook y la página /membresia/ok
@@ -10,7 +10,7 @@ export async function upsertFromSubscription(sub: Stripe.Subscription) {
   const userId = sub.metadata?.userId as string | undefined;
   const plan = (sub.metadata?.plan ?? "renter_monthly") as PlanId;
   if (!userId) return;
-  const periodEnd = (sub as unknown as { current_period_end?: number }).current_period_end;
+  const periodEnd = subPeriodEnd(sub);
 
   const values = {
     userId,

@@ -32,3 +32,12 @@ export function mapSubStatus(s: Stripe.Subscription.Status): SubStatus {
       return "incomplete";
   }
 }
+
+// Fin de periodo (unix). Cuentas Stripe con API >= 2025-03 lo traen en los items,
+// no en la suscripción; las viejas en el nivel superior.
+export function subPeriodEnd(sub: Stripe.Subscription): number | undefined {
+  const legacy = (sub as unknown as { current_period_end?: number }).current_period_end;
+  if (legacy) return legacy;
+  const item = sub.items?.data?.[0] as unknown as { current_period_end?: number } | undefined;
+  return item?.current_period_end;
+}

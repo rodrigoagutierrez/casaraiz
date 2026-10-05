@@ -7,7 +7,7 @@ import { feeTiers, legalDocs, plans, siteSettings, subscriptions, users } from "
 import { requireAdmin } from "@/modules/auth/guard";
 import { getUserByClerkId } from "@/modules/users/queries";
 import { logAudit } from "@/modules/audit/log";
-import { stripe } from "@/modules/billing/stripe";
+import { stripe, subPeriodEnd } from "@/modules/billing/stripe";
 import { saveGuaranteeSettings as persistGuaranteeSettings } from "@/modules/billing/guarantee";
 
 async function adminActor() {
@@ -220,7 +220,7 @@ export async function createCustomSubscription(
     .from(subscriptions)
     .where(eq(subscriptions.stripeSubId, sub.id))
     .limit(1);
-  const periodEnd = (sub as unknown as { current_period_end?: number }).current_period_end;
+  const periodEnd = subPeriodEnd(sub);
   const values = {
     userId,
     stripeCustomerId: customerId,
