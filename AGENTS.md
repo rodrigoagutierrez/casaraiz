@@ -10,7 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # AGENTS.md — CasaRaiz (contexto para agentes)
 
-> Lee esto al abrir el proyecto. Resume TODO lo necesario para trabajar sin re-explorar el código.
+> Lee esto al abrir el proyecto. Resume TODO lo necesario para trabajar sin re-explorar el código. `README.md` y `docs/*` pueden estar desfasados: ante duda, manda el código.
 
 ## 1. Qué es CasaRaiz
 
@@ -101,6 +101,8 @@ Regla: código nuevo va en su módulo; las rutas solo importan de `@/modules/*` 
 Notas:
 - `STRIPE_PRICE_RENTER_MONTHLY` ya NO se usa (inquilinos gratis); queda en `.env.example` por compat.
 - `RESEND_API_KEY` y `NEXT_PUBLIC_MAPBOX_TOKEN` son obsoletas (se usa Brevo y OSM/Leaflet).
+- **`NEXT_PUBLIC_SITE_URL` es crítico**: define success/cancel/portal URLs de Stripe. Vercel prod = `https://casaraizalquiler.com`; en preview NO existe (se usa `x-forwarded-host` de la request); `.env.local` = `http://localhost:3000`. Como `NEXT_PUBLIC_*` se inlinea en build, cambiarla exige redeploy.
+- `vercel env pull` **redacta secretos** (`[SENSITIVE]`); `.env.local` contiene las mismas claves que prod (ambos se actualizan juntos).
 - **Jamás** pongas secretos en archivos del repo; solo en `.env.local` (gitignored). Las claves reales están en Vercel env.
 
 ## 7. Colores / tema
@@ -109,21 +111,26 @@ Paleta en `app/globals.css` (`@theme`): **azul mar** (`--color-mar-*`, `#062640`
 
 ## 8. Verificación de cambios
 
-Siempre, antes de terminar:
+Siempre, antes de terminar (es EXACTAMENTE lo que corre CI en `ci.yml`, con envs dummy):
 ```bash
 npm run lint && npx tsc --noEmit && npm run build
 ```
 Y si toqué schema: `npm run db:generate && npm run db:migrate` (con `.env.local` cargado).
 
+Testing:
+- Usuarios de prueba: `npx tsx scripts/create-test-users.ts` (Clerk) — `dueno@` / `cliente@casaraizalquiler.com`, password `CasaRaiz2026Segura!` (está en la script). `scripts/setup-test-env.ts` crea sus filas DB + plan al dueño.
+- `npx tsx scripts/test-e2e-flows.ts` cubre flujos de datos (publicar, contactar, chat, reservas, reseñas); **NO** cubre checkout.
+- E2E de pago (manual): login en prod → `/precios` → tarjeta test `4242 4242 4242 4242` (exp `12/34`, cvc `123`). OJO: Clerk pide OTP "nuevo dispositivo" en sign-in automatizado — bypass: `POST /v1/sign_in_tokens` con `CLERK_SECRET_KEY` → navegar a `/sign-in?__clerk_ticket=<token>`.
+
 ## 9. Estado actual / pendientes
 
-**Hecho**: MVP completo y en producción (`casaraizalquiler.com`, DNS propagado) — búsqueda temporal (fechas+huéspedes), categorías por entorno, mapa, publicar/editar con NRA obligatorio, reservas, valoraciones bidireccionales, verificación de identidad, chat con imágenes, favoritos, garantía opcional (ruta A), panel admin (usuarios, gestiones, suscripciones, tarifas por tramos, garantía, documentos, informes) + panel dueño (mis pisos, informes), tarifas por tramos, recordatorio 24h (cron + Brevo real), i18n ES/EN, navbar sticky con buscador compacto, hero AVIF + pass de rendimiento (next.config, leaflet solo en /mapa, /buscar a 24 + skeleton), SEO (sitemap, robots, JSON-LD, ciudades programáticas, /comparativa), CI (GitHub Actions), logo PNG.
+**Hecho**: MVP completo y en producción (`casaraizalquiler.com`, DNS propagado) — búsqueda temporal (fechas+huéspedes), categorías por entorno, mapa, publicar/editar con NRA obligatorio, reservas, valoraciones bidireccionales, verificación de identidad, chat con imágenes, favoritos, garantía opcional (ruta A), panel admin (usuarios, gestiones, suscripciones, tarifas por tramos, garantía, documentos, informes) + panel dueño (mis pisos, informes), tarifas por tramos, recordatorio 24h (cron + Brevo real), i18n ES/EN, navbar sticky con buscador compacto, hero AVIF + pass de rendimiento (next.config, leaflet solo en /mapa, /buscar a 24 + skeleton), SEO (sitemap, robots, JSON-LD, ciudades programáticas, /comparativa), CI (GitHub Actions), logo PNG, **E2E Stripe en modo test verificado** (checkout anual+mensual con tarjeta 4242 → webhook → alta en BD → cancelación → baja).
 
 **Pendientes conocidos**:
-1. **Fotos reales**: subida usa `/api/upload` con presigned R2, pero R2 no está activado (devuelve 503 → el formulario acepta URLs manuales). Los seeds usan `picsum.photos`.
-2. **Stripe en modo test/sandbox**: prod usa claves `pk_test`/`sk_test` de una cuenta sandbox sin activar (`charges_enabled=false`, onboarding no hecho) → no cobra dinero real. Webhook YA configurado (`we_1UN63a2…`, eventos: checkout.session.completed, subscription.updated/deleted, invoice.payment_failed; `STRIPE_WEBHOOK_SECRET` en Vercel). Para live: cuenta Stripe real + claves live en Vercel + nuevo webhook live + `business_profile` (solo dashboard).
+1. **Fotos reales**: subida usa `/api/upload` con presigned R2, pero R2 no está activado (devuelve 503 → el formulario acepta URLs manuales). Los seeds usan `picsum.photos`. Config R2 preparada en `wrangler.toml` (bindings comentados).
+2. **Stripe en modo test, pendiente live**: prod usa claves test de la cuenta **CasaRaiz** (`acct_1UN6PvGxVaX3Ymfd`, "Entorno de prueba de CasaRaiz", ES/EUR, `charges_enabled=false` → sin cobros reales). Webhook test `we_1UN6lWGx…` (checkout.session.completed, subscription.updated/deleted, invoice.payment_failed) con `STRIPE_WEBHOOK_SECRET` en Vercel+.env.local. **Para live**: (a) onboarding en el dashboard → claves `pk_live`/`sk_live` y verificar con `GET /v1/account` que la sk es de ESTA cuenta (la pk_live `51UN6PpK…` recibida parece de otra); (b) precios en modo live — **test y live NO comparten prices**: solo hace falta el anual (`STRIPE_PRICE_OWNER_YEARLY` + fila `plans.stripe_price_id` en BD; el mensual es inline) — con `npx tsx scripts/create-stripe-prices.ts` usando la sk_live; (c) webhook nuevo creado con sk_live; (d) envs Vercel (prod+preview) + `.env.local` → redeploy. `business_profile` solo editable en dashboard. La cuenta sandbox anterior quedó inerte.
 3. ~~**CRON_SECRET**~~ Hecho: secretos en Vercel (prod+preview) y `.env.local`; el endpoint es fail-closed (503 sin env, 401 sin `Bearer`). Vercel Cron envía el header automático.
-4. **Dominios**: Clerk ✓ (`casaraizalquiler.com` añadido como dominio satélite). Pendiente solo Stripe settings (dashboard, ver punto 2).
+4. **Dominios**: Clerk ✓ (`casaraizalquiler.com` como dominio satélite). Stripe settings (business_profile) pendiente de dashboard → ver punto 2.
 5. **Calendario noche a noche**: las fechas filtran por ventana del dueño (`disponibleDesde/Hasta`), no hay calendario de reservas por día.
 6. **Geocoding** vía Nominatim (gratis, sin API key), limitado a España.
 
@@ -134,4 +141,5 @@ Y si toqué schema: `npm run db:generate && npm run db:migrate` (con `.env.local
 - `auth()` es async (Clerk v7): `const { userId } = await auth()`.
 - Server actions en `modules/*/actions.ts` con `"use server"`.
 - `logAudit(...)` para cualquier acción sensible (ver tipos en `modules/audit/log.ts`).
-- Deploy: `git push` a `origin` (público) y `privado`, luego `npx vercel --prod`.
+- **Stripe**: al leer fin de periodo de una suscripción usar `subPeriodEnd(sub)` (`modules/billing/stripe.ts`) — la API de Stripe ≥2025-03 (cuentas nuevas) trae `current_period_end` en `items`, no en la suscripción (con la API vieja quedaba `null` en BD).
+- Deploy: `git push` a `origin` (público) y `privado` **no despliega** (Vercel no está conectado a GitHub); hacer `npx vercel --prod`.
