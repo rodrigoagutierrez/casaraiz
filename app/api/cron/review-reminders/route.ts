@@ -10,7 +10,8 @@ import { logAudit } from "@/modules/audit/log";
 // finalizadas en las últimas 24h. Protegido por CRON_SECRET.
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET;
-  if (secret && req.headers.get("authorization") !== `Bearer ${secret}`) {
+  if (!secret) return NextResponse.json({ error: "CRON_NO_CONFIGURADO" }, { status: 503 });
+  if (req.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 

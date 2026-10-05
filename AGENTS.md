@@ -121,9 +121,9 @@ Y si toqué schema: `npm run db:generate && npm run db:migrate` (con `.env.local
 
 **Pendientes conocidos**:
 1. **Fotos reales**: subida usa `/api/upload` con presigned R2, pero R2 no está activado (devuelve 503 → el formulario acepta URLs manuales). Los seeds usan `picsum.photos`.
-2. **Webhook Stripe**: `STRIPE_WEBHOOK_SECRET` no configurado en prod; `/membresia/ok` sincroniza sin webhook.
-3. **CRON_SECRET** sin configurar (endpoint `/api/cron/review-reminders` responde 200 sin secret).
-4. **Dominio en Clerk/Stripe**: añadir `casaraizalquiler.com` en Clerk (Domains) y Stripe settings.
+2. **Stripe en modo test/sandbox**: prod usa claves `pk_test`/`sk_test` de una cuenta sandbox sin activar (`charges_enabled=false`, onboarding no hecho) → no cobra dinero real. Webhook YA configurado (`we_1UN63a2…`, eventos: checkout.session.completed, subscription.updated/deleted, invoice.payment_failed; `STRIPE_WEBHOOK_SECRET` en Vercel). Para live: cuenta Stripe real + claves live en Vercel + nuevo webhook live + `business_profile` (solo dashboard).
+3. ~~**CRON_SECRET**~~ Hecho: secretos en Vercel (prod+preview) y `.env.local`; el endpoint es fail-closed (503 sin env, 401 sin `Bearer`). Vercel Cron envía el header automático.
+4. **Dominios**: Clerk ✓ (`casaraizalquiler.com` añadido como dominio satélite). Pendiente solo Stripe settings (dashboard, ver punto 2).
 5. **Calendario noche a noche**: las fechas filtran por ventana del dueño (`disponibleDesde/Hasta`), no hay calendario de reservas por día.
 6. **Geocoding** vía Nominatim (gratis, sin API key), limitado a España.
 
