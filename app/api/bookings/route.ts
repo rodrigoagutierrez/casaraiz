@@ -49,8 +49,11 @@ export async function POST(req: NextRequest) {
   if (!prop || prop.status !== "active") return NextResponse.json({ error: "PISO_NO_DISPONIBLE" }, { status: 404 });
   if (prop.ownerId === me.id) return NextResponse.json({ error: "ES_TU_PISO" }, { status: 400 });
   if (guests > prop.maxHuespedes) return NextResponse.json({ error: "EXCEDE_CAPACIDAD", max: prop.maxHuespedes }, { status: 400 });
-  if (prop.disponibleDesde && checkout < prop.disponibleDesde) return NextResponse.json({ error: "FUERA_DE_TEMPORADA" }, { status: 400 });
-  if (prop.disponibleHasta && checkin > prop.disponibleHasta) return NextResponse.json({ error: "FUERA_DE_TEMPORADA" }, { status: 400 });
+  // Ventana del dueño: TODAS las noches [checkin, checkout) dentro de [desde, hasta]
+  const lastNight = new Date(`${checkout}T00:00:00Z`).getTime() - 86400000;
+  const lastNightStr = new Date(lastNight).toISOString().slice(0, 10);
+  if (prop.disponibleDesde && checkin < prop.disponibleDesde) return NextResponse.json({ error: "FUERA_DE_TEMPORADA" }, { status: 400 });
+  if (prop.disponibleHasta && lastNightStr > prop.disponibleHasta) return NextResponse.json({ error: "FUERA_DE_TEMPORADA" }, { status: 400 });
 
   // Solape con otras reservas vivas del mismo piso
   const clash = await db

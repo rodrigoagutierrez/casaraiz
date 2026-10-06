@@ -30,7 +30,7 @@ Marketplace de **alquiler temporal** (media estancia) en España, **sin comision
 
 ```
 app/            # Rutas Next.js (delgadas: solo orquestan)
-  api/          # Route handlers (REST): properties, bookings, reviews, contacts, chat,
+  api/          # Route handlers (REST): properties, bookings, availability, reviews, contacts, chat,
                 # favoritos, checkout, portal, garantia, reports, upload, mis-pisos,
                 # webhooks/stripe, cron/review-reminders, admin/me
   admin/        # Panel admin (/admin/*): panel, usuarios, gestiones, suscripciones,
@@ -44,7 +44,7 @@ modules/        # CÓDIGO REAL por dominio
   properties/   schema + validation + geocode + componentes (SearchBar, CompactSearch,
                 PropertyCard, FavButton, FiltersBar, CategoryRow, Map, PropertiesMap,
                 DescriptionBlock)
-  bookings/     schema (bookings + reviews) + queries (ratings) + componentes (BookingBox, ReviewForm, Stars, DecisionButtons)
+  bookings/     schema (bookings + reviews) + queries (ratings) + componentes (BookingBox, NightCalendar, ReviewForm, Stars, DecisionButtons)
   billing/      schema (plans, fee_tiers, site_settings) + stripe + fees + plans + guarantee + components
   contacts/     schema + ContactBox
   chat/         schema (conversations, messages) + queries + componentes (ChatButton, ChatThread)
@@ -131,7 +131,7 @@ Testing:
 2. **Stripe en modo test, pendiente live**: prod usa claves test de la cuenta **CasaRaiz** (`acct_1UN6PvGxVaX3Ymfd`, "Entorno de prueba de CasaRaiz", ES/EUR, `charges_enabled=false` → sin cobros reales). Webhook test `we_1UN6lWGx…` (checkout.session.completed, subscription.updated/deleted, invoice.payment_failed) con `STRIPE_WEBHOOK_SECRET` en Vercel+.env.local. **Para live**: (a) onboarding en el dashboard → claves `pk_live`/`sk_live` y verificar con `GET /v1/account` que la sk es de ESTA cuenta (la pk_live `51UN6PpK…` recibida parece de otra); (b) precios en modo live — **test y live NO comparten prices**: solo hace falta el anual (`STRIPE_PRICE_OWNER_YEARLY` + fila `plans.stripe_price_id` en BD; el mensual es inline) — con `npx tsx scripts/create-stripe-prices.ts` usando la sk_live; (c) webhook nuevo creado con sk_live; (d) envs Vercel (prod+preview) + `.env.local` → redeploy. `business_profile` solo editable en dashboard. La cuenta sandbox anterior quedó inerte.
 3. ~~**CRON_SECRET**~~ Hecho: secretos en Vercel (prod+preview) y `.env.local`; el endpoint es fail-closed (503 sin env, 401 sin `Bearer`). Vercel Cron envía el header automático.
 4. **Dominios**: Clerk ✓ (`casaraizalquiler.com` como dominio satélite). Stripe settings (business_profile) pendiente de dashboard → ver punto 2.
-5. **Calendario noche a noche**: las fechas filtran por ventana del dueño (`disponibleDesde/Hasta`), no hay calendario de reservas por día.
+5. ~~**Calendario noche a noche**~~ Hecho: `BookingBox` incluye `NightCalendar` (`modules/bookings/components/`) — rejilla mensual con noches `reserva` (pending/confirmed) / `temporada` (fuera de `disponibleDesde/Hasta`) / pasado, selección check-in→check-out que se reinicia si cruza un bloqueo. Datos vía `GET /api/availability?propertyId&from&to` (pública, ≤400 días, fechas inválidas → 400). `POST /api/bookings` ahora exige que TODAS las noches `[checkin, checkout)` estén dentro de la ventana (antes permitía noches parciales).
 6. **Geocoding** vía Nominatim (gratis, sin API key), limitado a España.
 
 ## 10. Convenciones rápidas

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SignInButton, useUser } from "@clerk/nextjs";
+import NightCalendar from "./NightCalendar";
 
 const ERRORS: Record<string, string> = {
   NO_DISPONIBLE: "Esas fechas ya están reservadas. Prueba otras.",
@@ -94,11 +95,31 @@ export default function BookingBox({ propertyId, maxHuespedes, priceCents }: { p
   return (
     <form onSubmit={send} className="mt-3 grid grid-cols-2 gap-2">
       <label className="text-xs text-mar-900">Check-in
-        <input type="date" required value={checkin} onChange={(e) => setCheckin(e.target.value)} className={`${input} mt-1`} />
+        <input
+          type="date"
+          required
+          value={checkin}
+          onChange={(e) => {
+            setCheckin(e.target.value);
+            if (e.target.value && checkout && e.target.value >= checkout) setCheckout("");
+          }}
+          className={`${input} mt-1`}
+        />
       </label>
       <label className="text-xs text-mar-900">Check-out
         <input type="date" required min={checkin || undefined} value={checkout} onChange={(e) => setCheckout(e.target.value)} className={`${input} mt-1`} />
       </label>
+      <div className="col-span-2 mt-2 rounded-xl border border-mar-100 bg-white p-3">
+        <NightCalendar
+          propertyId={propertyId}
+          checkin={checkin}
+          checkout={checkout}
+          onChange={(a, b) => {
+            setCheckin(a);
+            setCheckout(b);
+          }}
+        />
+      </div>
       <label className="col-span-2 text-xs text-mar-900">Huéspedes (máx. {maxHuespedes})
         <select value={guests} onChange={(e) => setGuests(Number(e.target.value))} className={`${input} mt-1`}>
           {Array.from({ length: Math.min(maxHuespedes, 16) }, (_, i) => i + 1).map((n) => (
