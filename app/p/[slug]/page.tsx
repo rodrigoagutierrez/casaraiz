@@ -20,12 +20,20 @@ import { getPropertyRating, getPropertyReviews } from "@/modules/bookings/querie
 import DescriptionBlock from "@/modules/properties/components/DescriptionBlock";
 import { JsonLd } from "@/modules/seo/JsonLd";
 
+function decodeSlug(raw: string): string {
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const slug = decodeSlug((await params).slug);
   try {
     const [p] = await db.select().from(properties).where(eq(properties.slug, slug)).limit(1);
     if (!p) return {};
@@ -50,7 +58,8 @@ export default async function PisoPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeSlug(rawSlug);
   let p: typeof properties.$inferSelect | undefined;
   try {
     [p] = await db.select().from(properties).where(eq(properties.slug, slug)).limit(1);
