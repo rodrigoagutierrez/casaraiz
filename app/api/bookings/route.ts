@@ -55,21 +55,6 @@ export async function POST(req: NextRequest) {
   if (prop.disponibleDesde && checkin < prop.disponibleDesde) return NextResponse.json({ error: "FUERA_DE_TEMPORADA" }, { status: 400 });
   if (prop.disponibleHasta && lastNightStr > prop.disponibleHasta) return NextResponse.json({ error: "FUERA_DE_TEMPORADA" }, { status: 400 });
 
-  // Solape con otras reservas vivas del mismo piso
-  const clash = await db
-    .select({ id: bookings.id })
-    .from(bookings)
-    .where(
-      and(
-        eq(bookings.propertyId, propertyId),
-        sql`${bookings.status} in ('pending','confirmed')`,
-        sql`${bookings.checkin} < ${checkout}`,
-        sql`${bookings.checkout} > ${checkin}`
-      )
-    )
-    .limit(1);
-  if (clash.length > 0) return NextResponse.json({ error: "NO_DISPONIBLE" }, { status: 409 });
-
   // Canon de garantía: se recalcula en servidor (no se fía del cliente)
   let garantiaImporte: number | null = null;
   if (garantia) {
@@ -79,30 +64,55 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const [created] = await db
-    .insert(bookings)
-    .values({
-      propertyId,
-      renterId: me.id,
-      ownerId: prop.ownerId,
-      checkin,
-      checkout,
-      guests,
-      status: "pending",
-      ...(garantiaImporte !== null
-        ? { garantiaOptada: true, garantiaImporteCents: garantiaImporte, garantiaEstado: "pendiente_pago" }
-        : {}),
-    })
-    .returning();
+  // Solape con otras reservas vivas del mismo piso.
+  // Serializado por piso (FOR UPDATE) para cerrar la carrera check-then-insert (SOC2 CC8.1).
+  try {
+    const created = await db.transaction(async (tx) => {
+      await tx.select({ id: properties.id }).from(properties).where(eq(properties.id, propertyId)).for("update");
+      const clash = await tx
+        .select({ id: bookings.id })
+        .from(bookings)
+        .where(
+          and(
+            eq(bookings.propertyId, propertyId),
+            sql`${bookings.status} in ('pending','confirmed')`,
+            sql`${bookings.checkin} < ${checkout}`,
+            sql`${bookings.checkout} > ${checkin}`
+          )
+        )
+        .limit(1);
+      if (clash.length > 0) return null;
+      const [row] = await tx
+        .insert(bookings)
+        .values({
+          propertyId,
+          renterId: me.id,
+          ownerId: prop.ownerId,
+          checkin,
+          checkout,
+          guests,
+          status: "pending",
+          ...(garantiaImporte !== null
+            ? { garantiaOptada: true, garantiaImporteCents: garantiaImporte, garantiaEstado: "pendiente_pago" }
+            : {}),
+        })
+        .returning();
+      return row;
+    });
+    if (!created) return NextResponse.json({ error: "NO_DISPONIBLE" }, { status: 409 });
 
-  await logAudit({
-    actorId: me.id,
-    targetUserId: me.id,
-    action: "booking.created",
-    entity: "booking",
-    entityId: created.id,
-    meta: { propertyId, checkin, checkout, guests, garantiaCents: garantiaImporte },
-  });
+    await logAudit({
+      actorId: me.id,
+      targetUserId: me.id,
+      action: "booking.created",
+      entity: "booking",
+      entityId: created.id,
+      meta: { propertyId, checkin, checkout, guests, garantiaCents: garantiaImporte },
+    });
 
-  return NextResponse.json({ data: created }, { status: 201 });
+    return NextResponse.json({ data: created }, { status: 201 });
+  } catch (e) {
+    console.error("booking create txn:", e);
+    return NextResponse.json({ error: "ERROR_CREAR_RESERVA" }, { status: 500 });
+  }
 }

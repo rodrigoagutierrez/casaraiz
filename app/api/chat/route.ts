@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   if (!me) return NextResponse.json({ error: "SIN_PERFIL" }, { status: 404 });
 
   const [prop] = await db.select().from(properties).where(eq(properties.id, parsed.data.propertyId)).limit(1);
-  if (!prop) return NextResponse.json({ error: "PISO_NO_ENCONTRADO" }, { status: 404 });
+  if (!prop || prop.status !== "active") return NextResponse.json({ error: "PISO_NO_DISPONIBLE" }, { status: 404 });
   if (prop.ownerId === me.id) return NextResponse.json({ error: "ES_TU_PISO" }, { status: 400 });
 
   const conv = await getOrCreateConversation(prop.id, me.id, prop.ownerId);

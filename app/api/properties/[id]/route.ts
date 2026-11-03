@@ -5,6 +5,7 @@ import { db } from "@/shared/db/client";
 import { properties } from "@/shared/db/schema";
 import { and, eq } from "drizzle-orm";
 import { getUserByClerkId } from "@/modules/users/queries";
+import { getPublishCapacity } from "@/modules/billing/plans";
 import { geocodeSpain } from "@/modules/properties/geocode";
 import { logAudit } from "@/modules/audit/log";
 
@@ -21,7 +22,7 @@ const patchSchema = z.object({
   address: z.string().max(200).optional(),
   barrio: z.string().min(2).max(60).optional(),
   city: z.string().min(2).max(80).optional(),
-  registroNumero: z.string().min(4).max(60).optional(),
+  registroNumero: z.string().trim().min(4).max(60).optional(),
   registroTipo: z.enum(["temporada", "vut"]).optional(),
   referenciaCatastral: z.string().max(30).nullable().optional(),
   entorno: z.enum(["playa", "montana", "bosque", "ciudad", "rio"]).optional(),
@@ -52,6 +53,19 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const nextStatus = (rest as { status?: string }).status ?? prop.status;
   if (nextStatus === "active" && !nextRegistro) {
     return NextResponse.json({ error: "FALTA_REGISTRO" }, { status: 400 });
+  }
+  // Reactivar a active consume cuota igual que publicar (SOC2 CC6.1)
+  if (nextStatus === "active" && prop.status !== "active") {
+    const cap = await getPublishCapacity(me.id);
+    if (!cap.hasRights) {
+      return NextResponse.json({ error: "NEED_OWNER_PLAN" }, { status: 403 });
+    }
+    if (!cap.canPublish) {
+      return NextResponse.json(
+        { error: "LIMIT_REACHED", limit: cap.limit, used: cap.used },
+        { status: 403 }
+      );
+    }
   }
 
   const patch: Record<string, unknown> = {

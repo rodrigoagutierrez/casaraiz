@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, smallint, integer, boolean, timestamp, date, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, smallint, integer, boolean, timestamp, date, pgEnum, unique } from "drizzle-orm/pg-core";
 import { users } from "../users/schema";
 import { properties } from "../properties/schema";
 
@@ -48,4 +48,6 @@ export const reviews = pgTable("reviews", {
   actitud: smallint("actitud"),
   comment: text("comment"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (t) => [
+  unique("uniq_review_booking_kind").on(t.bookingId, t.kind),
+]);

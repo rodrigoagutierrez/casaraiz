@@ -39,7 +39,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const parsed = z
     .object({
       text: z.string().max(4000).optional(),
-      image: z.string().startsWith("data:image/").max(MAX_IMAGE_CHARS).optional(),
+      // Solo fotos reales (jpeg/png/webp/gif); svg+xml queda fuera: el <img> es
+      // script-inerte pero el allowlist reduce bloat y phishing (ISO A.8.10).
+      image: z
+        .string()
+        .regex(/^data:image\/(jpeg|png|webp|gif);base64,/, "FORMATO_NO_SOPORTADO")
+        .max(MAX_IMAGE_CHARS)
+        .optional(),
     })
     .refine((d) => d.text || d.image, { message: "Envía texto o imagen" })
     .safeParse(await req.json());

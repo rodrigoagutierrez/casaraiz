@@ -4,10 +4,11 @@ import { useState, useTransition } from "react";
 import { submitVerification } from "@/modules/users/actions";
 
 async function uploadFile(file: File): Promise<string> {
+  if (file.size > 5 * 1024 * 1024) throw new Error("UPLOAD_FAIL");
   const res = await fetch("/api/upload", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ filename: file.name, contentType: file.type }),
+    body: JSON.stringify({ filename: file.name, contentType: file.type, contentLength: file.size }),
   });
   if (res.status === 503) throw new Error("ALMACENAMIENTO_PENDIENTE");
   if (!res.ok) throw new Error("UPLOAD_FAIL");

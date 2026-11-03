@@ -70,5 +70,8 @@ export async function GET(req: NextRequest) {
     else if (prop.disponibleHasta && d > prop.disponibleHasta) blocked.set(d, "temporada");
   }
 
-  return NextResponse.json({ from, to, blocked: [...blocked].map(([d, k]) => ({ d, k })) });
+  return NextResponse.json(
+    { from, to, blocked: [...blocked].map(([d, k]) => ({ d, k })) },
+    { headers: { "Cache-Control": "private, no-store" } }
+  );
 }

@@ -9,6 +9,7 @@ import { getOrCreateUser } from "@/modules/users/queries";
 import { getActivePriceId } from "@/modules/billing/plans";
 import { tierForCount } from "@/modules/billing/fees";
 import { logAudit } from "@/modules/audit/log";
+import { getSiteUrl } from "@/shared/utils/site-url";
 
 // POST /api/checkout { plan } -> { url }
 // owner_monthly: precio dinámico por tramos según pisos del dueño.
@@ -16,6 +17,12 @@ import { logAudit } from "@/modules/audit/log";
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+
+  // Fail-closed: nunca crear suscripciones test en producción (SOC2 CC6.1 / ISO A.5.15).
+  if (process.env.VERCEL_ENV === "production" && (process.env.STRIPE_SECRET_KEY ?? "").startsWith("sk_test")) {
+    console.error("checkout bloqueado: STRIPE_SECRET_KEY test en producción");
+    return NextResponse.json({ error: "PAGO_NO_DISPONIBLE" }, { status: 503 });
+  }
 
   const { plan } = (await req.json()) as { plan: PlanId };
   // Solo planes de dueño (los inquilinos son gratis)
@@ -59,8 +66,7 @@ export async function POST(req: NextRequest) {
     await db.update(users).set({ stripeCustomerId: customerId }).where(eq(users.id, user.id));
   }
 
-  const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? (host ? `https://${host}` : "http://localhost:3000");
+  const site = getSiteUrl(req);
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customerId,

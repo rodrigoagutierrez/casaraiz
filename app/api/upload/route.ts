@@ -3,7 +3,10 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { auth } from "@clerk/nextjs/server";
 
-// POST /api/upload { filename, contentType } -> { url, publicUrl } o 503 si falta config R2
+// POST /api/upload { filename, contentType, contentLength? } -> { url, publicUrl } o 503 si falta config R2
+// Alcance mínimo: solo image/jpeg/png/webp, ≤5MB, key namespaced por usuario (SOC2 CC6.6).
+const ALLOWED_UPLOAD_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) {
@@ -20,12 +23,17 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { filename, contentType } = await req.json();
-  if (!filename || !contentType?.startsWith("image/")) {
-    return NextResponse.json({ error: "filename y contentType image/* requeridos" }, { status: 400 });
+  const { filename, contentType, contentLength } = await req.json() as { filename?: string; contentType?: string; contentLength?: number };
+  if (!filename || !contentType || !(ALLOWED_UPLOAD_TYPES as readonly string[]).includes(contentType)) {
+    return NextResponse.json({ error: "filename y contentType image/jpeg|png|webp requeridos" }, { status: 400 });
+  }
+  if (contentLength !== undefined && (!Number.isInteger(contentLength) || contentLength <= 0 || contentLength > MAX_UPLOAD_BYTES)) {
+    return NextResponse.json({ error: "contentLength max 5MB" }, { status: 400 });
   }
 
-  const key = `pisos/${Date.now()}-${filename.replace(/[^a-zA-Z0-9.-]/g, "-")}`;
+  const safe = filename.replace(/[^a-zA-Z0-9.-]/g, "-").slice(0, 80) || "foto";
+  const rand = crypto.randomUUID().slice(0, 8);
+  const key = `uploads/${userId}/${Date.now()}-${rand}-${safe}`;
   const client = new S3Client({
     region: "auto",
     endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
@@ -34,7 +42,12 @@ export async function POST(req: NextRequest) {
 
   const url = await getSignedUrl(
     client,
-    new PutObjectCommand({ Bucket: R2_BUCKET, Key: key, ContentType: contentType }),
+    new PutObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: key,
+      ContentType: contentType,
+      ...(contentLength !== undefined ? { ContentLength: contentLength } : {}),
+    }),
     { expiresIn: 300 }
   );
 

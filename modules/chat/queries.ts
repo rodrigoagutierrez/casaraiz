@@ -12,11 +12,19 @@ export async function getOrCreateConversation(propertyId: string, renterId: stri
     .limit(1);
   if (existing) return existing;
 
+  // Idempotente bajo carrera: el unique evita duplicados (SOC2 CC8.1).
   const [created] = await db
     .insert(conversations)
     .values({ propertyId, renterId, ownerId })
+    .onConflictDoNothing({ target: [conversations.propertyId, conversations.renterId] })
     .returning();
-  return created;
+  if (created) return created;
+  const [retry] = await db
+    .select()
+    .from(conversations)
+    .where(and(eq(conversations.propertyId, propertyId), eq(conversations.renterId, renterId)))
+    .limit(1);
+  return retry!;
 }
 
 export async function getConversation(id: string) {

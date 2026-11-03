@@ -43,6 +43,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
   const input = parsed.data;
+  if (!input.registroNumero) {
+    return NextResponse.json({ error: "FALTA_REGISTRO" }, { status: 400 });
+  }
 
   const client = await clerkClient();
   const cu = await client.users.getUser(userId);

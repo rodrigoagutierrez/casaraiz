@@ -14,7 +14,7 @@ export const createPropertySchema = z.object({
   city: z.string().min(2).max(80).default("Valencia"),
   barrio: z.string().min(2).max(60),
   entorno: z.enum(["playa", "montana", "bosque", "ciudad", "rio"]).default("ciudad"),
-  registroNumero: z.string().min(4).max(60),
+  registroNumero: z.string().trim().min(4).max(60),
   registroTipo: z.enum(["temporada", "vut"]).default("temporada"),
   referenciaCatastral: z.string().max(30).optional(),
   lat: z.string().optional(),

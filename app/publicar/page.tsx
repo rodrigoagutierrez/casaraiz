@@ -55,11 +55,15 @@ export default function PublicarPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     setError(null);
+    if (file.size > 5 * 1024 * 1024) {
+      setError("La foto supera 5MB.");
+      return;
+    }
     try {
       const res = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filename: file.name, contentType: file.type }),
+        body: JSON.stringify({ filename: file.name, contentType: file.type, contentLength: file.size }),
       });
       if (res.status === 503) {
         setError("R2 aún no configurado: pega URLs de foto abajo de momento.");

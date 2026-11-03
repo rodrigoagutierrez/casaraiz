@@ -74,7 +74,9 @@ export async function POST(req: NextRequest) {
       actitud: kind === "to_renter" ? actitud ?? null : null,
       comment: comment || null,
     })
+    .onConflictDoNothing({ target: [reviews.bookingId, reviews.kind] })
     .returning();
+  if (!created) return NextResponse.json({ error: "YA_VALORADA" }, { status: 400 });
 
   await logAudit({
     actorId: me.id,

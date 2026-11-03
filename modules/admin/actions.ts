@@ -323,16 +323,25 @@ export async function saveTier(input: { id?: string; minProps: number; maxProps:
   revalidatePath("/precios");
 }
 
-export async function toggleTier(id: string, active: boolean) {
-  await requireAdmin();
+export async function toggleTier(id: string, active: boolean, reason?: string) {
+  const { actorId } = await adminActor();
   await db.update(feeTiers).set({ active }).where(eq(feeTiers.id, id));
+  await logAudit({
+    actorId,
+    action: active ? "tariff.activated" : "tariff.deactivated",
+    entity: "fee_tier",
+    entityId: id,
+    meta: { active },
+    reason: reason || "cambio rápido desde tarifas",
+  });
   revalidatePath("/admin/tarifas");
   revalidatePath("/precios");
 }
 
-export async function deleteTier(id: string) {
-  await requireAdmin();
+export async function deleteTier(id: string, reason?: string) {
+  const { actorId } = await adminActor();
   await db.delete(feeTiers).where(eq(feeTiers.id, id));
+  await logAudit({ actorId, action: "tariff.deleted", entity: "fee_tier", entityId: id, reason: reason?.trim() || "eliminado desde tarifas" });
   revalidatePath("/admin/tarifas");
   revalidatePath("/precios");
 }

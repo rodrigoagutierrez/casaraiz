@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import { stripe } from "@/modules/billing/stripe";
 import { getUserByClerkId } from "@/modules/users/queries";
 import { eur } from "@/shared/utils/format";
+import { getSiteUrl } from "@/shared/utils/site-url";
 
 // POST /api/garantia/checkout { bookingId } -> { url }
 // Cobra el canon de garantía (pago único) cuando la reserva está confirmada.
@@ -27,8 +28,7 @@ export async function POST(req: NextRequest) {
   }
   if (b.garantiaEstado === "pagada") return NextResponse.json({ error: "YA_PAGADA" }, { status: 400 });
 
-  const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? (host ? `https://${host}` : "http://localhost:3000");
+  const site = getSiteUrl(req);
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
