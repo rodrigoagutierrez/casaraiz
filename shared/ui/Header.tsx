@@ -40,14 +40,6 @@ export default function Header() {
           <Image src="/logo.png" alt="CasaRaiz" width={769} height={614} className="h-auto w-24 sm:w-32" />
         </Link>
 
-        <div
-          className={`hidden min-w-0 transition-all duration-300 md:block ${
-            scrolled ? "flex-1 opacity-100" : "w-0 flex-none overflow-hidden opacity-0"
-          }`}
-        >
-          <CompactSearch visible={scrolled} idSuffix="desk" city={city} setCity={setCity} />
-        </div>
-
         <nav className="flex shrink-0 items-center gap-2 text-sm sm:gap-3">
           <Link href="/buscar" className={`font-medium text-mar-900 ${scrolled ? "hidden" : "hidden md:inline"}`}>{t["nav.buscar"]}</Link>
           <Link href="/mapa" className={`font-medium text-mar-900 ${scrolled ? "hidden" : "hidden lg:inline"}`}>{t["nav.mapa"]}</Link>
@@ -77,14 +69,15 @@ export default function Header() {
           </Show>
         </nav>
       </div>
+      {/* Buscador: fila propia bajo el menú (no se junta con la nav). */}
       <div
-        className={`overflow-hidden transition-all duration-300 md:hidden ${
-          scrolled ? "max-h-20 opacity-100" : "max-h-0 opacity-0"
+        className={`overflow-hidden border-t transition-all duration-300 ${
+          scrolled ? "max-h-24 border-mar-100 opacity-100" : "max-h-0 border-transparent opacity-0"
         }`}
         aria-hidden={!scrolled}
       >
-        <div className="px-4 pb-3" inert={!scrolled ? true : undefined}>
-          <CompactSearch visible={scrolled} idSuffix="mob" city={city} setCity={setCity} />
+        <div className="mx-auto max-w-6xl px-4 py-2.5 sm:px-6" inert={!scrolled ? true : undefined}>
+          <CompactSearch visible={scrolled} idSuffix="bar" city={city} setCity={setCity} />
         </div>
       </div>
     </header>
