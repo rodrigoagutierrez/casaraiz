@@ -6,6 +6,7 @@ import { LEGAL_DOCS } from "@/modules/content/legal-docs-seed";
 
 const PLANS = [
   { plan: "renter_monthly", name: "Inquilino (gratis)", amountCents: 0, currency: "eur", interval: "month", maxListings: 0, active: false, stripePriceId: process.env.STRIPE_PRICE_RENTER_MONTHLY ?? null },
+  { plan: "owner_monthly", name: "Dueño mensual", amountCents: 1900, currency: "eur", interval: "month", maxListings: 3, active: true, stripePriceId: process.env.STRIPE_PRICE_OWNER_MONTHLY ?? null },
   { plan: "owner_yearly", name: "Dueño anual", amountCents: 14900, currency: "eur", interval: "year", maxListings: 15, active: true, stripePriceId: process.env.STRIPE_PRICE_OWNER_YEARLY ?? null },
 ];
 

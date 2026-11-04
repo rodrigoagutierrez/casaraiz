@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { db } from "@/shared/db/client";
-import { users } from "@/shared/db/schema";
-import { eq } from "drizzle-orm";
+import { properties, users } from "@/shared/db/schema";
+import { count, eq } from "drizzle-orm";
 import { PLANS, stripe, type PlanId } from "@/modules/billing/stripe";
 import type Stripe from "stripe";
 import { getOrCreateUser } from "@/modules/users/queries";
 import { getActivePriceId } from "@/modules/billing/plans";
+import { tierForCount } from "@/modules/billing/fees";
 import { logAudit } from "@/modules/audit/log";
 import { getSiteUrl } from "@/shared/utils/site-url";
 
 // POST /api/checkout { plan } -> { url }
+// owner_monthly: precio dinámico por tramos según pisos del dueño.
 // owner_yearly: precio fijo del plan.
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
@@ -24,7 +26,7 @@ export async function POST(req: NextRequest) {
 
   const { plan } = (await req.json()) as { plan: PlanId };
   // Solo planes de dueño (los inquilinos son gratis)
-  if (plan !== "owner_yearly") return NextResponse.json({ error: "PLAN_INVALIDO" }, { status: 400 });
+  if (plan !== "owner_monthly" && plan !== "owner_yearly") return NextResponse.json({ error: "PLAN_INVALIDO" }, { status: 400 });
 
   const client = await clerkClient();
   const cu = await client.users.getUser(userId);
@@ -32,9 +34,30 @@ export async function POST(req: NextRequest) {
 
   const user = await getOrCreateUser(userId, email, "owner");
 
-  const price = (await getActivePriceId(plan)) ?? process.env[PLANS[plan].priceEnv];
-  if (!price) return NextResponse.json({ error: "PRECIO_NO_CONFIGURADO" }, { status: 503 });
-  const lineItem: Stripe.Checkout.SessionCreateParams.LineItem = { price, quantity: 1 };
+  let lineItem: Stripe.Checkout.SessionCreateParams.LineItem;
+  let tierLabel = "";
+  if (plan === "owner_monthly") {
+    const [{ n }] = await db.select({ n: count() }).from(properties).where(eq(properties.ownerId, user.id));
+    const tier = await tierForCount(Math.max(n, 1));
+    if (!tier || tier.amountCents === null) {
+      return NextResponse.json({ error: "CONTACT_SALES" }, { status: 403 });
+    }
+    tierLabel = tier.label;
+    lineItem = {
+      price_data: {
+        currency: "eur",
+        unit_amount: tier.amountCents,
+        recurring: { interval: "month" },
+        product_data: { name: `CasaRaiz Dueño mensual — ${tier.label}` },
+        tax_behavior: "inclusive",
+      },
+      quantity: 1,
+    };
+  } else {
+    const price = (await getActivePriceId(plan)) ?? process.env[PLANS[plan].priceEnv];
+    if (!price) return NextResponse.json({ error: "PRECIO_NO_CONFIGURADO" }, { status: 503 });
+    lineItem = { price, quantity: 1 };
+  }
 
   let customerId = user.stripeCustomerId;
   if (!customerId) {
@@ -61,7 +84,7 @@ export async function POST(req: NextRequest) {
     targetUserId: user.id,
     action: "checkout.started",
     entity: "subscription",
-    meta: { plan },
+    meta: { plan, tier: tierLabel || undefined },
   });
 
   return NextResponse.json({ url: session.url });

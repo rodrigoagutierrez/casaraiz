@@ -36,14 +36,14 @@ async function main() {
     end.setFullYear(end.getFullYear() + 1);
     await db.insert(subscriptions).values({
       userId: owner.id,
-      plan: "owner_yearly",
+      plan: "owner_monthly",
       status: "active",
       kind: "standard",
       currentPeriodEnd: end,
       origin: "manual",
       adminNote: "Setup de pruebas",
     });
-    console.log("✓ Cortesía owner_yearly 12 meses otorgada al dueño");
+    console.log("✓ Cortesía owner_monthly 12 meses otorgada al dueño");
   } else {
     console.log("✓ El dueño ya tiene suscripción activa");
   }

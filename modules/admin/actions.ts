@@ -99,7 +99,7 @@ export async function cancelSubscription(stripeSubId: string, reason?: string) {
 // Cortesía: acceso activo N meses sin pasar por Stripe
 export async function grantComplimentary(
   userId: string,
-  plan: "renter_monthly" | "owner_yearly",
+  plan: "renter_monthly" | "owner_monthly" | "owner_yearly",
   months: number,
   reason: string
 ) {
@@ -128,7 +128,7 @@ export async function grantComplimentary(
 // Añadir suscripción manual (p. ej. oferta de temporada con validez limitada)
 export async function createManualSubscription(input: {
   email: string;
-  plan: "owner_yearly";
+  plan: "owner_monthly" | "owner_yearly";
   kind: "standard" | "seasonal";
   validUntil?: string; // fecha límite para ofertas de temporada
   note?: string;

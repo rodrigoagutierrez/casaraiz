@@ -20,7 +20,7 @@ const FAQS = [
   },
   {
     q: "¿Cuánto cobra CasaRaiz al dueño?",
-    a: "El dueño paga una membresía anual de 149 €/año (hasta 15 pisos activos). No hay comisión por alquiler ni por reserva.",
+    a: "El dueño paga una membresía según sus pisos publicados: 19 €/mes (1-3 pisos), 29 €/mes (3-5 pisos) o 149 €/año (hasta 15 pisos). Más de 5 pisos: plan a medida. No hay comisión por alquiler ni por reserva.",
   },
   {
     q: "¿Qué es el alquiler de temporada?",

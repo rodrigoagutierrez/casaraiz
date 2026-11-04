@@ -15,7 +15,7 @@ export default async function MembresiaOk({
   const { session_id } = await searchParams;
   let ok = false;
   let value = 0;
-  let plan = "owner_yearly";
+  let plan = "owner_monthly";
   let currency = "EUR";
   if (session_id && process.env.STRIPE_SECRET_KEY) {
     try {

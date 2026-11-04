@@ -5,6 +5,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 async function main() {
   const defs = [
+    { key: "owner_monthly", name: "CasaRaiz Dueño mensual", amount: 1900, interval: "month" as const },
     { key: "owner_yearly", name: "CasaRaiz Dueño anual", amount: 14900, interval: "year" as const },
   ];
   const out: Record<string, string> = {};

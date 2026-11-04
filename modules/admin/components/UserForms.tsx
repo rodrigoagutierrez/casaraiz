@@ -76,7 +76,7 @@ export function GrantForm({ userId }: { userId: string }) {
     setMsg(null);
     start(async () => {
       try {
-        await grantComplimentary(userId, plan as "renter_monthly" | "owner_yearly", months, reason);
+        await grantComplimentary(userId, plan as "renter_monthly" | "owner_monthly" | "owner_yearly", months, reason);
         setMsg("Cortesía activada.");
         setReason("");
       } catch (e) {
@@ -91,6 +91,7 @@ export function GrantForm({ userId }: { userId: string }) {
       <div className="mt-2 grid grid-cols-2 gap-2">
         <select value={plan} onChange={(e) => setPlan(e.target.value)} className={input}>
           <option value="renter_monthly">Inquilino</option>
+          <option value="owner_monthly">Dueño mensual</option>
           <option value="owner_yearly">Dueño anual</option>
         </select>
         <input type="number" min={1} max={24} value={months} onChange={(e) => setMonths(Number(e.target.value))} className={input} />
