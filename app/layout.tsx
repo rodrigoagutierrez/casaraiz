@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Header from "@/shared/ui/Header";
 import Footer from "@/shared/ui/Footer";
+import GoogleAnalytics from "@/shared/ui/GoogleAnalytics";
 import { I18nProvider } from "@/modules/i18n/provider";
 import { getLocale } from "@/modules/i18n/server";
 import "./globals.css";
@@ -57,6 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Footer />
           </I18nProvider>
         </ClerkProvider>
+      <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? ""} />
       </body>
     </html>
   );

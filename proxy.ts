@@ -10,11 +10,11 @@ export default clerkMiddleware(async (_auth, req) => {
 
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev https://*.client.protect.clerk.com${isDev ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'nonce-${nonce}' https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev https://*.client.protect.clerk.com https://www.googletagmanager.com${isDev ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' blob: data: https://img.clerk.com https://picsum.photos https://*.r2.dev https://tile.openstreetmap.org",
     "font-src 'self' data:",
-    `connect-src 'self' https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev https://clerk-telemetry.com${r2Connect}`,
+    `connect-src 'self' https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev https://clerk-telemetry.com https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com${r2Connect}`,
     "frame-src 'self' https://www.openstreetmap.org https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev",
     "object-src 'none'",
     "base-uri 'self'",
