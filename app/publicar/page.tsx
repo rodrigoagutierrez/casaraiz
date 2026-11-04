@@ -59,11 +59,19 @@ export default function PublicarPage() {
       setError("La foto supera 5MB.");
       return;
     }
+    let ct = file.type || "";
+    if (ct === "image/jpg") ct = "image/jpeg";
+    if (!ct) {
+      const ext = file.name.split(".").pop()?.toLowerCase();
+      if (ext === "jpg" || ext === "jpeg") ct = "image/jpeg";
+      else if (ext === "png") ct = "image/png";
+      else if (ext === "webp") ct = "image/webp";
+    }
     try {
       const res = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filename: file.name, contentType: file.type, contentLength: file.size }),
+        body: JSON.stringify({ filename: file.name, contentType: ct, contentLength: file.size }),
       });
       if (res.status === 503) {
         setError("R2 aún no configurado: pega URLs de foto abajo de momento.");
@@ -71,7 +79,7 @@ export default function PublicarPage() {
       }
       if (!res.ok) throw new Error("upload failed");
       const { url, publicUrl } = await res.json();
-      const put = await fetch(url, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+      const put = await fetch(url, { method: "PUT", body: file, headers: { "Content-Type": ct } });
       if (!put.ok) throw new Error("put failed");
       setPhotos((p) => [...p, publicUrl]);
     } catch {

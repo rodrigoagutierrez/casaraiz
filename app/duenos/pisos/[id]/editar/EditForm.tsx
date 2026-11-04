@@ -64,11 +64,20 @@ export default function EditForm({ initial }: { initial: Prop }) {
       setError("La foto supera 5MB.");
       return;
     }
+    // Normalizar contentType (algunos navegadores reportan "image/jpg" o vacío).
+    let ct = file.type || "";
+    if (ct === "image/jpg") ct = "image/jpeg";
+    if (!ct) {
+      const ext = file.name.split(".").pop()?.toLowerCase();
+      if (ext === "jpg" || ext === "jpeg") ct = "image/jpeg";
+      else if (ext === "png") ct = "image/png";
+      else if (ext === "webp") ct = "image/webp";
+    }
     try {
       const res = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filename: file.name, contentType: file.type, contentLength: file.size }),
+        body: JSON.stringify({ filename: file.name, contentType: ct, contentLength: file.size }),
       });
       const json = await res.json().catch(() => ({}));
       if (res.status === 503) {
@@ -81,7 +90,7 @@ export default function EditForm({ initial }: { initial: Prop }) {
         return;
       }
       const { url, publicUrl } = json;
-      const put = await fetch(url, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+      const put = await fetch(url, { method: "PUT", body: file, headers: { "Content-Type": ct } });
       if (!put.ok) {
         const txt = await put.text().catch(() => "");
         console.error("put failed", put.status, txt);

@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 
 // POST /api/upload { filename, contentType, contentLength? } -> { url, publicUrl } o 503 si falta config R2
 // Alcance mínimo: solo image/jpeg/png/webp, ≤5MB, key namespaced por usuario (SOC2 CC6.6).
-const ALLOWED_UPLOAD_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+const ALLOWED_UPLOAD_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"] as const;
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
@@ -24,7 +24,9 @@ export async function POST(req: NextRequest) {
   }
 
   const { filename, contentType, contentLength } = await req.json() as { filename?: string; contentType?: string; contentLength?: number };
-  if (!filename || !contentType || !(ALLOWED_UPLOAD_TYPES as readonly string[]).includes(contentType)) {
+  // Normalizar alias (image/jpg -> image/jpeg)
+  const ct = contentType === "image/jpg" ? "image/jpeg" : contentType;
+  if (!filename || !ct || !(ALLOWED_UPLOAD_TYPES as readonly string[]).includes(ct)) {
     return NextResponse.json({ error: "filename y contentType image/jpeg|png|webp requeridos" }, { status: 400 });
   }
   if (contentLength !== undefined && (!Number.isInteger(contentLength) || contentLength <= 0 || contentLength > MAX_UPLOAD_BYTES)) {
@@ -45,7 +47,7 @@ export async function POST(req: NextRequest) {
     new PutObjectCommand({
       Bucket: R2_BUCKET,
       Key: key,
-      ContentType: contentType,
+      ContentType: ct,
       ...(contentLength !== undefined ? { ContentLength: contentLength } : {}),
     }),
     { expiresIn: 300 }
