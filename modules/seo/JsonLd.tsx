@@ -26,5 +26,23 @@ export function websiteLd() {
     name: "CasaRaiz",
     url: "https://casaraizalquiler.com",
     description: "Alquiler temporal directo entre dueños e inquilinos, sin comisiones.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://casaraizalquiler.com/buscar?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
+}
+
+export function breadcrumbLd(items: { name: string; url: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: it.name,
+      item: it.url,
+    })),
   };
 }

@@ -19,7 +19,7 @@ import FavButton from "@/modules/properties/components/FavButton";
 import { Stars } from "@/modules/bookings/components/Stars";
 import { getPropertyRating, getPropertyReviews } from "@/modules/bookings/queries";
 import DescriptionBlock from "@/modules/properties/components/DescriptionBlock";
-import { JsonLd } from "@/modules/seo/JsonLd";
+import { JsonLd, breadcrumbLd } from "@/modules/seo/JsonLd";
 
 function decodeSlug(raw: string): string {
   try {
@@ -101,6 +101,13 @@ export default async function PisoPage({
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8 pb-28 md:pb-8">
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Inicio", url: "https://casaraizalquiler.com" },
+          { name: "Buscar", url: "https://casaraizalquiler.com/buscar" },
+          { name: p.title, url: `https://casaraizalquiler.com/p/${p.slug}` },
+        ])}
+      />
       <JsonLd
         data={{
           "@context": "https://schema.org",

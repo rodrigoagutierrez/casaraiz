@@ -15,6 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/mapa`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${base}/precios`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${base}/comparativa`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/preguntas-frecuentes`, changeFrequency: "monthly", priority: 0.7 },
   ];
 
   const barrios: MetadataRoute.Sitemap = BARRIOS_VALENCIA.map((b) => ({
