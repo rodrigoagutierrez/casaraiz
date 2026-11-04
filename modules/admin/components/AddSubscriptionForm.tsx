@@ -7,7 +7,7 @@ const input = "w-full rounded-lg border border-mar-200 bg-white px-3 py-2 text-s
 
 export function AddSubscriptionForm() {
   const [email, setEmail] = useState("");
-  const [plan, setPlan] = useState<"owner_monthly" | "owner_yearly">("owner_monthly");
+  const [plan, setPlan] = useState<"owner_yearly">("owner_yearly");
   const [seasonal, setSeasonal] = useState(false);
   const [validUntil, setValidUntil] = useState("");
   const [note, setNote] = useState("");
@@ -45,8 +45,7 @@ export function AddSubscriptionForm() {
           <input className={`${input} mt-1`} type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="dueno@casaraizalquiler.com" />
         </label>
         <label className="text-xs text-mar-900">Plan
-          <select className={`${input} mt-1`} value={plan} onChange={(e) => setPlan(e.target.value as "owner_monthly" | "owner_yearly")}>
-            <option value="owner_monthly">Dueño mensual</option>
+          <select className={`${input} mt-1`} value={plan} onChange={(e) => setPlan(e.target.value as "owner_yearly")}>
             <option value="owner_yearly">Dueño anual</option>
           </select>
         </label>

@@ -52,7 +52,6 @@ export default async function InformesAdmin() {
         <h3 className="font-semibold text-mar-900">Suscripciones activas por plan</h3>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { label: "Dueño mensual", key: "owner_monthly" },
             { label: "Dueño anual", key: "owner_yearly" },
             { label: "Inquilino (obsoleto)", key: "renter_monthly" },
           ].map((p) => (
