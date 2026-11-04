@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
   const client = new S3Client({
     region: "auto",
     endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    forcePathStyle: true, // URL con host de cuenta (ya permitido por CSP), no virtual-hosted
     credentials: { accessKeyId: R2_ACCESS_KEY_ID, secretAccessKey: R2_SECRET_ACCESS_KEY },
   });
 
