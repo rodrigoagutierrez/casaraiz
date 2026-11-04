@@ -35,7 +35,8 @@ export function TierEditor({ tier }: { tier: FeeTier | null }) {
           setEur("");
           setLabel("");
         }
-        router.refresh();
+        // Forzar recarga completa: revalidatePath/router.refresh no bastan en este setup.
+        window.location.reload();
       } catch (e) {
         setMsg(`Error: ${e instanceof Error ? e.message : "desconocido"}`);
       }
