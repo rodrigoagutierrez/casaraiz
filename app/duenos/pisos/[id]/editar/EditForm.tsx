@@ -32,6 +32,8 @@ export default function EditForm({ initial }: { initial: Prop }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [photos, setPhotos] = useState<string[]>(initial.photos);
   const [form, setForm] = useState({
     title: initial.title,
     description: initial.description,
@@ -54,6 +56,34 @@ export default function EditForm({ initial }: { initial: Prop }) {
 
   const set = (k: keyof typeof form, v: string | number) => setForm((f) => ({ ...f, [k]: v }));
 
+  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError(null);
+    if (file.size > 5 * 1024 * 1024) {
+      setError("La foto supera 5MB.");
+      return;
+    }
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: file.name, contentType: file.type, contentLength: file.size }),
+      });
+      if (res.status === 503) {
+        setError("R2 aún no configurado: pega URLs de foto abajo.");
+        return;
+      }
+      if (!res.ok) throw new Error("upload failed");
+      const { url, publicUrl } = await res.json();
+      const put = await fetch(url, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+      if (!put.ok) throw new Error("put failed");
+      setPhotos((p) => [...p, publicUrl]);
+    } catch {
+      setError("No se pudo subir la foto. Usa URL manual.");
+    }
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
@@ -61,7 +91,7 @@ export default function EditForm({ initial }: { initial: Prop }) {
     try {
       const payload = {
         ...form,
-        photos: initial.photos,
+        photos,
         disponibleDesde: form.disponibleDesde || null,
         disponibleHasta: form.disponibleHasta || null,
         referenciaCatastral: form.referenciaCatastral || null,
@@ -153,6 +183,37 @@ export default function EditForm({ initial }: { initial: Prop }) {
           ))}
         </select>
       </label>
+      <div className="rounded-xl border border-mar-100 bg-mar-50 p-4">
+        <p className="text-sm font-semibold text-mar-900">Fotos ({photos.length})</p>
+        <input type="file" accept="image/*" onChange={onFile} className="mt-2 text-sm text-mar-900" />
+        <div className="mt-2 flex gap-2">
+          <input
+            className={`${inputCls} flex-1 !py-1 text-sm`}
+            placeholder="...o pega URL https://"
+            value={photoUrl}
+            onChange={(e) => setPhotoUrl(e.target.value)}
+          />
+          <button
+            type="button"
+            className="rounded-lg border border-mar-200 px-3 text-sm text-mar-900 hover:bg-white"
+            onClick={() => { if (photoUrl.startsWith("http")) { setPhotos((p) => [...p, photoUrl]); setPhotoUrl(""); } }}
+          >
+            Añadir
+          </button>
+        </div>
+        {photos.length > 0 && (
+          <ul className="mt-2 space-y-1 text-xs text-mar-950/60">
+            {photos.map((u, i) => (
+              <li key={u + i} className="flex items-center justify-between gap-2">
+                <span className="truncate">• {u}</span>
+                <button type="button" className="shrink-0 text-otono-700 hover:underline" onClick={() => setPhotos((p) => p.filter((_, idx) => idx !== i))}>
+                  quitar
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
       {error && <p className="text-sm text-otono-700">{error}</p>}
       <button disabled={saving} className="w-full rounded-full bg-mar-900 py-3 text-white font-medium hover:bg-mar-800 disabled:opacity-50">
         {saving ? "Guardando..." : "Guardar cambios"}
