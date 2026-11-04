@@ -26,7 +26,7 @@ export default async function AdminTarifas() {
           {tiers.map((t) => (
             <TierEditor key={t.id} tier={t} />
           ))}
-          <TierEditor tier={null} />
+          <TierEditor key="new-tier" tier={null} />
         </div>
       </section>
     </div>

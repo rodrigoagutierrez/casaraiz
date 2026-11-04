@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { deleteTier, saveTariffSettings, saveTier, toggleTier } from "../actions";
 import type { FeeTier } from "@/modules/billing/fees";
 
 const input = "w-full rounded-lg border border-mar-200 bg-white px-3 py-1.5 text-sm outline-none focus:border-mar-600";
 
 export function TierEditor({ tier }: { tier: FeeTier | null }) {
+  const router = useRouter();
   const [min, setMin] = useState(tier?.minProps ?? 1);
   const [max, setMax] = useState(tier?.maxProps === null || tier?.maxProps === undefined ? "" : String(tier.maxProps));
   const [eur, setEur] = useState(tier?.amountCents === null || tier?.amountCents === undefined ? "" : String(tier.amountCents / 100));
@@ -26,6 +28,14 @@ export function TierEditor({ tier }: { tier: FeeTier | null }) {
           label,
         });
         setMsg("Guardado.");
+        // Si era un tramo nuevo, limpiar el formulario para poder añadir otro.
+        if (!tier) {
+          setMin(1);
+          setMax("");
+          setEur("");
+          setLabel("");
+        }
+        router.refresh();
       } catch (e) {
         setMsg(`Error: ${e instanceof Error ? e.message : "desconocido"}`);
       }
