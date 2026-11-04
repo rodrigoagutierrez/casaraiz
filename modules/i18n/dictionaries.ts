@@ -73,6 +73,15 @@ export const es = {  // Header / nav
   "propietarios.pasos.3.t": "3. Publica y contacta",
   "propietarios.pasos.3.d": "Sube tus fotos, publica y recibe contactos de inquilinos verificados.",
 
+  // Bloque confianza home
+  "confianza.titulo": "Por qué confiar en CasaRaiz",
+  "confianza.identidad.t": "Identidad verificada",
+  "confianza.identidad.d": "Cada dueño verifica su DNI o pasaporte antes de publicar. Tú sabes con quién trata.",
+  "confianza.contrato.t": "Contrato firmado digitalmente",
+  "confianza.contrato.d": "Firmas el contrato de temporada (LAU) online, con validez legal, sin papeles ni desplazamientos.",
+  "confianza.comisiones.t": "Sin comisiones ni tasas ocultas",
+  "confianza.comisiones.d": "El precio que ves es el que pagas. CasaRaiz no cobra comisión por alquiler, solo la membresía del dueño.",
+
   // Footer
   "footer.propietarios": "Propietarios",
   "footer.inquilinos": "Inquilinos",
@@ -168,6 +177,15 @@ export const en: Dict = {
   "propietarios.pasos.2.d": "Subscribe by tier based on how many homes you list.",
   "propietarios.pasos.3.t": "3. List and connect",
   "propietarios.pasos.3.d": "Upload your photos, list, and receive contacts from verified tenants.",
+
+  // Bloque confianza home
+  "confianza.titulo": "Why trust CasaRaiz",
+  "confianza.identidad.t": "Verified identity",
+  "confianza.identidad.d": "Every owner verifies their ID or passport before listing. You know who you're dealing with.",
+  "confianza.contrato.t": "Digitally signed contract",
+  "confianza.contrato.d": "You sign the seasonal lease (LAU) online, with legal validity, no paperwork or travel.",
+  "confianza.comisiones.t": "No commissions or hidden fees",
+  "confianza.comisiones.d": "The price you see is the price you pay. CasaRaiz charges no rental commission, only the owner's membership.",
 
   // Footer
   "footer.propietarios": "Owners",

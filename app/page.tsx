@@ -79,6 +79,27 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Bloque de confianza */}
+      <section className="mx-auto max-w-6xl px-6 py-10 border-t border-mar-100">
+        <h2 className="text-2xl font-semibold text-mar-900 mb-8">{t["confianza.titulo"]}</h2>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {[
+            { t: t["confianza.identidad.t"], d: t["confianza.identidad.d"], href: "/confianza/identidad-verificada" },
+            { t: t["confianza.contrato.t"], d: t["confianza.contrato.d"], href: "/confianza/contrato-digital" },
+            { t: t["confianza.comisiones.t"], d: t["confianza.comisiones.d"], href: "/confianza/sin-comisiones" },
+          ].map((c) => (
+            <a
+              key={c.t}
+              href={c.href}
+              className="rounded-2xl border border-mar-100 bg-white p-6 hover:shadow-md transition-shadow flex flex-col"
+            >
+              <p className="font-semibold text-mar-900">{c.t}</p>
+              <p className="mt-2 text-sm text-mar-950/70 flex-1">{c.d}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
       {/* Categorías */}
       <section className="mx-auto max-w-6xl px-6 pt-6">
         <Suspense>

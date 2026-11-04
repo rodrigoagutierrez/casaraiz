@@ -1,7 +1,7 @@
 import { pgTable, uuid, text, integer, boolean, timestamp, pgEnum } from "drizzle-orm/pg-core";
 import { users } from "../users/schema";
 
-export const planEnum = pgEnum("plan", ["renter_monthly", "owner_monthly", "owner_yearly"]);
+export const planEnum = pgEnum("plan", ["renter_monthly", "owner_yearly"]);
 export const subStatusEnum = pgEnum("sub_status", ["active", "past_due", "canceled", "trialing", "incomplete"]);
 
 export const subscriptions = pgTable("subscriptions", {
