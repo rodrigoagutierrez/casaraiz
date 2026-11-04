@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ENTORNOS } from "@/modules/properties/entornos";
 
@@ -30,7 +30,6 @@ const inputCls = "w-full rounded-lg border border-mar-200 bg-white px-4 py-2 tex
 
 export default function EditForm({ initial }: { initial: Prop }) {
   const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState("");
@@ -186,15 +185,11 @@ export default function EditForm({ initial }: { initial: Prop }) {
       </label>
       <div className="rounded-xl border border-mar-100 bg-mar-50 p-4">
         <p className="text-sm font-semibold text-mar-900">Fotos ({photos.length})</p>
-        <input ref={fileInputRef} type="file" accept="image/*" onChange={onFile} className="hidden" />
         <div className="mt-2 flex flex-wrap gap-2">
-          <button
-            type="button"
-            className="rounded-lg bg-mar-900 px-4 py-2 text-sm font-medium text-white hover:bg-mar-800"
-            onClick={() => fileInputRef.current?.click()}
-          >
+          <label className="cursor-pointer rounded-lg bg-mar-900 px-4 py-2 text-sm font-medium text-white hover:bg-mar-800">
             Subir foto
-          </button>
+            <input type="file" accept="image/*" onChange={onFile} className="hidden" />
+          </label>
           <input
             className={`${inputCls} flex-1 !py-1 text-sm`}
             placeholder="...o pega URL https://"
