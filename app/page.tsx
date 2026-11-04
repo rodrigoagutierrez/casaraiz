@@ -48,6 +48,14 @@ export default async function Home() {
   const ratings = await getRatingsForProperties(destacados.map((x) => x.id)).catch(() => new Map());
   const favIds = await getMyFavIds();
 
+  // Ciudades con al menos un anuncio activo (para no mostrar precios donde no hay oferta)
+  const ciudadesConOferta = await db
+    .select({ city: properties.city })
+    .from(properties)
+    .where(eq(properties.status, "active"))
+    .groupBy(properties.city)
+    .then((rows) => new Set(rows.map((r) => r.city)));
+
   return (
     <div className="font-sans">
       <JsonLd data={organizationLd()} />
@@ -128,16 +136,26 @@ export default async function Home() {
       <section className="mx-auto max-w-6xl px-6 pt-12">
         <h2 className="text-2xl font-semibold text-mar-950">{t["home.destinos"]}</h2>
         <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-3">
-          {CIUDADES.slice(0, 6).map((c) => (
-            <Link
-              key={c.slug}
-              href={`/alquiler-temporal/${c.slug}`}
-              className="rounded-2xl border border-mar-100 bg-white p-5 hover:border-mar-200 hover:shadow-lg"
-            >
-              <p className="font-semibold text-mar-900">{c.nombre}</p>
-              <p className="text-sm text-mar-950/55">{c.precioRef}</p>
-            </Link>
-          ))}
+          {CIUDADES.slice(0, 6).map((c) => {
+            const tieneOferta = ciudadesConOferta.has(c.nombre);
+            return (
+              <Link
+                key={c.slug}
+                href={tieneOferta ? `/alquiler-temporal/${c.slug}` : "mailto:hola@casaraizalquiler.com?subject=Lista%20de%20espera%20para%20" + encodeURIComponent(c.nombre)}
+                className="rounded-2xl border border-mar-100 bg-white p-5 hover:border-mar-200 hover:shadow-lg flex flex-col"
+              >
+                <p className="font-semibold text-mar-900">{c.nombre}</p>
+                {tieneOferta ? (
+                  <p className="text-sm text-mar-950/55">{c.precioRef}</p>
+                ) : (
+                  <>
+                    <p className="text-sm text-otono-700 font-medium">Próximamente</p>
+                    <p className="text-xs text-mar-950/50 mt-1">Únete a la lista de espera</p>
+                  </>
+                )}
+              </Link>
+            );
+          })}
         </div>
         <Link href="/alquiler-temporal" className="mt-4 inline-block text-sm font-medium text-mar-700 underline">
           {t["home.verTodos"]}

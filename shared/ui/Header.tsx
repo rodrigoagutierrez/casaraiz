@@ -43,7 +43,7 @@ export default function Header() {
         <nav className="flex shrink-0 items-center gap-2 text-sm sm:gap-3">
           <Link href="/buscar" className={`font-medium text-mar-900 ${scrolled ? "hidden" : "hidden md:inline"}`}>{t["nav.buscar"]}</Link>
           <Link href="/mapa" className={`font-medium text-mar-900 ${scrolled ? "hidden" : "hidden lg:inline"}`}>{t["nav.mapa"]}</Link>
-          <Link href="/publicar" className="hidden font-medium text-mar-900 lg:inline">{t["nav.publicar"]}</Link>
+          <Link href="/propietarios" className="hidden font-medium text-mar-900 lg:inline">{t["nav.publicar"]}</Link>
           <Link href="/precios" className="hidden font-medium text-otono-700 md:inline">{t["nav.precios"]}</Link>
           <Show when="signed-in">
             <Link href="/reservas" className="hidden font-medium text-mar-900 lg:inline">{t["nav.reservas"]}</Link>

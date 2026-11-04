@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const FAQS = [
   {
     q: "¿Qué es CasaRaiz?",
-    a: "CasaRaiz es un marketplace de alquiler temporal (contrato de temporada, LAU art. 3) en España que conecta dueños e inquilinos directamente, sin comisiones de intermediación. Los inquilinos usan la plataforma gratis; los dueños pagan una membresía por tramos según el número de pisos publicados.",
+    a: "CasaRaiz es un marketplace de alquiler temporal (contrato de temporada, LAU art. 3) en Valencia que conecta dueños e inquilinos directamente, sin comisiones de intermediación. Los inquilinos usan la plataforma gratis; los dueños pagan una membresía anual.",
   },
   {
     q: "¿Es gratis para los inquilinos?",
@@ -20,7 +20,7 @@ const FAQS = [
   },
   {
     q: "¿Cuánto cobra CasaRaiz al dueño?",
-    a: "El dueño paga una membresía recurrente: desde 19 €/mes para hasta 3 pisos, con tramos superiores. También hay un plan anual de 149 €/año (hasta 15 pisos). No hay comisión por alquiler ni por reserva.",
+    a: "El dueño paga una membresía anual de 149 €/año (hasta 15 pisos activos). No hay comisión por alquiler ni por reserva.",
   },
   {
     q: "¿Qué es el alquiler de temporada?",
@@ -48,7 +48,7 @@ const FAQS = [
   },
   {
     q: "¿Dónde está disponible CasaRaiz?",
-    a: "En toda España: Madrid, Barcelona, Valencia, Sevilla, Málaga, Bilbao y más. Tenemos fichas por ciudad y por barrio (Valencia).",
+    a: "Por ahora en Valencia y sus barrios (Ruzafa, El Cabanyal, Benimaclet, El Carmen y más). Próximamente en más ciudades: únete a la lista de espera escribiendo a hola@casaraizalquiler.com.",
   },
 ];
 

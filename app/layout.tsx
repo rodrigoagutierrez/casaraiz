@@ -6,6 +6,7 @@ import Footer from "@/shared/ui/Footer";
 import GoogleAnalytics from "@/shared/ui/GoogleAnalytics";
 import { I18nProvider } from "@/modules/i18n/provider";
 import { getLocale } from "@/modules/i18n/server";
+import pkg from "../package.json";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
     default: "CasaRaiz | Alquiler temporal sin comisión en España",
     template: "%s | CasaRaiz",
   },
-  description: "Conectamos dueños e inquilinos para alquiler temporal en toda España, sin comisiones. Inquilinos gratis, dueños con membresía por tramos.",
+  description: "Conectamos dueños e inquilinos para alquiler temporal en Valencia, sin comisiones. Inquilinos gratis, dueños con membresía anual.",
   keywords: ["alquiler temporal", "sin comisión", "dueños directos", "España", "alquiler de temporada", "alternativa a Airbnb"],
   alternates: { canonical: "/" },
   verification: process.env.GOOGLE_SITE_VERIFICATION
@@ -55,7 +56,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <I18nProvider initialLang={locale}>
             <Header />
             <div className="flex-1">{children}</div>
-            <Footer />
+            <Footer version={pkg.version} />
           </I18nProvider>
         </ClerkProvider>
       <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? ""} />
