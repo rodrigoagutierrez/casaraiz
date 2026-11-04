@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { PlanId } from "@/modules/billing/stripe";
+import { trackEvent } from "@/shared/lib/analytics";
 
 export function PlanButton({ plan, children }: { plan: PlanId; children: React.ReactNode }) {
   const router = useRouter();
@@ -21,7 +22,14 @@ export function PlanButton({ plan, children }: { plan: PlanId; children: React.R
         return;
       }
       const json = await res.json();
-      if (json.url) window.location.href = json.url as string;
+      if (json.url) {
+        trackEvent("begin_checkout", {
+          currency: "EUR",
+          value: plan === "owner_yearly" ? 149 : 19,
+          items: [{ item_id: plan, item_name: plan === "owner_yearly" ? "Dueño anual" : "Dueño mensual", price: plan === "owner_yearly" ? 149 : 19 }],
+        });
+        window.location.href = json.url as string;
+      }
     } finally {
       setLoading(false);
     }

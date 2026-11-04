@@ -7,6 +7,7 @@ import { SignInButton, useUser } from "@clerk/nextjs";
 import { BARRIOS_VALENCIA } from "@/modules/content/barrios";
 import { CIUDADES_ES } from "@/modules/properties/geocode";
 import { ENTORNOS } from "@/modules/properties/entornos";
+import { trackEvent } from "@/shared/lib/analytics";
 
 const inputCls = "w-full rounded-lg border border-mar-200 bg-white px-4 py-2 text-mar-950 outline-none focus:border-mar-600 focus:ring-2 focus:ring-mar-100";
 
@@ -102,6 +103,9 @@ export default function PublicarPage() {
         body: JSON.stringify(payload),
       });
       const json = await res.json();
+      if (res.ok && json.data?.id) {
+        trackEvent("publish_property", { property_id: json.data.id, title: form.title });
+      }
       if (!res.ok) {
         if (json.error === "NEED_OWNER_PLAN") {
           router.push("/precios");

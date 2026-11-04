@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { stripe } from "@/modules/billing/stripe";
 import { upsertFromSubscription } from "@/modules/billing/subscription-sync";
+import PurchaseTracker from "./PurchaseTracker";
 
 import type { Metadata } from "next";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -13,9 +14,16 @@ export default async function MembresiaOk({
 }) {
   const { session_id } = await searchParams;
   let ok = false;
+  let value = 0;
+  let plan = "owner_monthly";
+  let currency = "EUR";
   if (session_id && process.env.STRIPE_SECRET_KEY) {
     try {
       const session = await stripe.checkout.sessions.retrieve(session_id);
+      const amt = session.amount_total ?? 0;
+      value = amt / 100;
+      currency = (session.currency ?? "eur").toUpperCase();
+      plan = (session.metadata?.plan as string) ?? plan;
       if (session.subscription && session.payment_status === "paid") {
         const sub = await stripe.subscriptions.retrieve(session.subscription as string);
         await upsertFromSubscription(sub);
@@ -32,6 +40,7 @@ export default async function MembresiaOk({
 
   return (
     <main className="mx-auto max-w-xl px-6 py-16 text-center">
+      {ok && <PurchaseTracker value={value} currency={currency} plan={plan} />}
       <h1 className="text-3xl font-bold text-mar-950">
         {ok ? "¡Membresía activa!" : "Pago recibido"}
       </h1>

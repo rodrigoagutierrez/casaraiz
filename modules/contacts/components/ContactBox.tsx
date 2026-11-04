@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { SignInButton, useUser } from "@clerk/nextjs";
+import { trackEvent } from "@/shared/lib/analytics";
 
 export default function ContactBox({ propertyId }: { propertyId: string }) {
   const { isSignedIn } = useUser();
@@ -43,6 +44,7 @@ export default function ContactBox({ propertyId }: { propertyId: string }) {
         setState("error");
         return;
       }
+      trackEvent("contact_owner", { property_id: propertyId });
       setState("done");
     } catch {
       setState("error");

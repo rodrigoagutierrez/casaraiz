@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import { trackEvent } from "@/shared/lib/analytics";
 
 export default function ChatButton({ propertyId }: { propertyId: string }) {
   const router = useRouter();
@@ -23,7 +24,10 @@ export default function ChatButton({ propertyId }: { propertyId: string }) {
       }
       if (res.status === 400) return; // es tu propio piso
       const json = await res.json();
-      if (json.data?.id) router.push(`/chat/${json.data.id}`);
+      if (json.data?.id) {
+        trackEvent("chat_started", { property_id: propertyId });
+        router.push(`/chat/${json.data.id}`);
+      }
     } finally {
       setBusy(false);
     }
