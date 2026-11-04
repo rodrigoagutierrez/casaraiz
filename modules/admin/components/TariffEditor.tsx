@@ -1,14 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { deleteTier, saveTariffSettings, saveTier, toggleTier } from "../actions";
 import type { FeeTier } from "@/modules/billing/fees";
 
 const input = "w-full rounded-lg border border-mar-200 bg-white px-3 py-1.5 text-sm outline-none focus:border-mar-600";
 
 export function TierEditor({ tier }: { tier: FeeTier | null }) {
-  const router = useRouter();
   const [min, setMin] = useState(tier?.minProps ?? 1);
   const [max, setMax] = useState(tier?.maxProps === null || tier?.maxProps === undefined ? "" : String(tier.maxProps));
   const [eur, setEur] = useState(tier?.amountCents === null || tier?.amountCents === undefined ? "" : String(tier.amountCents / 100));
@@ -50,7 +48,7 @@ export function TierEditor({ tier }: { tier: FeeTier | null }) {
         <label className="text-xs text-mar-900">Desde<input type="number" min={1} className={`${input} mt-1`} value={min} onChange={(e) => setMin(Number(e.target.value))} /></label>
         <label className="text-xs text-mar-900">Hasta (vacío = ∞)<input type="number" min={1} className={`${input} mt-1`} value={max} placeholder="∞" onChange={(e) => setMax(e.target.value)} /></label>
       </div>
-      <label className="mt-2 block text-xs text-mar-900">€/mes (vacío = a consultar)
+      <label className="mt-2 block text-xs text-mar-900">Importe (vacío = a consultar)
         <input type="number" min={1} className={`${input} mt-1`} value={eur} placeholder="A consultar" onChange={(e) => setEur(e.target.value)} />
       </label>
       <label className="mt-2 block text-xs text-mar-900">Etiqueta

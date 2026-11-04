@@ -128,7 +128,6 @@ export function CustomPriceForm({ userId }: { userId: string }) {
       <div className="mt-2 grid grid-cols-2 gap-2">
         <input type="number" min={1} value={eur} onChange={(e) => setEur(e.target.value)} className={input} />
         <select value={int} onChange={(e) => setInt(e.target.value)} className={input}>
-          <option value="month">€/mes</option>
           <option value="year">€/año</option>
         </select>
       </div>

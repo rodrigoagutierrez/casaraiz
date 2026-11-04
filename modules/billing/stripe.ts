@@ -6,7 +6,7 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "sk_test_place
 export type PlanId = "renter_monthly" | "owner_yearly";
 
 export const PLANS: Record<PlanId, { nombre: string; precio: string; priceEnv: string }> = {
-  renter_monthly: { nombre: "Inquilino mensual", precio: "9€/mes", priceEnv: "STRIPE_PRICE_RENTER_MONTHLY" },
+  renter_monthly: { nombre: "Inquilino (gratis)", precio: "Gratis", priceEnv: "STRIPE_PRICE_RENTER_MONTHLY" },
   owner_yearly: { nombre: "Dueño anual", precio: "149€/año", priceEnv: "STRIPE_PRICE_OWNER_YEARLY" },
 };
 

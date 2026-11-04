@@ -49,7 +49,7 @@ export default function PropietariosPage() {
             },
             {
               t: "Planes por tramos",
-              d: "Desde 19€/mes para hasta 3 pisos. Plan anual desde 149€/año para hasta 15 pisos.",
+              d: "Membresía anual de 149 €/año para hasta 15 pisos.",
             },
             {
               t: "Registro NRA y verificación",

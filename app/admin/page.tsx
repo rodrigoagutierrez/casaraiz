@@ -26,7 +26,7 @@ export default async function AdminHome() {
   const cards = [
     { label: "Usuarios", value: u.n, sub: `${o.n} dueños · ${r.n} inquilinos` },
     { label: "Pisos activos", value: p.n, sub: "Valencia" },
-    { label: "Membresías activas", value: s.n, sub: `MRR ~${(mrr / 100).toFixed(0)}€/mes` },
+    { label: "Membresías activas", value: s.n, sub: `MRR ~${(mrr / 100).toFixed(0)}€` },
     { label: "Contactos", value: c.n, sub: "dueño ↔ inquilino" },
   ];
 

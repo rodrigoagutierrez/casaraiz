@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const FILAS = [
   { concepto: "Comisión al inquilino", casa: "0 € (gratis)", airbnb: "hasta ~14%", booking: "0 € (lo paga el dueño)" },
-  { concepto: "Coste para el dueño", casa: "Membresía plana (desde 19 €/mes)", airbnb: "~3% por reserva", booking: "~15% por reserva" },
+  { concepto: "Coste para el dueño", casa: "Membresía anual 149 €/año", airbnb: "~3% por reserva", booking: "~15% por reserva" },
   { concepto: "Contacto directo", casa: "Sí, dueño ↔ inquilino", airbnb: "No (mediado)", booking: "No (mediado)" },
   { concepto: "Precio final", casa: "Sin recargos ocultos", airbnb: "Tarifas de servicio añadidas", booking: "Comisión incluida en el precio" },
   { concepto: "Verificación", casa: "DNI/pasaporte del usuario", airbnb: "Verificación de perfil", booking: "Verificación del establecimiento" },
