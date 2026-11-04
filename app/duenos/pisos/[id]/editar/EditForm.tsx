@@ -70,17 +70,28 @@ export default function EditForm({ initial }: { initial: Prop }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ filename: file.name, contentType: file.type, contentLength: file.size }),
       });
+      const json = await res.json().catch(() => ({}));
       if (res.status === 503) {
         setError("R2 aún no configurado: pega URLs de foto abajo.");
         return;
       }
-      if (!res.ok) throw new Error("upload failed");
-      const { url, publicUrl } = await res.json();
+      if (!res.ok) {
+        console.error("upload failed", res.status, json);
+        setError(`Error al pedir URL (${res.status}): ${json.error ?? "desconocido"}. Tipo: ${file.type || "(vacío)"}, tamaño: ${(file.size/1024/1024).toFixed(2)}MB`);
+        return;
+      }
+      const { url, publicUrl } = json;
       const put = await fetch(url, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
-      if (!put.ok) throw new Error("put failed");
+      if (!put.ok) {
+        const txt = await put.text().catch(() => "");
+        console.error("put failed", put.status, txt);
+        setError(`Error al subir a R2 (${put.status}): ${txt.slice(0, 120) || put.statusText}`);
+        return;
+      }
       setPhotos((p) => [...p, publicUrl]);
-    } catch {
-      setError("No se pudo subir la foto. Usa URL manual.");
+    } catch (e) {
+      console.error("onFile exception", e);
+      setError(`Excepción: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 
