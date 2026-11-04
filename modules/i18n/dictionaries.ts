@@ -55,6 +55,24 @@ export const es = {  // Header / nav
   "home.verPlanes": "Ver planes",
   "home.publicarCta": "Publicar mi piso",
 
+  // Propietarios landing
+  "propietarios.titulo": "Publica tu piso sin comisión",
+  "propietarios.subtitulo": "Inquilinos gratis, dueños pagan membresía. Sin comisiones de intermediación.",
+  "propietarios.cta": "Publicar mi piso",
+  "propietarios.beneficio1.t": "Sin comisiones por alquiler",
+  "propietarios.beneficio1.d": "Conectas directo con el inquilino. Tú pones el precio, tú cobras el alquiler.",
+  "propietarios.beneficio2.t": "Planes por tramos",
+  "propietarios.beneficio2.d": "Desde 19€/mes para hasta 3 pisos. Plan anual desde 149€/año para hasta 15 pisos.",
+  "propietarios.beneficio3.t": "Registro NRA y verificación",
+  "propietarios.beneficio3.d": "Te ayudamos con el Registro Único de Arrendamientos (RD 1312/2024) y verificación de identidad.",
+  "propietarios.pasos.t": "Cómo funciona para propietarios",
+  "propietarios.pasos.1.t": "1. Regístrate",
+  "propietarios.pasos.1.d": "Crea tu cuenta de propietario y verifica tu identidad.",
+  "propietarios.pasos.2.t": "2. Elige tu plan",
+  "propietarios.pasos.2.d": "Suscríbete por tramos según el número de pisos que publiques.",
+  "propietarios.pasos.3.t": "3. Publica y contacta",
+  "propietarios.pasos.3.d": "Sube tus fotos, publica y recibe contactos de inquilinos verificados.",
+
   // Footer
   "footer.propietarios": "Propietarios",
   "footer.inquilinos": "Inquilinos",
@@ -132,6 +150,24 @@ export const en: Dict = {
   "home.planesTexto": "Tenants free · Owners from 19€/month. You pay what it costs.",
   "home.verPlanes": "See plans",
   "home.publicarCta": "List my home",
+
+  // Propietarios landing
+  "propietarios.titulo": "List your home without commissions",
+  "propietarios.subtitulo": "Tenants free, owners pay membership. No intermediary commissions.",
+  "propietarios.cta": "List my home",
+  "propietarios.beneficio1.t": "No commissions on rentals",
+  "propietarios.beneficio1.d": "Connect directly with the tenant. You set the price, you collect the rent.",
+  "propietarios.beneficio2.t": "Tiered pricing",
+  "propietarios.beneficio2.d": "From 19€/month for up to 3 homes. Annual plan from 149€/year for up to 15 homes.",
+  "propietarios.beneficio3.t": "NRA registration and verification",
+  "propietarios.beneficio3.d": "We help with the Unique Rental Register (RD 1312/2024) and identity verification.",
+  "propietarios.pasos.t": "How it works for owners",
+  "propietarios.pasos.1.t": "1. Register",
+  "propietarios.pasos.1.d": "Create your owner account and verify your identity.",
+  "propietarios.pasos.2.t": "2. Choose your plan",
+  "propietarios.pasos.2.d": "Subscribe by tier based on how many homes you list.",
+  "propietarios.pasos.3.t": "3. List and connect",
+  "propietarios.pasos.3.d": "Upload your photos, list, and receive contacts from verified tenants.",
 
   // Footer
   "footer.propietarios": "Owners",

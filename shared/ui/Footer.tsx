@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useI18n } from "@/modules/i18n/provider";
 
-export default function Footer() {
+export default function Footer({ version }: { version?: string }) {
   const { t } = useI18n();
   return (
     <footer className="mt-16 border-t border-mar-100 bg-white">
@@ -11,7 +11,7 @@ export default function Footer() {
         <div>
           <p className="font-semibold text-mar-900">{t["footer.propietarios"]}</p>
           <ul className="mt-3 space-y-2 text-mar-950/65">
-            <li><Link href="/publicar" className="hover:underline">{t["footer.ponPiso"]}</Link></li>
+            <li><Link href="/propietarios" className="hover:underline">{t["footer.ponPiso"]}</Link></li>
             <li><Link href="/precios" className="hover:underline">{t["footer.planes"]}</Link></li>
           </ul>
         </div>
@@ -46,6 +46,7 @@ export default function Footer() {
       </div>
       <div className="border-t border-mar-100 py-4 text-center text-xs text-mar-950/50">
         {t["footer.copy"]} · <a href="mailto:soporte@casaraizalquiler.com" className="hover:underline">soporte@casaraizalquiler.com</a>
+        {version ? ` · v${version}` : ""}
       </div>
     </footer>
   );

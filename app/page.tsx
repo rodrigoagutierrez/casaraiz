@@ -171,8 +171,8 @@ export default async function Home() {
             <Link href="/precios" className="rounded-full bg-otono-600 px-6 py-3 font-medium hover:bg-otono-700">
               {t["home.verPlanes"]}
             </Link>
-            <Link href="/publicar" className="rounded-full border border-white/30 px-6 py-3 font-medium hover:bg-white/10">
-              {t["home.publicarCta"]}
+            <Link href="/propietarios" className="rounded-full border border-white/30 px-6 py-3 font-medium hover:bg-white/10">
+              {t["nav.publicar"]}
             </Link>
           </div>
         </div>
