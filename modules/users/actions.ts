@@ -7,6 +7,7 @@ import { z } from "zod";
 import { db } from "@/shared/db/client";
 import { users } from "./schema";
 import { logAudit } from "@/modules/audit/log";
+import { DEFAULT_THINGS_TO_KNOW, type ThingToKnow } from "./thingsToKnow";
 
 // El dueño también puede alquilar: cambia su rol sin perder nada
 export async function switchMyRole(role: "owner" | "renter") {
@@ -24,6 +25,29 @@ export async function switchMyRole(role: "owner" | "renter") {
     meta: { from: me.role, to: role, bySelf: true },
   });
   revalidatePath("/mi-cuenta");
+}
+
+export async function updateThingsToKnow(input: ThingToKnow[]) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("UNAUTHORIZED");
+  const [me] = await db.select().from(users).where(eq(users.clerkId, userId)).limit(1);
+  if (!me) throw new Error("SIN_PERFIL");
+  const cleaned = (input ?? [])
+    .map((x) => ({ t: String(x?.t ?? "").trim(), d: String(x?.d ?? "").trim() }))
+    .filter((x) => x.t || x.d)
+    .slice(0, 6);
+  const value = cleaned.length > 0 ? cleaned : DEFAULT_THINGS_TO_KNOW;
+  await db.update(users).set({ thingsToKnow: value }).where(eq(users.id, me.id));
+  await logAudit({
+    actorId: me.id,
+    targetUserId: me.id,
+    action: "user.things_to_know_updated",
+    entity: "user",
+    entityId: me.id,
+    meta: { count: value.length },
+  });
+  revalidatePath("/mi-cuenta");
+  revalidatePath("/p");
 }
 
 // Subir DNI o pasaporte para verificación (las fotos llegan ya subidas vía /api/upload)

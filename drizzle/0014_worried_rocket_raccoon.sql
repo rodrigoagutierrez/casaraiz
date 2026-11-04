@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "things_to_know" jsonb;

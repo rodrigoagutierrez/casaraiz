@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { eur } from "@/shared/utils/format";
 import { getUserByClerkId } from "@/modules/users/queries";
+import { DEFAULT_THINGS_TO_KNOW, type ThingToKnow } from "@/modules/users/thingsToKnow";
 import { getFavoriteIds } from "@/modules/properties/favorites";
 import { entornoLabel } from "@/modules/properties/entornos";
 import Map from "@/modules/properties/components/Map";
@@ -71,9 +72,10 @@ export default async function PisoPage({
   const [rating, reviewList, ownerRows] = await Promise.all([
     getPropertyRating(p.id).catch(() => ({ avg: null as number | null, count: 0 })),
     getPropertyReviews(p.id).catch(() => []),
-    db.select({ dniVerified: users.dniVerified }).from(users).where(eq(users.id, p.ownerId)).limit(1).catch(() => []),
+    db.select({ dniVerified: users.dniVerified, thingsToKnow: users.thingsToKnow }).from(users).where(eq(users.id, p.ownerId)).limit(1).catch(() => []),
   ]);
   const ownerVerified = ownerRows[0]?.dniVerified ?? false;
+  const thingsToKnow: ThingToKnow[] = (ownerRows[0]?.thingsToKnow as ThingToKnow[] | null) ?? DEFAULT_THINGS_TO_KNOW;
 
   const avgOf = (key: "servicio" | "comunicacion" | "entorno") => {
     const vals = reviewList.map((r) => r[key]).filter((x): x is number => x !== null);
@@ -297,11 +299,7 @@ export default async function PisoPage({
 
           <h2 className="mt-8 text-xl font-semibold text-mar-950">Cosas que debes saber</h2>
           <ul className="mt-3 grid grid-cols-1 gap-2 text-sm sm:grid-cols-3">
-            {[
-              { t: "Sin comisiones", d: "Hablas directo con el dueño. Lo que ves es lo que pagas." },
-              { t: "Fianza 2 meses", d: "Contrato de temporada (LAU). El dueño la deposita en su comunidad." },
-              { t: "Contacto verificado", d: "Dueño con identidad verificada y valoraciones reales." },
-            ].map((c) => (
+            {thingsToKnow.map((c) => (
               <li key={c.t} className="rounded-2xl border border-mar-100 bg-white p-4">
                 <p className="font-semibold text-mar-900">{c.t}</p>
                 <p className="mt-1 text-mar-950/65">{c.d}</p>

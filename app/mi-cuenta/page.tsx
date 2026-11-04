@@ -8,6 +8,8 @@ import { getUserByClerkId, hasActiveSubscription, latestSubscription } from "@/m
 import { PortalButton } from "@/modules/billing/components/BillingButtons";
 import { RoleSwitch } from "./RoleSwitch";
 import VerificationForm from "./VerificationForm";
+import ThingsToKnowEditor from "./ThingsToKnowEditor";
+import { DEFAULT_THINGS_TO_KNOW } from "@/modules/users/thingsToKnow";
 
 import type { Metadata } from "next";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -33,6 +35,16 @@ export default async function MiCuenta() {
         <p className="font-semibold text-mar-900">Soy...</p>
         <div className="mt-3"><RoleSwitch role={me.role} /></div>
       </section>
+
+      {me.role === "owner" && (
+        <section className="mt-4 rounded-2xl border border-mar-100 bg-white p-5">
+          <p className="font-semibold text-mar-900">Cosas que debes saber (se muestra en tus pisos)</p>
+          <p className="mt-1 text-sm text-mar-950/55">Personaliza los puntos que verán los inquilinos en la ficha de tus anuncios.</p>
+          <div className="mt-3">
+            <ThingsToKnowEditor initial={me.thingsToKnow ?? DEFAULT_THINGS_TO_KNOW} />
+          </div>
+        </section>
+      )}
 
       <section className="mt-4 rounded-2xl border border-mar-100 bg-white p-5">
         <p className="font-semibold text-mar-900">Verificación de identidad</p>

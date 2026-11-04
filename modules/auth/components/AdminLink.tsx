@@ -8,7 +8,7 @@ export default function AdminLink() {
   useEffect(() => {
     fetch("/api/admin/me")
       .then((r) => r.json())
-      .then((j) => setShow(!!j.isAdmin))
+      .then((j) => setShow(!!j.isSuperAdmin))
       .catch(() => {});
   }, []);
   if (!show) return null;
