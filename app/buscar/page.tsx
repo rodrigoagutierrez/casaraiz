@@ -104,6 +104,11 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
             <PropertyCard key={p.id} p={{ id: p.id, slug: p.slug, title: p.title, priceCents: p.priceCents, rooms: p.rooms, m2: p.m2, barrio: p.barrio, maxHuespedes: p.maxHuespedes, photos: p.photos, rating: ratings.get(p.id), fav: favIds.has(p.id) }} />
           ))}
         </div>
+      ) : city && city.toLowerCase() !== "valencia" ? (
+        <div className="mt-6 rounded-2xl border border-mar-100 bg-white p-8 text-center">
+          <p className="font-medium text-mar-900">Próximamente en {city}</p>
+          <p className="mt-1 text-sm text-mar-950/55">Aún no tenemos pisos activos en esa ciudad, pero pronto llegaremos.</p>
+        </div>
       ) : (
         <div className="mt-6 rounded-2xl border border-mar-100 bg-white p-8 text-center">
           <p className="font-medium text-mar-900">Sin resultados con esos filtros.</p>
