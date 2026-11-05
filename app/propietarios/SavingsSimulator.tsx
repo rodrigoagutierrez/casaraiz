@@ -1,21 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function SavingsSimulator() {
   const [precio, setPrecio] = useState(800);
   const [pisos, setPisos] = useState(1);
-
-  useEffect(() => {
-    const p = document.getElementById("precioAlquiler") as HTMLInputElement | null;
-    const n = document.getElementById("numPisos") as HTMLSelectElement | null;
-    if (p && n) {
-      setPrecio(Number(p.value) || 0);
-      setPisos(Number(n.value) || 1);
-      p.addEventListener("input", () => setPrecio(Number(p.value) || 0));
-      n.addEventListener("change", () => setPisos(Number(n.value) || 0));
-    }
-  }, []);
 
   const anual = precio * 12 * pisos;
   const casa = pisos <= 3 ? 19 * 12 : pisos <= 5 ? 29 * 12 : 149;
@@ -38,7 +27,7 @@ export default function SavingsSimulator() {
                   type="number"
                   min="0"
                   step="50"
-                  defaultValue={800}
+                  value={precio}
                   onChange={(e) => setPrecio(Number(e.target.value) || 0)}
                   className="w-full rounded-lg border border-mar-200 bg-white px-3 py-1.5 text-sm text-mar-950 outline-none focus:border-mar-600"
                 />
@@ -47,7 +36,7 @@ export default function SavingsSimulator() {
                 <label className="block text-xs font-medium text-mar-900 mb-1">Número de pisos publicados</label>
                 <select
                   id="numPisos"
-                  defaultValue="1"
+                  value={pisos}
                   onChange={(e) => setPisos(Number(e.target.value) || 1)}
                   className="w-full rounded-lg border border-mar-200 bg-white px-3 py-1.5 text-sm text-mar-950 outline-none focus:border-mar-600"
                 >

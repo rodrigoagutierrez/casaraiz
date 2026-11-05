@@ -98,7 +98,7 @@ export default async function PropietariosPage() {
               </Link>
               <Link
                 href="/precios"
-                className="rounded-full border border-white/40 px-8 py-3 text-lg font-medium text-white hover:bg-white/10 hover:text-white"
+                className="rounded-full border border-white/40 bg-white/10 px-8 py-3 text-lg font-medium text-white hover:bg-white/20 hover:text-white"
               >
                 Ver planes
               </Link>
