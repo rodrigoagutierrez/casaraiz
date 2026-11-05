@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 
+/** Formato de miles con punto, independiente del ICU del runtime (evita hydration mismatch). */
+function fmt(n: number): string {
+  return Math.round(n)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
 export default function SavingsSimulator() {
   const [precio, setPrecio] = useState(800);
   const [pisos, setPisos] = useState(1);
@@ -53,14 +60,14 @@ export default function SavingsSimulator() {
           </div>
           <div className="flex-1 bg-mar-50 rounded-xl p-6">
             <h3 className="text-lg font-semibold text-mar-900 mb-4">Con CasaRaiz</h3>
-            <p className="text-2xl font-bold text-mar-900">{casa.toLocaleString("es-ES")} €/año</p>
+            <p className="text-2xl font-bold text-mar-900">{fmt(casa)} €/año</p>
             <h3 className="mt-4 text-lg font-semibold text-mar-900 mb-4">Con Airbnb (~3%)</h3>
-            <p className="text-2xl font-bold text-otono-700">{Math.round(airbnb).toLocaleString("es-ES")} €/año</p>
+            <p className="text-2xl font-bold text-otono-700">{fmt(airbnb)} €/año</p>
             <h3 className="mt-4 text-lg font-semibold text-mar-900 mb-4">Con Booking (~15%)</h3>
-            <p className="text-2xl font-bold text-otono-700">{Math.round(booking).toLocaleString("es-ES")} €/año</p>
+            <p className="text-2xl font-bold text-otono-700">{fmt(booking)} €/año</p>
             <div className="mt-6 pt-4 border-t border-mar-100">
               <h4 className="text-sm font-semibold text-mar-900">Te ahorras al año</h4>
-              <p className="text-3xl font-bold text-otono-600">{ahorro > 0 ? Math.round(ahorro).toLocaleString("es-ES") : 0} €/año</p>
+              <p className="text-3xl font-bold text-otono-600">{ahorro > 0 ? fmt(ahorro) : 0} €/año</p>
             </div>
           </div>
         </div>
@@ -72,21 +79,21 @@ export default function SavingsSimulator() {
               <span className="flex-shrink-0 text-otono-600">1.</span>
               <div>
                 <p className="font-medium text-mar-900">Ingreso anual</p>
-                <p className="text-xs text-mar-950/60">{precio.toLocaleString("es-ES")} €/mes × 12 meses × {pisos} piso{pisos > 1 ? "s" : ""} = <span className="font-bold">{anual.toLocaleString("es-ES")} €/año</span></p>
+                <p className="text-xs text-mar-950/60">{fmt(precio)} €/mes × 12 meses × {pisos} piso{pisos > 1 ? "s" : ""} = <span className="font-bold">{fmt(anual)} €/año</span></p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <span className="flex-shrink-0 text-otono-600">2.</span>
               <div>
                 <p className="font-medium text-mar-900">Comisión Airbnb (~3%)</p>
-                <p className="text-xs text-mar-950/60">{anual.toLocaleString("es-ES")} € × 3% = <span className="font-bold text-otono-700">{Math.round(airbnb).toLocaleString("es-ES")} €/año</span></p>
+                <p className="text-xs text-mar-950/60">{fmt(anual)} € × 3% = <span className="font-bold text-otono-700">{fmt(airbnb)} €/año</span></p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <span className="flex-shrink-0 text-otono-600">3.</span>
               <div>
                 <p className="font-medium text-mar-900">Comisión Booking (~15%)</p>
-                <p className="text-xs text-mar-950/60">{anual.toLocaleString("es-ES")} € × 15% = <span className="font-bold text-otono-700">{Math.round(booking).toLocaleString("es-ES")} €/año</span></p>
+                <p className="text-xs text-mar-950/60">{fmt(anual)} € × 15% = <span className="font-bold text-otono-700">{fmt(booking)} €/año</span></p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -100,7 +107,7 @@ export default function SavingsSimulator() {
               <span className="flex-shrink-0 text-otono-600">5.</span>
               <div>
                 <p className="font-medium text-mar-900">Tu ahorro real</p>
-                <p className="text-xs text-mar-950/60">Comisión de plataforma − Membresía CasaRaiz = <span className="font-bold text-otono-600">{ahorro > 0 ? Math.round(ahorro).toLocaleString("es-ES") : 0} €/año</span></p>
+                <p className="text-xs text-mar-950/60">Comisión de plataforma − Membresía CasaRaiz = <span className="font-bold text-otono-600">{ahorro > 0 ? fmt(ahorro) : 0} €/año</span></p>
               </div>
             </div>
           </div>
