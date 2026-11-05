@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { sendEmail } from "@/modules/notifications/email";
+import { clientIp, rateLimit, tooManyRequests } from "@/shared/lib/rateLimit";
 
 const waitlistSchema = z.object({
   email: z.string().email().max(200),
@@ -31,7 +32,14 @@ async function upsertBrevoContact(key: string, email: string, attrs: Record<stri
 
 // POST /api/waitlist { email, ciudad, tipo } -> { ok }
 // Alta en lista de espera: contacto en Brevo + aviso por email al equipo. Sin login.
+// Anti-abuso (SOC2 A1.1): endpoint público y sin auth → 5 altas/hora y máx 20/día por IP.
 export async function POST(req: NextRequest) {
+  const ip = clientIp(req);
+  const rlHour = rateLimit(`waitlist:h:${ip}`, 5, 60 * 60 * 1000);
+  if (!rlHour.ok) return tooManyRequests(rlHour.retryAfterSec);
+  const rlDay = rateLimit(`waitlist:d:${ip}`, 20, 24 * 60 * 60 * 1000);
+  if (!rlDay.ok) return tooManyRequests(rlDay.retryAfterSec);
+
   let body: unknown;
   try {
     body = await req.json();

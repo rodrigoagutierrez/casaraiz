@@ -3,6 +3,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { auth } from "@clerk/nextjs/server";
 import { docsBucketConfigured, DOC_KEY_PREFIX, presignDocPut } from "@/modules/users/docs";
+import { rateLimit, tooManyRequests } from "@/shared/lib/rateLimit";
 
 // POST /api/upload { filename, contentType, contentLength? } -> { url, publicUrl } o 503 si falta config R2
 // Alcance mínimo: solo image/jpeg/png/webp, ≤5MB, key namespaced por usuario (SOC2 CC6.6).
@@ -13,6 +14,10 @@ export async function POST(req: NextRequest) {
   if (!userId) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
+
+  // Anti-abuso: máx 30 presigns/hora por usuario (fotos de piso + DNI + perfil).
+  const rl = rateLimit(`upload:${userId}`, 30, 60 * 60 * 1000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSec);
 
   const { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, NEXT_PUBLIC_R2_PUBLIC_URL } =
     process.env;
