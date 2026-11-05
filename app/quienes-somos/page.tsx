@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Quiénes somos · CasaRaiz",
+  title: "Quiénes somos",
   description: "Conoce al equipo detrás de CasaRaiz, el marketplace de alquiler temporal sin comisiones en Valencia.",
   alternates: { canonical: "/quienes-somos" },
 };
