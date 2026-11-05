@@ -107,58 +107,7 @@ export default async function PropietariosPage() {
         </div>
       </section>
 
-      {/* Simulador de ahorro */}
-      <section className="mx-auto max-w-6xl px-6 pt-16">
-        <div className="rounded-2xl border border-mar-100 bg-white p-6 md:p-8 shadow-sm">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="flex-1">
-              <h2 className="text-2xl font-semibold text-mar-900 mb-2">{t["propietarios.simulador.t"]}</h2>
-              <p className="text-sm text-mar-950/60 mb-6">{t["propietarios.simulador.subt"]}</p>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-xs font-medium text-mar-900 mb-1">{t["propietarios.simulador.alquiler"]}</label>
-                  <input
-                    id="precioAlquiler"
-                    type="number"
-                    min="0"
-                    step="50"
-                    defaultValue="800"
-                    className="w-full rounded-lg border border-mar-200 bg-white px-3 py-1.5 text-sm text-mar-950 outline-none focus:border-mar-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-mar-900 mb-1">{t["propietarios.simulador.pisos"]}</label>
-                  <select
-                    id="numPisos"
-                    className="w-full rounded-lg border border-mar-200 bg-white px-3 py-1.5 text-sm text-mar-950 outline-none focus:border-mar-600"
-                  >
-                    <option value="1">1 piso</option>
-                    <option value="2">2 pisos</option>
-                    <option value="3">3 pisos</option>
-                    <option value="4">4 pisos</option>
-                    <option value="5">5 pisos</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div className="flex-1 bg-mar-50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-mar-900 mb-4">{t["propietarios.simulador.resultadoCasa"]}</h3>
-              <p className="text-2xl font-bold text-mar-900" id="resultadoCasa">0 €/año</p>
-              <h3 className="mt-4 text-lg font-semibold text-mar-900 mb-4">{t["propietarios.simulador.resultadoAirbnb"]}</h3>
-              <p className="text-2xl font-bold text-otono-700" id="resultadoAirbnb">0 €/año</p>
-              <h3 className="mt-4 text-lg font-semibold text-mar-900 mb-4">{t["propietarios.simulador.resultadoBooking"]}</h3>
-              <p className="text-2xl font-bold text-otono-700" id="resultadoBooking">0 €/año</p>
-              <div className="mt-6 pt-4 border-t border-mar-100">
-                <h4 className="text-sm font-semibold text-mar-900">{t["propietarios.simulador.resultadoAhorro"]}</h4>
-                <p className="text-3xl font-bold text-otono-600" id="resultadoAhorro">0 €/año</p>
-              </div>
-            </div>
-          </div>
-          <p className="mt-4 text-xs text-mar-950/50 text-center">
-            Cálculo estimado: comisión Airbnb ~3% sobre el alquiler, Booking ~15%. CasaRaiz: solo membresía (19 €/mes hasta 3 pisos, 29 €/mes de 3 a 5, 149 €/año hasta 15).
-          </p>
-        </div>
-      </section>
+      {/* Simulador de ahorro (componente cliente con desglose) */}
       <SavingsSimulator />
 
       {/* Planes */}
@@ -175,7 +124,7 @@ export default async function PropietariosPage() {
               <div className="mt-auto pt-4">
                 <Link
                   href="/precios"
-                  className="w-full rounded-full bg-mar-900 px-4 py-2 text-sm font-medium text-white hover:bg-mar-800"
+                  className="block w-full rounded-full bg-mar-900 px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-mar-800"
                 >
                   {p.button}
                 </Link>
@@ -189,7 +138,7 @@ export default async function PropietariosPage() {
               <div className="mt-auto pt-4">
                 <a
                   href={`mailto:${t["propietarios.planMas.contacto"]}`}
-                  className="w-full rounded-full border border-mar-200 bg-white px-4 py-2 text-sm font-medium text-mar-900 hover:bg-mar-50"
+                  className="block w-full rounded-full border border-mar-200 bg-white px-4 py-2.5 text-center text-sm font-medium text-mar-900 hover:bg-mar-50"
                 >
                   {t["propietarios.planMas.contacto"]}
                 </a>
