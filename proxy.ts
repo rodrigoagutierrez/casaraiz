@@ -8,14 +8,18 @@ export default clerkMiddleware(async (_auth, req) => {
     ? ` https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`
     : "";
 
+  // Dominios que Clerk exige para su protección anti-bots (CAPTCHA/Turnstile) — ver docs CSP de Clerk.
+  const clerkProtect = "https://*.protect.clerk.com";
+  const turnstile = "https://challenges.cloudflare.com";
+
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev https://*.client.protect.clerk.com https://www.googletagmanager.com${isDev ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'nonce-${nonce}' https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev ${clerkProtect} ${turnstile} https://www.googletagmanager.com${isDev ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' blob: data: https://img.clerk.com https://picsum.photos https://*.r2.dev https://tile.openstreetmap.org",
     "font-src 'self' data:",
-    `connect-src 'self' https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev https://clerk-telemetry.com https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com${r2Connect}`,
-    "frame-src 'self' https://www.openstreetmap.org https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev",
+    `connect-src 'self' https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev ${clerkProtect}:* ${turnstile} https://clerk-telemetry.com https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com${r2Connect}`,
+    `frame-src 'self' https://www.openstreetmap.org https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev ${clerkProtect} ${turnstile}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

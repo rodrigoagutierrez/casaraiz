@@ -1,6 +1,7 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { headers } from "next/headers";
 import Header from "@/shared/ui/Header";
 import Footer from "@/shared/ui/Footer";
 import GoogleAnalytics from "@/shared/ui/GoogleAnalytics";
@@ -47,6 +48,8 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
+  // Nonce de la CSP (lo genera proxy.ts): necesario para el inline script de gtag.
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <html
       lang={locale}
@@ -60,7 +63,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Footer version={pkg.version} />
           </I18nProvider>
         </ClerkProvider>
-      <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? ""} />
+      <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? ""} nonce={nonce} />
       </body>
     </html>
   );
