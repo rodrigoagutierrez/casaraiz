@@ -1,10 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useI18n } from "@/modules/i18n/provider";
 
 export default function Footer({ version }: { version?: string }) {
   const { t } = useI18n();
+  const pathname = usePathname();
+
+  // El hilo de chat (/chat/[id]) es una vista de altura de pantalla: si el footer
+  // se renderiza debajo, el documento scrollea y la cabecera sticky se come los
+  // mensajes al hacer scrollIntoView. En esa ruta no hay footer.
+  if (/^\/chat\//.test(pathname)) return null;
+
   return (
     <footer className="mt-16 border-t border-mar-100 bg-white">
       <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-6 py-10 text-sm md:grid-cols-4">

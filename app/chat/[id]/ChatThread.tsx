@@ -15,8 +15,12 @@ export default function ChatThread({ conversationId, meId }: { conversationId: s
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  // ¿Debe seguir el final de la lista? Solo si el usuario ya estaba abajo
+  // (o es la primera carga): así un mensaje nuevo no le arranca la lectura.
+  const stickRef = useRef(true);
+  const prevLenRef = useRef(0);
 
   async function refetch() {
     const res = await fetch(`/api/chat/${conversationId}`);
@@ -41,9 +45,26 @@ export default function ChatThread({ conversationId, meId }: { conversationId: s
     };
   }, [conversationId]);
 
+  // Auto-scroll SOLO dentro del contenedor de mensajes. OJO: scrollIntoView
+  // scrollea también la ventana (aquí el documento llega a medir 1328px con el
+  // footer debajo) y la cabecera sticky tapaba los mensajes: "la pantalla se va
+  // hacia abajo y desaparecen los mensajes". Se usa scrollTo del propio div.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = listRef.current;
+    if (!el) return;
+    const initial = prevLenRef.current === 0 && msgs.length > 0;
+    prevLenRef.current = msgs.length;
+    if (initial) stickRef.current = true;
+    if (initial || stickRef.current) {
+      el.scrollTo({ top: el.scrollHeight, behavior: initial ? "auto" : "smooth" });
+    }
   }, [msgs.length]);
+
+  function onListScroll() {
+    const el = listRef.current;
+    if (!el) return;
+    stickRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 150;
+  }
 
   async function send(text?: string, image?: string) {
     setSending(true);
@@ -55,6 +76,7 @@ export default function ChatThread({ conversationId, meId }: { conversationId: s
       });
       setText("");
       if (fileRef.current) fileRef.current.value = "";
+      stickRef.current = true; // quien escribe quiere ver su mensaje
       await refetch();
     } finally {
       setSending(false);
@@ -81,7 +103,7 @@ export default function ChatThread({ conversationId, meId }: { conversationId: s
 
   return (
     <>
-      <div className="flex-1 space-y-2 overflow-y-auto py-4">
+      <div ref={listRef} onScroll={onListScroll} className="min-h-0 flex-1 space-y-2 overflow-y-auto py-4">
         {msgs.length === 0 && (
           <p className="pt-10 text-center text-sm text-mar-950/50">
             Empieza la conversación. Envía un mensaje o una foto del piso.
@@ -108,7 +130,6 @@ export default function ChatThread({ conversationId, meId }: { conversationId: s
             </div>
           );
         })}
-        <div ref={bottomRef} />
       </div>
 
       <form onSubmit={onSubmit} className="flex items-center gap-2 border-t border-mar-100 pt-3">

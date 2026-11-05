@@ -25,7 +25,10 @@ export default async function ChatConversationPage({ params }: { params: Promise
   const [other] = await db.select().from(users).where(eq(users.id, otherId)).limit(1);
 
   return (
-    <main className="mx-auto flex h-[calc(100vh-4rem)] max-w-3xl flex-col px-6 py-4">
+    // Altura = viewport - cabecera real (101.8px móvil / 127.4px sm+ con logo
+    // w-24/w-32 + py-3): así el documento NO scrollea y la cabecera sticky
+    // nunca tapa los mensajes. dvh para móviles con barra dinámica.
+    <main className="mx-auto flex h-[calc(100dvh-7rem)] max-w-3xl flex-col px-6 py-4 sm:h-[calc(100dvh-8.5rem)]">
       <div className="flex items-center gap-3 border-b border-mar-100 pb-3">
         <Link href="/chat" className="text-sm text-mar-600">←</Link>
         <div className="min-w-0 flex-1">
@@ -34,7 +37,7 @@ export default async function ChatConversationPage({ params }: { params: Promise
         </div>
         {prop && <Link href={`/p/${prop.slug}`} className="text-xs text-mar-700 underline">Ver piso</Link>}
       </div>
-      <ChatThread conversationId={conv.id} meId={me.id} />
+      <ChatThread key={conv.id} conversationId={conv.id} meId={me.id} />
     </main>
   );
 }
