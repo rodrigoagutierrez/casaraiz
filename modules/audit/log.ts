@@ -7,6 +7,7 @@ export type AuditAction =
   | "user.role_changed"
   | "user.dni_changed"
   | "user.things_to_know_updated"
+  | "user.profile_updated"
   | "property.created"
   | "property.updated"
   | "contact.sent"

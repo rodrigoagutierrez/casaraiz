@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, boolean, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, boolean, timestamp, pgEnum, jsonb } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", ["owner", "renter"]);
 export const verificationEnum = pgEnum("verification_status", ["none", "pending", "verified", "rejected"]);
@@ -15,5 +15,8 @@ export const users = pgTable("users", {
   docFrontUrl: text("doc_front_url"),
   docBackUrl: text("doc_back_url"),
   stripeCustomerId: text("stripe_customer_id"),
+  thingsToKnow: jsonb("things_to_know").$type<{ t: string; d: string }[]>(),
+  photoUrl: text("photo_url"),
+  whatsapp: text("whatsapp"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
