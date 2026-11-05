@@ -6,6 +6,7 @@ import { contacts, properties } from "@/shared/db/schema";
 import { and, desc, eq, or } from "drizzle-orm";
 import { getUserByClerkId } from "@/modules/users/queries";
 import { logAudit } from "@/modules/audit/log";
+import { notify, notifyContactSent } from "@/modules/notifications/notify";
 
 const contactSchema = z.object({
   propertyId: z.string().uuid(),
@@ -75,6 +76,16 @@ export async function POST(req: NextRequest) {
     entityId: created.id,
     meta: { propertyId: prop.id, ownerId: prop.ownerId },
   });
+
+  // Aviso al dueño de que le han escrito (no bloquea la respuesta).
+  notify(() =>
+    notifyContactSent({
+      ownerId: prop.ownerId,
+      renterEmail: me.email,
+      propertyTitle: prop.title,
+      message: parsed.data.message,
+    })
+  );
 
   return NextResponse.json({ data: created }, { status: 201 });
 }

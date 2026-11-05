@@ -8,6 +8,7 @@ import { and, desc, eq, or, sql } from "drizzle-orm";
 import { getUserByClerkId } from "@/modules/users/queries";
 import { getGuaranteeConfig, quoteGuarantee, stayNights } from "@/modules/billing/guarantee";
 import { logAudit } from "@/modules/audit/log";
+import { notify, notifyBookingRequested } from "@/modules/notifications/notify";
 
 const createSchema = z.object({
   propertyId: z.string().uuid(),
@@ -65,41 +66,40 @@ export async function POST(req: NextRequest) {
   }
 
   // Solape con otras reservas vivas del mismo piso.
-  // Serializado por piso (FOR UPDATE) para cerrar la carrera check-then-insert (SOC2 CC8.1).
+  // OJO: el driver neon-http no admite transacciones interactivas (db.transaction
+  // lanza "No transactions support in neon-http driver"), así que la carrera
+  // check-then-insert se cierra en el motor con el constraint `bookings_no_overlap`
+  // (migración 0020): si dos requests solapan a la vez, el segundo recibe 23P01.
   try {
-    const created = await db.transaction(async (tx) => {
-      await tx.select({ id: properties.id }).from(properties).where(eq(properties.id, propertyId)).for("update");
-      const clash = await tx
-        .select({ id: bookings.id })
-        .from(bookings)
-        .where(
-          and(
-            eq(bookings.propertyId, propertyId),
-            sql`${bookings.status} in ('pending','confirmed')`,
-            sql`${bookings.checkin} < ${checkout}`,
-            sql`${bookings.checkout} > ${checkin}`
-          )
+    const clash = await db
+      .select({ id: bookings.id })
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.propertyId, propertyId),
+          sql`${bookings.status} in ('pending','confirmed')`,
+          sql`${bookings.checkin} < ${checkout}`,
+          sql`${bookings.checkout} > ${checkin}`
         )
-        .limit(1);
-      if (clash.length > 0) return null;
-      const [row] = await tx
-        .insert(bookings)
-        .values({
-          propertyId,
-          renterId: me.id,
-          ownerId: prop.ownerId,
-          checkin,
-          checkout,
-          guests,
-          status: "pending",
-          ...(garantiaImporte !== null
-            ? { garantiaOptada: true, garantiaImporteCents: garantiaImporte, garantiaEstado: "pendiente_pago" }
-            : {}),
-        })
-        .returning();
-      return row;
-    });
-    if (!created) return NextResponse.json({ error: "NO_DISPONIBLE" }, { status: 409 });
+      )
+      .limit(1);
+    if (clash.length > 0) return NextResponse.json({ error: "NO_DISPONIBLE" }, { status: 409 });
+
+    const [created] = await db
+      .insert(bookings)
+      .values({
+        propertyId,
+        renterId: me.id,
+        ownerId: prop.ownerId,
+        checkin,
+        checkout,
+        guests,
+        status: "pending",
+        ...(garantiaImporte !== null
+          ? { garantiaOptada: true, garantiaImporteCents: garantiaImporte, garantiaEstado: "pendiente_pago" }
+          : {}),
+      })
+      .returning();
 
     await logAudit({
       actorId: me.id,
@@ -110,9 +110,30 @@ export async function POST(req: NextRequest) {
       meta: { propertyId, checkin, checkout, guests, garantiaCents: garantiaImporte },
     });
 
+    // Aviso al dueño (no bloquea la respuesta).
+    notify(() =>
+      notifyBookingRequested({
+        ownerId: prop.ownerId,
+        renterEmail: me.email,
+        propertyTitle: prop.title,
+        checkin,
+        checkout,
+        guests,
+      })
+    );
+
     return NextResponse.json({ data: created }, { status: 201 });
   } catch (e) {
-    console.error("booking create txn:", e);
+    // 23P01 = exclusion violation: otro request ganó la carrera (solape real).
+    // El código puede venir en el propio error o en `cause` (DrizzleQueryError
+    // envuelve el NeonDbError del driver).
+    const err = e as { code?: unknown; cause?: { code?: unknown; message?: unknown } };
+    const code = typeof err.code === "string" ? err.code : typeof err.cause?.code === "string" ? err.cause.code : undefined;
+    const msg = typeof err.cause?.message === "string" ? err.cause.message : "";
+    if (code === "23P01" || msg.includes("bookings_no_overlap")) {
+      return NextResponse.json({ error: "NO_DISPONIBLE" }, { status: 409 });
+    }
+    console.error("booking create:", e);
     return NextResponse.json({ error: "ERROR_CREAR_RESERVA" }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { getUserByClerkId } from "@/modules/users/queries";
 import { getConversation, getMessages, markConversationRead, sendMessage } from "@/modules/chat/queries";
+import { notify, notifyChatMessage } from "@/modules/notifications/notify";
 
 // Tamaño máximo del mensaje (la imagen llega ya comprimida en cliente como data URL).
 const MAX_IMAGE_CHARS = 350_000; // ~260KB en base64
@@ -53,5 +54,18 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!parsed.success) return NextResponse.json({ error: "DATOS_INVALIDOS" }, { status: 400 });
 
   const created = await sendMessage(conv.id, me.id, parsed.data);
+
+  // Aviso al otro interlocutor (no bloquea la respuesta).
+  const toUserId = conv.renterId === me.id ? conv.ownerId : conv.renterId;
+  notify(() =>
+    notifyChatMessage({
+      toUserId,
+      fromEmail: me.email,
+      conversationId: conv.id,
+      text: parsed.data.text,
+      hasImage: !!parsed.data.image,
+    })
+  );
+
   return NextResponse.json({ data: created }, { status: 201 });
 }

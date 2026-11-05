@@ -3,9 +3,11 @@ import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { db } from "@/shared/db/client";
 import { bookings } from "@/modules/bookings/schema";
+import { properties } from "@/shared/db/schema";
 import { and, eq } from "drizzle-orm";
 import { getUserByClerkId } from "@/modules/users/queries";
 import { logAudit } from "@/modules/audit/log";
+import { notify, notifyBookingDecided } from "@/modules/notifications/notify";
 
 // PATCH /api/bookings/[id] { decision: "confirmed" | "declined" | "canceled" }
 // El dueño confirma/rechaza; el inquilino puede cancelar la suya.
@@ -48,6 +50,22 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     entityId: id,
     meta: { decision: parsed.data.decision },
   });
+
+  // Aviso por email a la otra parte (no bloquea la respuesta).
+  if (updated) {
+    const [prop] = await db.select({ title: properties.title }).from(properties).where(eq(properties.id, b.propertyId)).limit(1);
+    notify(() =>
+      notifyBookingDecided({
+        bookingId: id,
+        decision: parsed.data.decision,
+        ownerId: b.ownerId,
+        renterId: b.renterId,
+        propertyTitle: prop?.title ?? "tu reserva",
+        checkin: b.checkin,
+        checkout: b.checkout,
+      })
+    );
+  }
 
   return NextResponse.json({ data: updated });
 }
