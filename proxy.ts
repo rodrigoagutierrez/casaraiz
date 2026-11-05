@@ -18,7 +18,7 @@ export default clerkMiddleware(async (_auth, req) => {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' blob: data: https://img.clerk.com https://picsum.photos https://*.r2.dev https://tile.openstreetmap.org",
     "font-src 'self' data:",
-    `connect-src 'self' https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev ${clerkProtect}:* ${turnstile} https://clerk-telemetry.com https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com${r2Connect}`,
+    `connect-src 'self' https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev ${clerkProtect}:* ${turnstile} https://clerk-telemetry.com https://www.googletagmanager.com https://*.google-analytics.com https://analytics.google.com${r2Connect}`,
     `frame-src 'self' https://www.openstreetmap.org https://clerk.casaraizalquiler.com https://*.clerk.accounts.dev ${clerkProtect} ${turnstile}`,
     "object-src 'none'",
     "base-uri 'self'",
