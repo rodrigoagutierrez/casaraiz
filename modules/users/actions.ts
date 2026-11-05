@@ -50,6 +50,28 @@ export async function updateThingsToKnow(input: ThingToKnow[]) {
   revalidatePath("/p");
 }
 
+// Teléfono de contacto del usuario (obligatorio para dueños al publicar/activar)
+export async function updateMyPhone(raw: string) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("UNAUTHORIZED");
+  const phone = raw.trim();
+  if (phone && (phone.length < 6 || phone.length > 30 || /[^\d\s+()-]/.test(phone))) {
+    throw new Error("TELEFONO_INVALIDO");
+  }
+  const [me] = await db.select().from(users).where(eq(users.clerkId, userId)).limit(1);
+  if (!me) throw new Error("SIN_PERFIL");
+  await db.update(users).set({ phone: phone || null }).where(eq(users.id, me.id));
+  await logAudit({
+    actorId: me.id,
+    targetUserId: me.id,
+    action: "user.data_updated",
+    entity: "user",
+    entityId: me.id,
+    meta: { fields: ["phone"] },
+  });
+  revalidatePath("/mi-cuenta");
+}
+
 // Subir DNI o pasaporte para verificación (las fotos llegan ya subidas vía /api/upload)
 export async function submitVerification(input: { docType: "dni" | "pasaporte"; frontUrl: string; backUrl: string }) {
   const { userId } = await auth();
@@ -60,6 +82,8 @@ export async function submitVerification(input: { docType: "dni" | "pasaporte"; 
   if (!parsed.success) throw new Error("DATOS_INVALIDOS");
   const [me] = await db.select().from(users).where(eq(users.clerkId, userId)).limit(1);
   if (!me) throw new Error("SIN_PERFIL");
+  // "Todos los datos cargados": sin foto de perfil no se admite a revisión
+  if (!me.photoUrl) throw new Error("FALTA_FOTO");
   await db
     .update(users)
     .set({

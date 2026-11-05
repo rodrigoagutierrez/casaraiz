@@ -28,6 +28,10 @@ export async function POST(req: NextRequest) {
 
   const me = await getUserByClerkId(userId);
   if (!me) return NextResponse.json({ error: "SIN_PERFIL" }, { status: 404 });
+  // Sin verificar: solo consulta pública (ni abrir chat)
+  if (me.verificationStatus !== "verified") {
+    return NextResponse.json({ error: "NO_VERIFICADO" }, { status: 403 });
+  }
 
   const [prop] = await db.select().from(properties).where(eq(properties.id, parsed.data.propertyId)).limit(1);
   if (!prop || prop.status !== "active") return NextResponse.json({ error: "PISO_NO_DISPONIBLE" }, { status: 404 });

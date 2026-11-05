@@ -28,6 +28,9 @@ export default async function Reservas({ searchParams }: { searchParams: Promise
   if (!me) redirect("/sign-in");
   const { garantia } = await searchParams;
 
+  // Visita a la página: las decisiones posteriores vuelven a pintar el badge.
+  await db.update(users).set({ bookingsSeenAt: new Date() }).where(eq(users.id, me.id));
+
   const rows = await db.select().from(bookings).where(eq(bookings.renterId, me.id)).orderBy(desc(bookings.createdAt)).limit(100);
   const props = await db.select().from(properties);
   const propById = new Map(props.map((p) => [p.id, p]));
@@ -72,12 +75,26 @@ export default async function Reservas({ searchParams }: { searchParams: Promise
         {rows.map((b) => {
           const p = propById.get(b.propertyId);
           const o = ownerById.get(b.ownerId);
+          const confirmed = b.status === "confirmed";
           return (
             <div key={b.id} className="rounded-2xl border border-mar-100 bg-white p-4 text-sm">
-              <p className="font-semibold text-mar-900">
-                {p ? <Link href={`/p/${p.slug}`} className="underline">{p.title}</Link> : "Piso"}
-              </p>
-              <p className="mt-1 text-mar-950/65">{b.checkin} → {b.checkout} · {b.guests} huésp. · {STATUS[b.status]}</p>
+              <div className="flex items-start gap-3">
+                {o?.photoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={o.photoUrl}
+                    alt=""
+                    className={`h-10 w-10 shrink-0 rounded-full object-cover ${confirmed ? "" : "blur-[6px]"}`}
+                  />
+                ) : null}
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-mar-900">
+                    {p ? <Link href={`/p/${p.slug}`} className="underline">{p.title}</Link> : "Piso"}
+                    {o?.verificationStatus === "verified" && <span className="ml-1.5 text-xs font-semibold text-green-700">✓ dueño verificado</span>}
+                  </p>
+                  <p className="mt-1 text-mar-950/65">{b.checkin} → {b.checkout} · {b.guests} huésp. · {STATUS[b.status]}</p>
+                </div>
+              </div>
               {b.garantiaOptada && (
                 <p className="mt-1 text-mar-950/65">
                   Garantía:{" "}
@@ -91,8 +108,19 @@ export default async function Reservas({ searchParams }: { searchParams: Promise
                   )}
                 </p>
               )}
-              {b.status === "confirmed" && o && (
-                <p className="mt-1 text-mar-950/65">Dueño: {o.email}{o.phone ? ` · ${o.phone}` : ""}</p>
+              {confirmed && o && (
+                <div className="mt-2 rounded-xl bg-mar-50 p-3 text-xs text-mar-950/70">
+                  <p className="font-medium text-mar-900">Datos de contacto (reserva concretada)</p>
+                  <p className="mt-1">
+                    {o.email}
+                    {o.phone ? ` · ${o.phone}` : ""}
+                  </p>
+                  {p?.emergencyPhone && (
+                    <p className="mt-1">
+                      <span className="font-medium text-otono-700">Emergencias:</span> {p.emergencyPhone}
+                    </p>
+                  )}
+                </div>
               )}
               {b.status === "pending" && (
                 <div className="mt-2"><DecisionButtons id={b.id} role="renter" /></div>

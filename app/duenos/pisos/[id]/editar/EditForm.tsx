@@ -17,6 +17,7 @@ type Prop = {
   registroNumero: string | null;
   registroTipo: string;
   referenciaCatastral: string | null;
+  emergencyPhone: string | null;
   maxHuespedes: number;
   disponibleDesde: string | null;
   disponibleHasta: string | null;
@@ -46,6 +47,7 @@ export default function EditForm({ initial }: { initial: Prop }) {
     registroNumero: initial.registroNumero ?? "",
     registroTipo: initial.registroTipo ?? "temporada",
     referenciaCatastral: initial.referenciaCatastral ?? "",
+    emergencyPhone: initial.emergencyPhone ?? "",
     maxHuespedes: initial.maxHuespedes,
     disponibleDesde: initial.disponibleDesde ?? "",
     disponibleHasta: initial.disponibleHasta ?? "",
@@ -115,6 +117,7 @@ export default function EditForm({ initial }: { initial: Prop }) {
         disponibleDesde: form.disponibleDesde || null,
         disponibleHasta: form.disponibleHasta || null,
         referenciaCatastral: form.referenciaCatastral || null,
+        emergencyPhone: form.emergencyPhone.trim() || null,
       };
       const res = await fetch(`/api/properties/${initial.id}`, {
         method: "PATCH",
@@ -126,7 +129,11 @@ export default function EditForm({ initial }: { initial: Prop }) {
         setError(
           json.error === "FALTA_REGISTRO"
             ? "Falta el nº de Registro Único para activar el anuncio."
-            : "No se pudo guardar. Revisa los campos."
+            : json.error === "FALTA_TELEFONO"
+              ? "Falta tu teléfono de contacto: añádelo en «Mi cuenta» para activar."
+              : json.error === "FALTA_EMERGENCIA"
+                ? "Falta el teléfono de emergencia del piso: rellénalo para activar."
+                : "No se pudo guardar. Revisa los campos."
         );
         return;
       }
@@ -189,6 +196,14 @@ export default function EditForm({ initial }: { initial: Prop }) {
         <input className={`${inputCls} mt-1`} value={form.referenciaCatastral}
           onChange={(e) => set("referenciaCatastral", e.target.value)} />
       </label>
+      <label className="text-sm text-mar-900">Teléfono de emergencia del piso *
+        <input className={`${inputCls} mt-1`} type="tel" value={form.emergencyPhone}
+          onChange={(e) => set("emergencyPhone", e.target.value)} required
+          placeholder="Puede ser el mismo que tu teléfono de contacto" />
+      </label>
+      <p className="-mt-2 text-xs text-mar-950/60">
+        Se muestra al inquilino solo cuando la reserva está concretada.
+      </p>
       <label className="text-sm text-mar-900">Estado
         <select className={`${inputCls} mt-1`} value={form.status} onChange={(e) => set("status", e.target.value)}>
           <option value="active">Activo (visible)</option>

@@ -24,6 +24,8 @@ export const bookings = pgTable("bookings", {
   garantiaEstado: text("garantia_estado").notNull().default("ninguna"),
   garantiaStripeSession: text("garantia_stripe_session"),
   garantiaPagadaAt: timestamp("garantia_pagada_at"),
+  // Cuándo se decidió (confirm/rechazo/cancelación): alimenta el badge de reservas
+  decidedAt: timestamp("decided_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

@@ -37,6 +37,7 @@ export default async function EditarPiso({ params }: { params: Promise<{ id: str
           registroNumero: p.registroNumero,
           registroTipo: p.registroTipo,
           referenciaCatastral: p.referenciaCatastral,
+          emergencyPhone: p.emergencyPhone,
           maxHuespedes: p.maxHuespedes,
           disponibleDesde: p.disponibleDesde,
           disponibleHasta: p.disponibleHasta,

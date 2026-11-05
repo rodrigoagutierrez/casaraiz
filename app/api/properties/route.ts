@@ -29,7 +29,16 @@ export async function GET(req: NextRequest) {
     .orderBy(desc(properties.createdAt))
     .limit(limit);
 
-  return NextResponse.json({ data: rows });
+  // Nunca exponer al inquilino: nº de registro (NRA), referencia catastral ni
+  // teléfono de emergencia. Solo se ven en los formularios del dueño y en admin.
+  const sensitive = new Set(["registroNumero", "referenciaCatastral", "emergencyPhone"]);
+  const safe = rows.map((row) => {
+    const copy: Record<string, unknown> = { ...row };
+    for (const k of sensitive) delete copy[k];
+    return copy;
+  });
+
+  return NextResponse.json({ data: safe });
 }
 
 // POST /api/properties — requiere login + suscripción de dueño con capacidad
@@ -51,6 +60,11 @@ export async function POST(req: NextRequest) {
   const cu = await client.users.getUser(userId);
   const email = cu.emailAddresses[0]?.emailAddress ?? `${userId}@casaraiz.local`;
   const owner = await getOrCreateUser(userId, email, "owner");
+
+  // El dueño debe tener teléfono de contacto publicado (criterio de confianza)
+  if (!owner.phone?.trim()) {
+    return NextResponse.json({ error: "FALTA_TELEFONO" }, { status: 400 });
+  }
 
   const cap = await getPublishCapacity(owner.id);
   if (!cap.hasRights) {
@@ -83,6 +97,7 @@ export async function POST(req: NextRequest) {
       registroNumero: input.registroNumero.trim(),
       registroTipo: input.registroTipo,
       referenciaCatastral: input.referenciaCatastral?.trim() || null,
+      emergencyPhone: input.emergencyPhone.trim(),
       slug: slugify(input.title),
       lat: input.lat,
       lng: input.lng,

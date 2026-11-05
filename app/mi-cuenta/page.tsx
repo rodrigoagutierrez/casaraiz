@@ -2,12 +2,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/shared/db/client";
-import { contacts, properties } from "@/shared/db/schema";
-import { count, eq, or } from "drizzle-orm";
+import { contacts, conversations, messages, properties } from "@/shared/db/schema";
+import { and, count, eq, or, sql } from "drizzle-orm";
 import { getUserByClerkId, hasActiveSubscription, latestSubscription } from "@/modules/users/queries";
 import { PortalButton } from "@/modules/billing/components/BillingButtons";
 import { RoleSwitch } from "./RoleSwitch";
 import VerificationForm from "./VerificationForm";
+import ProfilePhotoForm from "./ProfilePhotoForm";
+import PhoneForm from "./PhoneForm";
 import ThingsToKnowEditor from "./ThingsToKnowEditor";
 import { DEFAULT_THINGS_TO_KNOW } from "@/modules/users/thingsToKnow";
 
@@ -19,17 +21,50 @@ export default async function MiCuenta() {
   const me = await getUserByClerkId(userId);
   if (!me) redirect("/sign-in");
 
-  const [[np], [nc], active, sub] = await Promise.all([
+  const [[np], [nc], active, sub, [unread]] = await Promise.all([
     db.select({ n: count() }).from(properties).where(eq(properties.ownerId, me.id)),
     db.select({ n: count() }).from(contacts).where(or(eq(contacts.renterId, me.id), eq(contacts.ownerId, me.id))),
     hasActiveSubscription(me.id),
     latestSubscription(me.id),
+    db
+      .select({ n: count() })
+      .from(messages)
+      .innerJoin(conversations, eq(messages.conversationId, conversations.id))
+      .where(
+        and(
+          or(eq(conversations.renterId, me.id), eq(conversations.ownerId, me.id)),
+          sql`${messages.senderId} <> ${me.id}`,
+          sql`${messages.readAt} is null`
+        )
+      ),
   ]);
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
       <h1 className="text-3xl font-bold text-mar-950">Mi cuenta</h1>
-      <p className="mt-1 text-sm text-mar-950/55">{me.email} · DNI {me.dniVerified ? "verificado ✓" : "pendiente"}</p>
+      <p className="mt-1 text-sm text-mar-950/55">
+        {me.email} ·{" "}
+        {me.verificationStatus === "verified" ? (
+          <span className="font-medium text-green-700">Identidad verificada ✓</span>
+        ) : me.verificationStatus === "pending" ? (
+          <span className="font-medium text-otono-700">Verificación en revisión</span>
+        ) : (
+          <span className="font-medium text-otono-700">Sin verificar</span>
+        )}
+      </p>
+
+      <section className="mt-6 rounded-2xl border border-mar-100 bg-white p-5">
+        <p className="font-semibold text-mar-900">Tu perfil</p>
+        <p className="mt-1 text-sm text-mar-950/55">
+          Foto de perfil y teléfono de contacto. La foto se muestra borrada a los demás hasta que haya una reserva
+          confirmada entre vosotros; tu teléfono solo se ve cuando una reserva está concretada.
+        </p>
+        <ProfilePhotoForm initial={me.photoUrl ?? null} />
+        <div className="mt-4 border-t border-mar-100 pt-4">
+          <p className="text-sm font-medium text-mar-900">Teléfono de contacto</p>
+          <PhoneForm initial={me.phone ?? ""} isOwner={me.role === "owner"} />
+        </div>
+      </section>
 
       <section className="mt-6 rounded-2xl border border-mar-100 bg-white p-5">
         <p className="font-semibold text-mar-900">Soy...</p>
@@ -81,7 +116,7 @@ export default async function MiCuenta() {
       <section className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { href: "/duenos", t: "Mis pisos", d: `${np.n} publicados` },
-          { href: "/chat", t: "Mensajes", d: "Conversaciones" },
+          { href: "/chat", t: "Mensajes", d: unread.n > 0 ? `${unread.n} sin leer` : "Conversaciones" },
           { href: "/buscar", t: "Buscar piso", d: "Como inquilino" },
           { href: "/favoritos", t: "Favoritos", d: "Mis guardados" },
           { href: "/publicar", t: "Publicar", d: "Nuevo anuncio" },

@@ -41,7 +41,10 @@ export async function POST(req: NextRequest) {
 
   const me = await getUserByClerkId(userId);
   if (!me) return NextResponse.json({ error: "SIN_PERFIL" }, { status: 404 });
-  // Inquilinos gratis: basta con estar registrado. Publicar sigue exigiendo plan de dueño.
+  // Sin verificar: solo consulta pública (ni contacto)
+  if (me.verificationStatus !== "verified") {
+    return NextResponse.json({ error: "NO_VERIFICADO" }, { status: 403 });
+  }
 
   const [prop] = await db.select().from(properties).where(eq(properties.id, parsed.data.propertyId)).limit(1);
   if (!prop || prop.status !== "active") {

@@ -139,7 +139,7 @@ export function CustomPriceForm({ userId }: { userId: string }) {
   );
 }
 
-export function VerificationReview({ userId, status, docType, front, back }: { userId: string; status: string; docType: string | null; front: string | null; back: string | null }) {
+export function VerificationReview({ userId, status, docType, front, back, photo }: { userId: string; status: string; docType: string | null; front: string | null; back: string | null; photo?: string | null }) {
   const [reason, setReason] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -163,8 +163,12 @@ export function VerificationReview({ userId, status, docType, front, back }: { u
   return (
     <div className="mt-3">
       <p className="text-sm text-mar-900">Documento: <strong>{docType ?? "—"}</strong> · estado: <strong>{status}</strong></p>
-      <div className="mt-2 grid grid-cols-2 gap-2">
+      <p className="mt-1 text-xs text-mar-950/50">
+        Comprueba que la cara del documento coincide con la foto de perfil: si no coinciden, rechaza con motivo.
+      </p>
+      <div className="mt-2 grid grid-cols-3 gap-2">
         {[
+          { u: photo, l: "Foto de perfil" },
           { u: front, l: "Anverso" },
           { u: back, l: "Reverso" },
         ].map(({ u, l }) =>

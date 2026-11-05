@@ -38,7 +38,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const [updated] = await db
     .update(bookings)
-    .set({ status: parsed.data.decision })
+    .set({ status: parsed.data.decision, decidedAt: new Date() })
     .where(and(eq(bookings.id, id), eq(bookings.status, "pending")))
     .returning();
 

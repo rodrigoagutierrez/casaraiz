@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { trackEvent } from "@/shared/lib/analytics";
 
-export default function ChatButton({ propertyId }: { propertyId: string }) {
+export default function ChatButton({ propertyId, verified }: { propertyId: string; verified?: boolean }) {
   const router = useRouter();
   const { isSignedIn } = useUser();
   const [busy, setBusy] = useState(false);
@@ -40,6 +40,18 @@ export default function ChatButton({ propertyId }: { propertyId: string }) {
         className="rounded-full border border-mar-200 bg-white px-5 py-2 text-sm font-medium text-mar-900 hover:bg-mar-50"
       >
         Chatear con el dueño
+      </button>
+    );
+  }
+
+  // Solo usuarios verificados chatean (antes: solo consulta pública)
+  if (!verified) {
+    return (
+      <button
+        onClick={() => router.push("/mi-cuenta")}
+        className="rounded-full border border-otono-200 bg-otono-100 px-5 py-2 text-sm font-medium text-otono-700 hover:bg-otono-200"
+      >
+        Verifica tu identidad para chatear
       </button>
     );
   }

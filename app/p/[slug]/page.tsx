@@ -20,6 +20,7 @@ import { Stars } from "@/modules/bookings/components/Stars";
 import { getPropertyRating, getPropertyReviews } from "@/modules/bookings/queries";
 import DescriptionBlock from "@/modules/properties/components/DescriptionBlock";
 import { JsonLd, breadcrumbLd } from "@/modules/seo/JsonLd";
+import { getAdminIdentity } from "@/modules/auth/guard";
 
 function decodeSlug(raw: string): string {
   try {
@@ -91,11 +92,19 @@ export default async function PisoPage({
   const photos = p.photos.slice(0, 5);
 
   let fav = false;
+  let meVerified = false;
+  let isSuperadmin = false;
   try {
     const { userId } = await auth();
     if (userId) {
       const me = await getUserByClerkId(userId).catch(() => undefined);
-      if (me) fav = (await getFavoriteIds(me.id).catch(() => new Set<string>())).has(p.id);
+      if (me) {
+        fav = (await getFavoriteIds(me.id).catch(() => new Set<string>())).has(p.id);
+        meVerified = me.verificationStatus === "verified";
+      }
+      // El NRA solo lo ve el superadmin (inspecciones); nunca al inquilino.
+      const admin = await getAdminIdentity().catch(() => null);
+      isSuperadmin = admin?.role === "superadmin";
     }
   } catch {}
 
@@ -137,7 +146,6 @@ export default async function PisoPage({
           description: p.description.slice(0, 300),
           url: `https://casaraizalquiler.com/p/${p.slug}`,
           image: p.photos.slice(0, 5),
-          identifier: p.registroNumero ?? undefined,
           latitude: p.lat ?? undefined,
           longitude: p.lng ?? undefined,
           containsPlace: {
@@ -159,7 +167,6 @@ export default async function PisoPage({
           url: `https://casaraizalquiler.com/p/${p.slug}`,
           availability: p.status === "active" ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
           validFrom: p.disponibleDesde ?? undefined,
-          identifier: p.registroNumero ?? undefined,
         }}
       />
       <JsonLd
@@ -193,15 +200,11 @@ export default async function PisoPage({
       </div>
       <p className="mt-1 text-sm text-mar-950/55">{p.rooms} hab · {p.baths} baños · {p.m2} m² · hasta {p.maxHuespedes} huésp.</p>
       <div className="mt-2">
-        {p.registroNumero ? (
+        {isSuperadmin && p.registroNumero ? (
           <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
-            Nº Registro: {p.registroNumero}
+            Nº Registro: {p.registroNumero} (solo superadmin)
           </span>
-        ) : (
-          <span className="rounded-full bg-otono-100 px-3 py-1 text-xs font-semibold text-otono-700">
-            Registro en trámite
-          </span>
-        )}
+        ) : null}
       </div>
 
       {/* Galería mosaico */}
@@ -327,12 +330,12 @@ export default async function PisoPage({
             <p className="mt-1 text-xs text-mar-950/55">Sin comisiones · IVA incluido en membresía</p>
             <div className="mt-4 border-t border-mar-100 pt-4">
               <p className="text-sm font-medium text-mar-900">Tu estancia temporal</p>
-              <BookingBox propertyId={p.id} maxHuespedes={p.maxHuespedes} priceCents={p.priceCents} />
+              <BookingBox propertyId={p.id} maxHuespedes={p.maxHuespedes} priceCents={p.priceCents} verified={meVerified} />
             </div>
             <div className="mt-4 border-t border-mar-100 pt-4">
               <p className="text-sm font-medium text-mar-900">¿Dudas? Habla con el dueño</p>
-              <div className="mt-2"><ChatButton propertyId={p.id} /></div>
-              <div className="mt-2"><ContactBox propertyId={p.id} /></div>
+              <div className="mt-2"><ChatButton propertyId={p.id} verified={meVerified} /></div>
+              <div className="mt-2"><ContactBox propertyId={p.id} verified={meVerified} /></div>
             </div>
             <div className="mt-4 rounded-xl bg-mar-50 p-3 text-xs text-mar-950/70">
               <p><strong className="text-mar-900">RGPD:</strong> contacto visible con consentimiento y cuenta registrada.</p>

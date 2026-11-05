@@ -21,6 +21,7 @@ export default function ChatThread({ conversationId, meId }: { conversationId: s
   // (o es la primera carga): así un mensaje nuevo no le arranca la lectura.
   const stickRef = useRef(true);
   const prevLenRef = useRef(0);
+  const [blocked, setBlocked] = useState(false);
 
   async function refetch() {
     const res = await fetch(`/api/chat/${conversationId}`);
@@ -69,11 +70,19 @@ export default function ChatThread({ conversationId, meId }: { conversationId: s
   async function send(text?: string, image?: string) {
     setSending(true);
     try {
-      await fetch(`/api/chat/${conversationId}`, {
+      const res = await fetch(`/api/chat/${conversationId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, image }),
       });
+      if (res.status === 403) {
+        const json = await res.json().catch(() => ({}));
+        if (json.error === "NO_VERIFICADO") {
+          setBlocked(true);
+          return;
+        }
+        return;
+      }
       setText("");
       if (fileRef.current) fileRef.current.value = "";
       stickRef.current = true; // quien escribe quiere ver su mensaje
@@ -132,6 +141,11 @@ export default function ChatThread({ conversationId, meId }: { conversationId: s
         })}
       </div>
 
+      {blocked && (
+        <p className="border-t border-mar-100 pt-2 text-xs text-otono-700">
+          Tu cuenta aún no está verificada: no puedes enviar mensajes hasta que la revisión se complete (24-48h).
+        </p>
+      )}
       <form onSubmit={onSubmit} className="flex items-center gap-2 border-t border-mar-100 pt-3">
         <input
           ref={fileRef}

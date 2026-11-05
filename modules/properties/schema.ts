@@ -28,6 +28,8 @@ export const properties = pgTable(
     registroNumero: text("registro_numero"),
     registroTipo: text("registro_tipo").notNull().default("temporada"),
     referenciaCatastral: text("referencia_catastral"),
+    // Teléfono de emergencia del piso (puede coincidir con el del dueño)
+    emergencyPhone: text("emergency_phone"),
     slug: text("slug").notNull().unique(),
     lat: text("lat"),
     lng: text("lng"),

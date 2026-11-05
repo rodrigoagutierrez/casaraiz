@@ -32,10 +32,22 @@ export default async function ChatPage() {
               href={`/chat/${c.id}`}
               className="flex items-center justify-between rounded-2xl border border-mar-100 bg-white p-4 hover:shadow"
             >
-              <div className="min-w-0">
-                <p className="truncate font-semibold text-mar-900">{c.title}</p>
-                <p className="truncate text-sm text-mar-950/55">{c.lastText ?? "Conversación iniciada"}</p>
-                <p className="text-xs text-mar-950/40">con {c.otherEmail}</p>
+              <div className="flex min-w-0 flex-1 items-center gap-3">
+                {c.otherPhoto ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={c.otherPhoto}
+                    alt=""
+                    className={`h-10 w-10 shrink-0 rounded-full object-cover ${c.unlocked ? "" : "blur-[6px]"}`}
+                  />
+                ) : (
+                  <div className="h-10 w-10 shrink-0 rounded-full bg-mar-100" />
+                )}
+                <div className="min-w-0">
+                  <p className="truncate font-semibold text-mar-900">{c.title}</p>
+                  <p className="truncate text-sm text-mar-950/55">{c.lastText ?? "Conversación iniciada"}</p>
+                  <p className="truncate text-xs text-mar-950/40">con {c.otherEmail}</p>
+                </div>
               </div>
               {c.unread > 0 && (
                 <span className="ml-3 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-otono-600 text-xs font-bold text-white">

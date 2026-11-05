@@ -46,6 +46,7 @@ export default function PublicarPage() {
     registroNumero: "",
     registroTipo: "temporada",
     referenciaCatastral: "",
+    emergencyPhone: "",
     address: "",
   });
 
@@ -113,6 +114,10 @@ export default function PublicarPage() {
         }
         if (json.error === "FALTA_REGISTRO") {
           setError("Falta el nº de Registro Único: sin él el anuncio queda como borrador.");
+          return;
+        }
+        if (json.error === "FALTA_TELEFONO") {
+          setError("Falta tu teléfono de contacto: añádelo en «Mi cuenta» antes de publicar.");
           return;
         }
         if (json.error === "LIMIT_REACHED") {
@@ -302,6 +307,13 @@ export default function PublicarPage() {
             <input className={`${inputCls} mt-1`} value={form.referenciaCatastral}
               onChange={(e) => set("referenciaCatastral", e.target.value)} placeholder="20 caracteres" />
           </label>
+          <label className="mt-3 block text-sm text-mar-900">Teléfono de emergencia del piso *
+            <input className={`${inputCls} mt-1`} value={form.emergencyPhone} type="tel" required
+              onChange={(e) => set("emergencyPhone", e.target.value)} placeholder="Por si ocurre algo en el piso" />
+          </label>
+          <p className="mt-1 text-xs text-mar-950/60">
+            Se muestra al inquilino solo cuando la reserva está concretada. Puede ser el mismo que tu teléfono de contacto.
+          </p>
         </div>
 
         <div className="rounded-xl border border-mar-100 bg-mar-50 p-3">

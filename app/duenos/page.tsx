@@ -21,6 +21,9 @@ export default async function Duenos() {
 
   const me = await getUserByClerkId(userId);
   if (!me) redirect("/sign-in");
+  // Visita a la página: las decisiones posteriores (p. ej. cancelaciones del
+  // inquilino) vuelven a pintar el badge de reservas.
+  await db.update(users).set({ bookingsSeenAt: new Date() }).where(eq(users.id, me.id));
   const [rows, cap, incoming, toReview] = await Promise.all([
     db.select().from(properties).where(eq(properties.ownerId, me.id)).orderBy(desc(properties.createdAt)).limit(100),
     getPublishCapacity(me.id),
@@ -31,6 +34,13 @@ export default async function Duenos() {
   const renterById = new Map(renters.map((u) => [u.id, u]));
   const propsById = new Map(rows.map((p) => [p.id, p]));
   const needOwner = toReview.filter((p) => p.needOwner);
+  // Reservas concretadas: ahí (y solo ahí) se muestran los datos del inquilino
+  const confirmedRows = await db
+    .select()
+    .from(bookings)
+    .where(and(eq(bookings.ownerId, me.id), eq(bookings.status, "confirmed")))
+    .orderBy(desc(bookings.createdAt))
+    .limit(50);
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
@@ -62,15 +72,54 @@ export default async function Duenos() {
       {incoming.length > 0 && (
         <section className="mt-8 rounded-2xl border border-mar-100 bg-white p-5">
           <h2 className="font-semibold text-mar-900">Solicitudes pendientes ({incoming.length})</h2>
+          <p className="mt-1 text-xs text-mar-950/50">Los datos del inquilino se muestran cuando la reserva esté concretada.</p>
           <ul className="mt-3 space-y-2 text-sm">
-            {incoming.map((b) => (
-              <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-mar-50 p-3">
-                <span className="text-mar-900">
-                  <strong>{propsById.get(b.propertyId)?.title ?? "Piso"}</strong> · {b.checkin} → {b.checkout} · {b.guests} huésp. · {renterById.get(b.renterId)?.email}
-                </span>
-                <DecisionButtons id={b.id} role="owner" />
-              </li>
-            ))}
+            {incoming.map((b) => {
+              const r = renterById.get(b.renterId);
+              return (
+                <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-mar-50 p-3">
+                  <span className="flex min-w-0 items-center gap-2 text-mar-900">
+                    {r?.photoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={r.photoUrl} alt="" className="h-8 w-8 shrink-0 rounded-full object-cover blur-[6px]" />
+                    ) : null}
+                    <span>
+                      <strong>{propsById.get(b.propertyId)?.title ?? "Piso"}</strong> · {b.checkin} → {b.checkout} · {b.guests} huésp.
+                      {r?.verificationStatus === "verified" && <span className="ml-1.5 text-xs font-semibold text-green-700">✓</span>}
+                      <span className="block text-xs text-mar-950/50">Interesado</span>
+                    </span>
+                  </span>
+                  <DecisionButtons id={b.id} role="owner" />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
+
+      {confirmedRows.length > 0 && (
+        <section className="mt-4 rounded-2xl border border-mar-100 bg-white p-5">
+          <h2 className="font-semibold text-mar-900">Reservas concretadas ({confirmedRows.length})</h2>
+          <ul className="mt-3 space-y-2 text-sm">
+            {confirmedRows.map((b) => {
+              const r = renterById.get(b.renterId);
+              return (
+                <li key={b.id} className="rounded-xl bg-mar-50 p-3">
+                  <p className="font-medium text-mar-900">
+                    <strong>{propsById.get(b.propertyId)?.title ?? "Piso"}</strong> · {b.checkin} → {b.checkout} · {b.guests} huésp.
+                  </p>
+                  {r && (
+                    <p className="mt-1 text-xs text-mar-950/70">
+                      {r.email}
+                      {r.phone ? ` · ${r.phone}` : ""}
+                      <span className="ml-2 text-mar-950/40">
+                        {r.verificationStatus === "verified" ? "✓ verificado" : "sin verificar"}
+                      </span>
+                    </p>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </section>
       )}

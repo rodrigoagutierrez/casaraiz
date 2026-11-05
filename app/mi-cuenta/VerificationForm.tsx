@@ -38,7 +38,13 @@ export default function VerificationForm() {
         setMsg("Recibido. Revisaremos tu documento en 24-48h.");
       } catch (e) {
         const m = e instanceof Error ? e.message : "";
-        setMsg(m === "ALMACENAMIENTO_PENDIENTE" ? "Estamos activando el almacenamiento seguro. Prueba en unas horas." : "No se pudo enviar. Prueba de nuevo.");
+        setMsg(
+          m === "FALTA_FOTO"
+            ? "Falta tu foto de perfil: súbela en «Tu perfil» justo encima antes de enviar."
+            : m === "ALMACENAMIENTO_PENDIENTE"
+              ? "Estamos activando el almacenamiento seguro. Prueba en unas horas."
+              : "No se pudo enviar. Prueba de nuevo."
+        );
       }
     });
   }

@@ -25,6 +25,7 @@ const patchSchema = z.object({
   registroNumero: z.string().trim().min(4).max(60).optional(),
   registroTipo: z.enum(["temporada", "vut"]).optional(),
   referenciaCatastral: z.string().max(30).nullable().optional(),
+  emergencyPhone: z.string().trim().min(6).max(30).nullable().optional(),
   entorno: z.enum(["playa", "montana", "bosque", "ciudad", "rio"]).optional(),
   photos: z.array(z.string().url()).max(12).optional(),
   status: z.enum(["draft", "active", "rented"]).optional(),
@@ -53,6 +54,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const nextStatus = (rest as { status?: string }).status ?? prop.status;
   if (nextStatus === "active" && !nextRegistro) {
     return NextResponse.json({ error: "FALTA_REGISTRO" }, { status: 400 });
+  }
+  // Activar exige también teléfono de contacto del dueño
+  if (nextStatus === "active" && !me.phone?.trim()) {
+    return NextResponse.json({ error: "FALTA_TELEFONO" }, { status: 400 });
+  }
+  // ...y teléfono de emergencia del piso (puede coincidir con el principal)
+  const nextEmergency = parsed.data.emergencyPhone !== undefined ? parsed.data.emergencyPhone : prop.emergencyPhone;
+  if (nextStatus === "active" && !nextEmergency) {
+    return NextResponse.json({ error: "FALTA_EMERGENCIA" }, { status: 400 });
   }
   // Reactivar a active consume cuota igual que publicar (SOC2 CC6.1)
   if (nextStatus === "active" && prop.status !== "active") {

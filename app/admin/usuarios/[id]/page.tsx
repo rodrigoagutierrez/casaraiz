@@ -72,7 +72,7 @@ export default async function UserDetail({ params }: { params: Promise<{ id: str
       {/* Verificación de identidad */}
       <section className={card}>
         <h2 className="font-semibold text-mar-900">Verificación de identidad</h2>
-        <VerificationReview userId={u.id} status={u.verificationStatus} docType={u.docType} front={u.docFrontUrl} back={u.docBackUrl} />
+        <VerificationReview userId={u.id} status={u.verificationStatus} docType={u.docType} front={u.docFrontUrl} back={u.docBackUrl} photo={u.photoUrl} />
       </section>
 
       {/* Suscripciones */}
@@ -127,7 +127,10 @@ export default async function UserDetail({ params }: { params: Promise<{ id: str
             <p className="font-medium text-mar-900">Pisos publicados ({props.length})</p>
             <ul className="mt-1 space-y-1 text-mar-950/70">
               {props.map((p) => (
-                <li key={p.id}><Link href={`/p/${p.slug}`} className="underline">{p.title}</Link> · {p.status}</li>
+                <li key={p.id}>
+                  <Link href={`/p/${p.slug}`} className="underline">{p.title}</Link> · {p.status}
+                  {p.registroNumero && <span className="ml-1 text-xs text-mar-950/50">(NRA: {p.registroNumero})</span>}
+                </li>
               ))}
               {props.length === 0 && <li>—</li>}
             </ul>

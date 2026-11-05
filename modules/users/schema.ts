@@ -20,5 +20,7 @@ export const users = pgTable("users", {
   whatsapp: text("whatsapp"),
   // Email público de contacto (aparece en «Quiénes somos»); null = usar el email de la cuenta
   contactEmail: text("contact_email"),
+  // Última visita a /reservas|/duenos: las decisiones posteriores pintan el badge
+  bookingsSeenAt: timestamp("bookings_seen_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

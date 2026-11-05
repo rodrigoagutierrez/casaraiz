@@ -127,6 +127,13 @@
       "when": 1794100000000,
       "tag": "0020_booking_no_overlap",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794200000000,
+      "tag": "0021_notifications_profile",
+      "breakpoints": true
     }
   ]
 }

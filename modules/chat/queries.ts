@@ -2,6 +2,7 @@ import { db } from "@/shared/db/client";
 import { conversations, messages } from "./schema";
 import { properties } from "@/modules/properties/schema";
 import { users } from "@/modules/users/schema";
+import { bookings } from "@/modules/bookings/schema";
 import { and, asc, desc, eq, or, sql } from "drizzle-orm";
 
 export async function getOrCreateConversation(propertyId: string, renterId: string, ownerId: string) {
@@ -67,6 +68,18 @@ export async function listMyConversations(userId: string) {
         and ${messages.senderId} <> ${userId}
         and ${messages.readAt} is null
       )`,
+      otherPhoto: sql<string | null>`(
+        select case when ${conversations.renterId} = ${userId} then u2.photo_url else u1.photo_url end
+        from users u1, users u2
+        where u1.id = ${conversations.renterId} and u2.id = ${conversations.ownerId}
+      )`,
+      // Desbloqueo: reserva CONCRETADA entre ambos (cualquier piso)
+      confirmed: sql<number>`(
+        select count(*)::int from ${bookings} b
+        where b.status = 'confirmed'
+        and b.renter_id = ${conversations.renterId}
+        and b.owner_id = ${conversations.ownerId}
+      )`,
     })
     .from(conversations)
     .leftJoin(properties, eq(conversations.propertyId, properties.id))
@@ -81,7 +94,12 @@ export async function listMyConversations(userId: string) {
 
   return rows.map((r) => {
     const other = r.renterId === userId ? userById.get(r.ownerId) : userById.get(r.renterId);
-    return { ...r, otherEmail: other?.email ?? "—" };
+    return {
+      ...r,
+      // Contacto (email) solo con reserva concretada; antes, solo el rol
+      otherEmail: r.confirmed > 0 ? (other?.email ?? "—") : (r.renterId === userId ? "Dueño del piso" : "Interesado en tu piso"),
+      unlocked: r.confirmed > 0,
+    };
   });
 }
 

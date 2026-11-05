@@ -11,6 +11,7 @@ const ERRORS: Record<string, string> = {
   FUERA_DE_TEMPORADA: "Fuera de la temporada del anuncio.",
   FECHAS_INVALIDAS: "Revisa las fechas.",
   ES_TU_PISO: "Es tu propio piso.",
+  NO_VERIFICADO: "Tu cuenta aún no está verificada. Solo los usuarios verificados pueden reservar.",
 };
 
 type GarCfg = { nombre: string; pct: number; minCents: number; maxCents: number | null; texto: string };
@@ -20,7 +21,7 @@ function eur(c: number) {
 }
 
 // Solicitud de reserva temporal (el dueño la confirma)
-export default function BookingBox({ propertyId, maxHuespedes, priceCents }: { propertyId: string; maxHuespedes: number; priceCents: number }) {
+export default function BookingBox({ propertyId, maxHuespedes, priceCents, verified }: { propertyId: string; maxHuespedes: number; priceCents: number; verified?: boolean }) {
   const { isSignedIn } = useUser();
   const [checkin, setCheckin] = useState("");
   const [checkout, setCheckout] = useState("");
@@ -54,6 +55,23 @@ export default function BookingBox({ propertyId, maxHuespedes, priceCents }: { p
             Entrar para reservar
           </button>
         </SignInButton>
+      </div>
+    );
+  }
+
+  // Solo usuarios verificados reservan (antes: solo consulta pública)
+  if (!verified) {
+    return (
+      <div>
+        <p className="mt-1 text-mar-950/55">
+          Para reservar, verifica tu identidad primero (DNI y foto de perfil). Es gratis y tarda 24-48h.
+        </p>
+        <Link
+          href="/mi-cuenta"
+          className="mt-3 inline-block rounded-full bg-otono-600 px-5 py-2 text-white hover:bg-otono-700"
+        >
+          Verificar mi identidad
+        </Link>
       </div>
     );
   }

@@ -5,10 +5,10 @@ import Link from "next/link";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { trackEvent } from "@/shared/lib/analytics";
 
-export default function ContactBox({ propertyId }: { propertyId: string }) {
+export default function ContactBox({ propertyId, verified }: { propertyId: string; verified?: boolean }) {
   const { isSignedIn } = useUser();
   const [message, setMessage] = useState("");
-  const [state, setState] = useState<"idle" | "sending" | "done" | "need_membership" | "error">("idle");
+  const [state, setState] = useState<"idle" | "sending" | "done" | "need_membership" | "need_verification" | "error">("idle");
 
   if (!isSignedIn) {
     return (
@@ -27,6 +27,23 @@ export default function ContactBox({ propertyId }: { propertyId: string }) {
     return <p className="mt-3 rounded-xl bg-mar-50 p-4 text-sm text-mar-900">✓ Contacto enviado. El dueño te responderá por email.</p>;
   }
 
+  // Solo usuarios verificados contactan (antes: solo consulta pública)
+  if (!verified) {
+    return (
+      <div>
+        <p className="mt-1 text-mar-950/55">
+          Para contactar al dueño, verifica tu identidad primero (DNI y foto de perfil). Es gratis y tarda 24-48h.
+        </p>
+        <Link
+          href="/mi-cuenta"
+          className="mt-3 inline-block rounded-full border border-otono-200 bg-otono-100 px-5 py-2 text-sm font-medium text-otono-700 hover:bg-otono-200"
+        >
+          Verificar mi identidad
+        </Link>
+      </div>
+    );
+  }
+
   async function send(e: React.FormEvent) {
     e.preventDefault();
     setState("sending");
@@ -37,7 +54,8 @@ export default function ContactBox({ propertyId }: { propertyId: string }) {
         body: JSON.stringify({ propertyId, message: message || undefined }),
       });
       if (res.status === 403) {
-        setState("need_membership");
+        const json = await res.json().catch(() => ({}));
+        setState(json.error === "NO_VERIFICADO" ? "need_verification" : "need_membership");
         return;
       }
       if (!res.ok) {
@@ -64,6 +82,12 @@ export default function ContactBox({ propertyId }: { propertyId: string }) {
         <p className="mt-2 rounded-xl bg-otono-100 p-3 text-sm text-otono-700">
           Necesitas una cuenta con membresía para contactar.{" "}
           <Link href="/precios" className="font-semibold underline">Ver planes de dueño</Link>
+        </p>
+      )}
+      {state === "need_verification" && (
+        <p className="mt-2 rounded-xl bg-otono-100 p-3 text-sm text-otono-700">
+          Verifica tu identidad para contactar.{" "}
+          <Link href="/mi-cuenta" className="font-semibold underline">Ir a verificación</Link>
         </p>
       )}
       {state === "error" && <p className="mt-2 text-sm text-otono-700">No se pudo enviar. Prueba de nuevo.</p>}

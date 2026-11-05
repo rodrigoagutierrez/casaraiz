@@ -53,11 +53,12 @@ export async function notifyBookingRequested(p: {
     `Nueva solicitud de reserva — ${p.propertyTitle}`,
     `Hola,
 
-${p.renterEmail} ha solicitado reservar «${p.propertyTitle}» del ${fmtDate(p.checkin)} al ${fmtDate(
+Un usuario verificado ha solicitado reservar «${p.propertyTitle}» del ${fmtDate(p.checkin)} al ${fmtDate(
       p.checkout
     )} (${p.guests} huéspedes).
 
-Confirma o rechaza la solicitud desde tu panel:
+Los datos del inquilino se muestran en tu panel cuando confirmes la reserva.
+Confirma o rechaza desde aquí:
 ${SITE}/duenos
 
 — CasaRaiz`
@@ -119,11 +120,11 @@ export async function notifyContactSent(p: { ownerId: string; renterEmail: strin
     `Nuevo mensaje sobre ${p.propertyTitle}`,
     `Hola,
 
-${p.renterEmail} te ha escrito desde la ficha de «${p.propertyTitle}»:${
+Un usuario te ha escrito desde la ficha de «${p.propertyTitle}»:${
       p.message ? `\n\n«${p.message}»\n` : ""
     }
 
-Respondele a ${p.renterEmail} o sigue el hilo en tu bandeja:
+Sigue el hilo en tu bandeja (sus datos se muestran con la reserva concretada):
 ${SITE}/chat
 
 — CasaRaiz`
@@ -144,10 +145,10 @@ export async function notifyChatMessage(p: {
   const preview = p.hasImage ? "[Foto]" : p.text ? `«${p.text.slice(0, 300)}${p.text.length > 300 ? "…" : ""}»` : "";
   await sendEmail(
     to,
-    `Nuevo mensaje de ${p.fromEmail}`,
+    `Nuevo mensaje en CasaRaiz`,
     `Hola,
 
-${p.fromEmail} te ha enviado un mensaje en CasaRaiz:
+Alguien te ha enviado un mensaje en CasaRaiz:
 ${preview ? `\n${preview}\n` : ""}
 
 Respón aquí:

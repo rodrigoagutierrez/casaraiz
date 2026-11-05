@@ -7,6 +7,31 @@ import { eq } from "drizzle-orm";
 import { logAudit } from "@/modules/audit/log";
 import { revalidatePath } from "next/cache";
 
+// Cualquier usuario actualiza su propia foto de perfil (dueño o inquilino)
+export async function updateMyProfile(input: { photoUrl?: string | null }) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("UNAUTHORIZED");
+  const [me] = await db.select().from(users).where(eq(users.clerkId, userId)).limit(1);
+  if (!me) throw new Error("SIN_PERFIL");
+
+  await db
+    .update(users)
+    .set({ ...(input.photoUrl !== undefined ? { photoUrl: input.photoUrl } : {}) })
+    .where(eq(users.id, me.id));
+
+  await logAudit({
+    actorId: me.id,
+    targetUserId: me.id,
+    action: "user.profile_updated",
+    entity: "user",
+    entityId: me.id,
+    meta: { fields: Object.keys(input), bySelf: true },
+  });
+
+  revalidatePath("/mi-cuenta");
+  return { ok: true };
+}
+
 export async function updateSuperadminProfile(input: {
   photoUrl?: string | null;
   whatsapp?: string | null;

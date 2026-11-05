@@ -17,6 +17,8 @@ export const createPropertySchema = z.object({
   registroNumero: z.string().trim().min(4).max(60),
   registroTipo: z.enum(["temporada", "vut"]).default("temporada"),
   referenciaCatastral: z.string().max(30).optional(),
+  // Teléfono de emergencia del piso (puede coincidir con el del dueño)
+  emergencyPhone: z.string().trim().min(6).max(30),
   lat: z.string().optional(),
   lng: z.string().optional(),
   photos: z.array(z.string().url()).max(12).default([]),
