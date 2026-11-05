@@ -145,8 +145,10 @@ Testing:
 - Server actions en `modules/*/actions.ts` con `"use server"`.
 - `logAudit(...)` para cualquier acción sensible (ver tipos en `modules/audit/log.ts`).
 - **Stripe**: al leer fin de periodo de una suscripción usar `subPeriodEnd(sub)` (`modules/billing/stripe.ts`) — la API de Stripe ≥2025-03 (cuentas nuevas) trae `current_period_end` en `items`, no en la suscripción (con la API vieja quedaba `null` en BD).
-- Deploy: `git push` a `origin` (público) y `privado` **no despliega** (Vercel no está conectado a GitHub). **Flujo fiable = build local + prebuilt** (el build remoto de Vercel ha servido CSS obsoleto: clases nuevas como `px-10`/`w-48` ausentes del bundle, botones sin padding):
+- Deploy: **la integración Vercel↔GitHub SÍ está conectada** (desde ≥2026-11-05): cada `git push` a `origin`/`privado` dispara un **build remoto automático** (~60-90 s) que **sirve CSS obsoleto** (clases nuevas como `px-10`/`w-48` ausentes del bundle → botones sin padding) y **pisa** un deploy prebuilt si termina después. Antes no estaba conectada (esto era falso hasta el 5 nov 2026). **Flujo fiable = build local + prebuilt**:
   1. `DATABASE_URL="postgresql://user:pass@localhost:5432/casaraiz" CLERK_SECRET_KEY=sk_test_dummy STRIPE_SECRET_KEY=sk_test_dummy STRIPE_WEBHOOK_SECRET=whsec_dummy STRIPE_PRICE_OWNER_YEARLY=price_dummy npx vercel build --yes --environment production`
   2. `npx vercel deploy --prebuilt --yes --prod`
+  - **Tras cada push**: esperar a que el deploy Git automático quede `Ready` (`npx vercel ls`) y solo entonces lanzar los pasos 1-2, para que el prebuilt termine el último y mande. Verificar siempre después (paso siguiente).
+  - Ideal: **desconectar la integración Git** en el dashboard (Project → Settings → Git) para que el push vuelva a no desplegar y solo mande el flujo prebuilt.
   - Ojo: `npx vercel pull` escribe `[SENSITIVE]` en `.vercel/.env.production.local` → por eso el paso 1 sobre-escribe los secretos con dummies (como CI). `NEXT_PUBLIC_*` sí salen reales (de `.env.local`/pulled). Nunca commitear `.vercel/`.
   - Tras desplegar, verificar una clase nueva en el CSS servido: `curl -s https://casaraizalquiler.com/ | grep -oE '/_next/static/[^"]+\.css'` y comprobar que contiene p. ej. `.px-10{`.
