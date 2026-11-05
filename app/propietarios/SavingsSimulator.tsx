@@ -10,7 +10,9 @@ export default function SavingsSimulator() {
   const casa = pisos <= 3 ? 19 * 12 : pisos <= 5 ? 29 * 12 : 149;
   const airbnb = anual * 0.03;
   const booking = anual * 0.15;
-  const ahorro = Math.max(airbnb - casa, booking - casa);
+  const ahorroAirbnb = airbnb - casa;
+  const ahorroBooking = booking - casa;
+  const ahorro = Math.max(ahorroAirbnb, ahorroBooking);
 
   return (
     <section className="mx-auto max-w-6xl px-6 pt-16 pb-20">

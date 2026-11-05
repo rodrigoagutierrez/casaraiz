@@ -93,12 +93,12 @@ export default async function PropietariosPage() {
           </div>
           <div className="relative px-4 pb-8 sm:px-8">
             <div className="flex flex-col sm:flex-row justify-center gap-3">
-              <Link href="/publicar" className="rounded-full bg-otono-600 px-8 py-3 text-xl font-medium text-white hover:bg-otono-700">
+              <Link href="/publicar" className="rounded-full bg-otono-600 px-10 py-4 text-xl font-medium text-white hover:bg-otono-700 shadow-lg">
                 {t["propietarios.cta"]}
               </Link>
               <Link
                 href="/precios"
-                className="rounded-full border border-white/40 bg-white/10 px-8 py-3 text-lg font-medium text-white hover:bg-white/20 hover:text-white"
+                className="rounded-full bg-white px-10 py-4 text-xl font-medium text-mar-900 hover:bg-gray-100 shadow-lg"
               >
                 Ver planes
               </Link>
