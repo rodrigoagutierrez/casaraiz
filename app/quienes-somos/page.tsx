@@ -12,20 +12,28 @@ export const metadata: Metadata = {
 };
 
 export default async function QuienesSomosPage() {
-  const client = await clerkClient();
-  const usersList = await client.users.getUserList();
-  const superadmin = usersList.data.find(
-    (u) => (u.publicMetadata as { role?: string })?.role === "superadmin"
-  );
-
+  let superadminName = "CasaRaiz";
+  let superadminEmail = "";
   let profile: { email?: string; photoUrl?: string | null; whatsapp?: string | null } | null = null;
-  if (superadmin) {
-    const [row] = await db
-      .select({ email: users.email, photoUrl: users.photoUrl, whatsapp: users.whatsapp })
-      .from(users)
-      .where(eq(users.clerkId, superadmin.id))
-      .limit(1);
-    if (row) profile = row;
+
+  try {
+    const client = await clerkClient();
+    const usersList = await client.users.getUserList();
+    const superadmin = usersList.data.find(
+      (u) => (u.publicMetadata as { role?: string })?.role === "superadmin"
+    );
+    if (superadmin) {
+      superadminName = `${superadmin.firstName ?? ""} ${superadmin.lastName ?? ""}`.trim() || "CasaRaiz";
+      superadminEmail = superadmin.emailAddresses[0]?.emailAddress ?? "";
+      const [row] = await db
+        .select({ email: users.email, photoUrl: users.photoUrl, whatsapp: users.whatsapp })
+        .from(users)
+        .where(eq(users.clerkId, superadmin.id))
+        .limit(1);
+      if (row) profile = row;
+    }
+  } catch {
+    // Si Clerk falla, mostramos la página sin datos de superadmin
   }
 
   return (
@@ -51,10 +59,8 @@ export default async function QuienesSomosPage() {
             </div>
           )}
           <div className="mt-6 text-center">
-            <h2 className="text-2xl font-bold text-mar-900">
-              {superadmin?.firstName || "CasaRaiz"} {superadmin?.lastName || ""}
-            </h2>
-            <p className="mt-1 text-sm text-mar-950/60">{superadmin?.emailAddresses[0]?.emailAddress ?? ""}</p>
+            <h2 className="text-2xl font-bold text-mar-900">{superadminName}</h2>
+            <p className="mt-1 text-sm text-mar-950/60">{superadminEmail}</p>
             {profile?.whatsapp && (
               <a
                 href={`https://wa.me/${profile.whatsapp.replace(/\D/g, "")}`}
