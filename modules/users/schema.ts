@@ -18,5 +18,7 @@ export const users = pgTable("users", {
   thingsToKnow: jsonb("things_to_know").$type<{ t: string; d: string }[]>(),
   photoUrl: text("photo_url"),
   whatsapp: text("whatsapp"),
+  // Email público de contacto (aparece en «Quiénes somos»); null = usar el email de la cuenta
+  contactEmail: text("contact_email"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

@@ -7,7 +7,11 @@ import { eq } from "drizzle-orm";
 import { logAudit } from "@/modules/audit/log";
 import { revalidatePath } from "next/cache";
 
-export async function updateSuperadminProfile(input: { photoUrl?: string | null; whatsapp?: string | null }) {
+export async function updateSuperadminProfile(input: {
+  photoUrl?: string | null;
+  whatsapp?: string | null;
+  contactEmail?: string | null;
+}) {
   const { userId } = await auth();
   if (!userId) throw new Error("UNAUTHORIZED");
 
@@ -24,6 +28,7 @@ export async function updateSuperadminProfile(input: { photoUrl?: string | null;
     .set({
       ...(input.photoUrl !== undefined ? { photoUrl: input.photoUrl } : {}),
       ...(input.whatsapp !== undefined ? { whatsapp: input.whatsapp } : {}),
+      ...(input.contactEmail !== undefined ? { contactEmail: input.contactEmail } : {}),
     })
     .where(eq(users.id, me.id));
 
@@ -57,5 +62,6 @@ export async function getSuperadminProfile() {
     email: me.email,
     photoUrl: me.photoUrl ?? null,
     whatsapp: me.whatsapp ?? null,
+    contactEmail: me.contactEmail ?? null,
   };
 }

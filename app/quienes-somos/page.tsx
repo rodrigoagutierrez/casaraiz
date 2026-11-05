@@ -14,7 +14,12 @@ export const metadata: Metadata = {
 export default async function QuienesSomosPage() {
   let superadminName = "CasaRaiz";
   let superadminEmail = "";
-  let profile: { email?: string; photoUrl?: string | null; whatsapp?: string | null } | null = null;
+  let profile: {
+    email?: string;
+    photoUrl?: string | null;
+    whatsapp?: string | null;
+    contactEmail?: string | null;
+  } | null = null;
 
   try {
     const client = await clerkClient();
@@ -26,7 +31,7 @@ export default async function QuienesSomosPage() {
       superadminName = `${superadmin.firstName ?? ""} ${superadmin.lastName ?? ""}`.trim() || "CasaRaiz";
       superadminEmail = superadmin.emailAddresses[0]?.emailAddress ?? "";
       const [row] = await db
-        .select({ email: users.email, photoUrl: users.photoUrl, whatsapp: users.whatsapp })
+        .select({ email: users.email, photoUrl: users.photoUrl, whatsapp: users.whatsapp, contactEmail: users.contactEmail })
         .from(users)
         .where(eq(users.clerkId, superadmin.id))
         .limit(1);
@@ -35,6 +40,9 @@ export default async function QuienesSomosPage() {
   } catch {
     // Si Clerk falla, mostramos la página sin datos de superadmin
   }
+
+  // Email público: el configurado en «Mi perfil» si existe; si no, el de la cuenta.
+  const contactEmail = profile?.contactEmail || superadminEmail;
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
@@ -60,7 +68,7 @@ export default async function QuienesSomosPage() {
           )}
           <div className="mt-6 text-center">
             <h2 className="text-2xl font-bold text-mar-900">{superadminName}</h2>
-            <p className="mt-1 text-sm text-mar-950/60">{superadminEmail}</p>
+            <p className="mt-1 text-sm text-mar-950/60">{contactEmail}</p>
             {profile?.whatsapp && (
               <a
                 href={`https://wa.me/${profile.whatsapp.replace(/\D/g, "")}`}

@@ -3,11 +3,17 @@
 import { useState, useTransition } from "react";
 import { updateSuperadminProfile } from "@/modules/users/profileActions";
 
-type Initial = { email?: string; photoUrl?: string | null; whatsapp?: string | null };
+type Initial = {
+  email?: string;
+  photoUrl?: string | null;
+  whatsapp?: string | null;
+  contactEmail?: string | null;
+};
 
 export default function ProfileForm({ initial }: { initial: Initial }) {
   const [photoUrl, setPhotoUrl] = useState(initial.photoUrl ?? "");
   const [whatsapp, setWhatsapp] = useState(initial.whatsapp ?? "");
+  const [contactEmail, setContactEmail] = useState(initial.contactEmail ?? "");
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, start] = useTransition();
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -39,9 +45,18 @@ export default function ProfileForm({ initial }: { initial: Initial }) {
   }
 
   function save() {
+    const email = contactEmail.trim();
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setMsg("Error: el email de contacto no es válido.");
+      return;
+    }
     start(async () => {
       try {
-        await updateSuperadminProfile({ photoUrl: photoUrl || null, whatsapp: whatsapp || null });
+        await updateSuperadminProfile({
+          photoUrl: photoUrl || null,
+          whatsapp: whatsapp || null,
+          contactEmail: email || null,
+        });
         setMsg("Perfil guardado.");
       } catch (e) {
         setMsg(`Error: ${e instanceof Error ? e.message : "desconocido"}`);
@@ -80,6 +95,21 @@ export default function ProfileForm({ initial }: { initial: Initial }) {
           className="w-full rounded-lg border border-mar-200 bg-white px-3 py-2 text-sm outline-none focus:border-mar-600"
         />
         <p className="mt-1 text-xs text-mar-950/50">Formato internacional, ej: +34600000000</p>
+      </div>
+
+      <div className="mt-6">
+        <label className="mb-1 block text-xs font-medium text-mar-900">Email de contacto</label>
+        <input
+          type="email"
+          value={contactEmail}
+          onChange={(e) => setContactEmail(e.target.value)}
+          placeholder="contacto@casaraizalquiler.com"
+          className="w-full rounded-lg border border-mar-200 bg-white px-3 py-2 text-sm outline-none focus:border-mar-600"
+        />
+        <p className="mt-1 text-xs text-mar-950/50">
+          Es el correo público que aparece en «Quiénes somos» y donde te escribirán. Déjalo vacío para usar el de tu
+          cuenta ({initial.email}).
+        </p>
       </div>
 
       {msg && (
