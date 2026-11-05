@@ -140,8 +140,8 @@ export default function SavingsSimulator() {
             <div className="rounded-xl border border-mar-100 bg-white p-4">
               <p className="text-xs font-medium text-mar-900">Y para el inquilino</p>
               <p className="mt-1 text-xs text-mar-950/60">
-                Cero tasas de servicio: en Airbnb y Booking el huésped paga además un 14–16% de tarjeta de servicio. En
-                CasaRaiz el inquilino no paga nada.
+                Cero tasas de servicio: en Airbnb el huésped paga además un 14–16% de tarjeta de servicio (en Booking
+                esa tasa la paga el dueño, no el inquilino). En CasaRaiz el inquilino no paga nada.
               </p>
             </div>
           </div>

@@ -9,7 +9,7 @@ const pic = (seed: string) => `https://picsum.photos/seed/${seed}/800/600`;
 
 const DEMO_PROPERTIES = [
   {
-    title: "Piso 2hab reformado en Ruzafa",
+    title: "Ejemplo: Piso 2hab reformado en Ruzafa",
     description: "Exterior, balcón, amueblado. A 5 min del mercado de Ruzafa. Dueño directo.",
     priceCents: 9500, rooms: 2, baths: 1, m2: 72,
     barrio: "ruzafa", slug: "piso-2hab-reformado-ruzafa-1",
@@ -18,7 +18,7 @@ const DEMO_PROPERTIES = [
     photos: [pic("casaraiz-ruzafa-1a"), pic("casaraiz-ruzafa-1b"), pic("casaraiz-ruzafa-1c")],
   },
   {
-    title: "Ático con terraza en Ruzafa",
+    title: "Ejemplo: Ático con terraza en Ruzafa",
     description: "Ático 85m2 + terraza 20m2, ideal parejas. Sin amueblar.",
     priceCents: 12000, rooms: 2, baths: 2, m2: 85,
     barrio: "ruzafa", slug: "atico-terraza-ruzafa-2",
@@ -27,7 +27,7 @@ const DEMO_PROPERTIES = [
     photos: [pic("casaraiz-ruzafa-2a"), pic("casaraiz-ruzafa-2b")],
   },
   {
-    title: "Estudio luminoso en Ruzafa para profesionales",
+    title: "Ejemplo: Estudio luminoso en Ruzafa para profesionales",
     description: "45m2, bajo consumo, fibra 1Gb. Disponible ya.",
     priceCents: 7000, rooms: 1, baths: 1, m2: 45,
     barrio: "ruzafa", slug: "estudio-luminoso-ruzafa-3",
@@ -36,7 +36,7 @@ const DEMO_PROPERTIES = [
     photos: [pic("casaraiz-ruzafa-3a")],
   },
   {
-    title: "Piso 3hab familiar en Benimaclet",
+    title: "Ejemplo: Piso 3hab familiar en Benimaclet",
     description: "Junto a la UPV, plaza de la iglesia. Amueblado, admite estudiantes.",
     priceCents: 8500, rooms: 3, baths: 1, m2: 90,
     barrio: "benimaclet", slug: "piso-3hab-benimaclet-1",
@@ -45,7 +45,7 @@ const DEMO_PROPERTIES = [
     photos: [pic("casaraiz-beni-1a"), pic("casaraiz-beni-1b"), pic("casaraiz-beni-1c")],
   },
   {
-    title: "Piso 2hab económico en Benimaclet",
+    title: "Ejemplo: Piso 2hab económico en Benimaclet",
     description: "Ideal primera vivienda o estudiantes. Metro línea 3 y 9.",
     priceCents: 7000, rooms: 2, baths: 1, m2: 68,
     barrio: "benimaclet", slug: "piso-2hab-benimaclet-2",
@@ -54,7 +54,7 @@ const DEMO_PROPERTIES = [
     photos: [pic("casaraiz-beni-2a"), pic("casaraiz-beni-2b")],
   },
   {
-    title: "Bajo con patio en Benimaclet",
+    title: "Ejemplo: Bajo con patio en Benimaclet",
     description: "70m2 + patio 30m2, pet-friendly. Dueño directo.",
     priceCents: 7500, rooms: 2, baths: 1, m2: 70,
     barrio: "benimaclet", slug: "bajo-patio-benimaclet-3",
@@ -63,7 +63,7 @@ const DEMO_PROPERTIES = [
     photos: [pic("casaraiz-beni-3a")],
   },
   {
-    title: "Casa marinera en El Cabanyal",
+    title: "Ejemplo: Casa marinera en El Cabanyal",
     description: "Planta baja rehabilitada, 4 min playa. Aire acondicionado.",
     priceCents: 11000, rooms: 3, baths: 2, m2: 95,
     barrio: "el-cabanyal", slug: "casa-marinera-cabanyal-1",
@@ -72,7 +72,7 @@ const DEMO_PROPERTIES = [
     photos: [pic("casaraiz-caba-1a"), pic("casaraiz-caba-1b"), pic("casaraiz-caba-1c")],
   },
   {
-    title: "Piso 2hab a 200m de la Malvarrosa",
+    title: "Ejemplo: Piso 2hab a 200m de la Malvarrosa",
     description: "Vistas lateral mar, ascensor, parking bici.",
     priceCents: 9500, rooms: 2, baths: 1, m2: 70,
     barrio: "el-cabanyal", slug: "piso-malvarrosa-cabanyal-2",
@@ -81,7 +81,7 @@ const DEMO_PROPERTIES = [
     photos: [pic("casaraiz-caba-2a"), pic("casaraiz-caba-2b")],
   },
   {
-    title: "Apartamento 1hab El Cabanyal, ideal teletrabajo",
+    title: "Ejemplo: Apartamento 1hab El Cabanyal, ideal teletrabajo",
     description: "55m2, fibra, escritorio y balcón. Disponible larga estancia.",
     priceCents: 8000, rooms: 1, baths: 1, m2: 55,
     barrio: "el-cabanyal", slug: "apartamento-teletrabajo-cabanyal-3",
@@ -90,7 +90,7 @@ const DEMO_PROPERTIES = [
     photos: [pic("casaraiz-caba-3a")],
   },
   {
-    title: "Piso 2hab en Malasaña, Madrid centro",
+    title: "Ejemplo: Piso 2hab en Malasaña, Madrid centro",
     description: "Exterior, amueblado, metro Tribunal. Dueño directo.",
     priceCents: 12000, rooms: 2, baths: 1, m2: 65,
     city: "Madrid",
@@ -100,7 +100,7 @@ const DEMO_PROPERTIES = [
     photos: [pic("casaraiz-mad-1a"), pic("casaraiz-mad-1b")],
   },
   {
-    title: "Apartamento en Eixample, Barcelona",
+    title: "Ejemplo: Apartamento en Eixample, Barcelona",
     description: "70m2 reformado, balcón, a 10 min de Sagrada Familia.",
     priceCents: 11500, rooms: 2, baths: 1, m2: 70,
     city: "Barcelona",
@@ -110,7 +110,7 @@ const DEMO_PROPERTIES = [
     photos: [pic("casaraiz-bcn-1a"), pic("casaraiz-bcn-1b")],
   },
   {
-    title: "Casa con patio en Triana, Sevilla",
+    title: "Ejemplo: Casa con patio en Triana, Sevilla",
     description: "Planta baja con patio andaluz, aire acondicionado.",
     priceCents: 9000, rooms: 3, baths: 2, m2: 95,
     city: "Sevilla",

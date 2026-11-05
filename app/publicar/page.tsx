@@ -290,6 +290,11 @@ export default function PublicarPage() {
             <a href="https://sede.registradores.org" target="_blank" rel="noreferrer" className="underline">sede.registradores.org</a>{" "}
             (27 €). Sin este número tu anuncio quedará como borrador.
           </p>
+          <p className="mt-2 rounded-lg bg-white px-3 py-2 text-xs text-mar-950/70">
+            Checklist para activar el anuncio: tu <Link href="/mi-cuenta" className="font-medium underline">teléfono en «Mi cuenta»</Link>,
+            un teléfono de emergencia del piso (debajo) y tus datos verificados. Solo tú ves el nº de registro:
+            nunca se muestra al inquilino.
+          </p>
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <label className="text-sm text-mar-900">Nº de registro *
               <input className={`${inputCls} mt-1`} value={form.registroNumero}

@@ -51,7 +51,7 @@ export const es = {  // Header / nav
   "home.como3t": "3. Contacta directo",
   "home.como3d": "Inquilinos gratis: habla con el dueño, visita y firma. Cero comisiones.",
   "home.planesTitulo": "Una membresía, cero comisiones",
-  "home.planesTexto": "Inquilinos gratis · Dueños pagan membresía por tramos. Lo que pagas es lo que cuesta.",
+  "home.planesTexto": "Sin comisión por alquiler: solo una membresía fija, desde 19 €/mes para hasta 2 pisos — o 190 €/año con 2 meses gratis. Inquilinos siempre gratis.",
   "home.verPlanes": "Ver planes",
   "home.publicarCta": "Publicar mi piso",
 
@@ -183,7 +183,7 @@ export const en: Dict = {
   "home.como3t": "3. Contact directly",
   "home.como3d": "Tenants for free: talk to the owner, visit and sign. Zero commissions.",
   "home.planesTitulo": "One membership, zero commissions",
-  "home.planesTexto": "Tenants free · Owners pay tiered membership. You pay what it costs.",
+  "home.planesTexto": "No rental commission — just a fixed membership, from €19/month for up to 2 properties — or €190/year with 2 months free. Tenants always free.",
   "home.verPlanes": "See plans",
   "home.publicarCta": "List my home",
 
