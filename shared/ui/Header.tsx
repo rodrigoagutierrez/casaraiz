@@ -80,15 +80,25 @@ export default function Header() {
             </SignUpButton>
           </Show>
           <Show when="signed-in">
-            <UserButton>
-              {/* Atajos siempre visibles (también en móvil, donde la nav está oculta). */}
-              <UserButton.MenuItems>
-                <UserButton.Link href="/reservas" label={notif.reservations > 0 ? `${t["nav.reservas"]} (${notif.reservations})` : t["nav.reservas"]} labelIcon={<NavIcon d="M3 4.5h10v9H3zM3 7.5h10M6.5 2.5v4M9.5 2.5v4" />} />
-                <UserButton.Link href="/chat" label={notif.messages > 0 ? `${t["nav.mensajes"]} (${notif.messages})` : t["nav.mensajes"]} labelIcon={<NavIcon d="M2.5 4h11v7h-6l-3.5 2.5V11h-1.5z" />} />
-                <UserButton.Link href="/favoritos" label={t["nav.favoritos"]} labelIcon={<NavIcon d="M8 13.5S2.5 10.5 2.5 6.5A2.9 2.9 0 0 1 8 5a2.9 2.9 0 0 1 5.5 1.5c0 4-5.5 7-5.5 7z" />} />
-                <UserButton.Link href="/mi-cuenta" label={t["nav.miCuenta"]} labelIcon={<NavIcon d="M8 8a2.75 2.75 0 1 0 0-5.5A2.75 2.75 0 0 0 8 8zm-5 5.5c0-2.2 2.2-3.5 5-3.5s5 1.3 5 3.5" />} />
-              </UserButton.MenuItems>
-            </UserButton>
+            {/* Puntito rojo sobre el avatar: en móvil la nav está oculta y el
+                menú del avatar es el único acceso a Mensajes/Reservas. */}
+            <span className="relative inline-flex">
+              <UserButton>
+                {/* Atajos siempre visibles (también en móvil, donde la nav está oculta). */}
+                <UserButton.MenuItems>
+                  <UserButton.Link href="/reservas" label={notif.reservations > 0 ? `${t["nav.reservas"]} (${notif.reservations})` : t["nav.reservas"]} labelIcon={<NavIcon d="M3 4.5h10v9H3zM3 7.5h10M6.5 2.5v4M9.5 2.5v4" />} />
+                  <UserButton.Link href="/chat" label={notif.messages > 0 ? `${t["nav.mensajes"]} (${notif.messages})` : t["nav.mensajes"]} labelIcon={<NavIcon d="M2.5 4h11v7h-6l-3.5 2.5V11h-1.5z" />} />
+                  <UserButton.Link href="/favoritos" label={t["nav.favoritos"]} labelIcon={<NavIcon d="M8 13.5S2.5 10.5 2.5 6.5A2.9 2.9 0 0 1 8 5a2.9 2.9 0 0 1 5.5 1.5c0 4-5.5 7-5.5 7z" />} />
+                  <UserButton.Link href="/mi-cuenta" label={t["nav.miCuenta"]} labelIcon={<NavIcon d="M8 8a2.75 2.75 0 1 0 0-5.5A2.75 2.75 0 0 0 8 8zm-5 5.5c0-2.2 2.2-3.5 5-3.5s5 1.3 5 3.5" />} />
+                </UserButton.MenuItems>
+              </UserButton>
+              {notif.messages + notif.reservations > 0 && (
+                <span
+                  className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-red-600 ring-2 ring-white"
+                  aria-label={`${notif.messages} mensajes y ${notif.reservations} reservas sin leer`}
+                />
+              )}
+            </span>
           </Show>
         </nav>
       </div>
