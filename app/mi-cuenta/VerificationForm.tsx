@@ -3,19 +3,20 @@
 import { useState, useTransition } from "react";
 import { submitVerification } from "@/modules/users/actions";
 
-async function uploadFile(file: File): Promise<string> {
+async function uploadDoc(file: File): Promise<string> {
   if (file.size > 5 * 1024 * 1024) throw new Error("UPLOAD_FAIL");
   const res = await fetch("/api/upload", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ filename: file.name, contentType: file.type, contentLength: file.size }),
+    body: JSON.stringify({ filename: file.name, contentType: file.type, contentLength: file.size, purpose: "doc" }),
   });
   if (res.status === 503) throw new Error("ALMACENAMIENTO_PENDIENTE");
   if (!res.ok) throw new Error("UPLOAD_FAIL");
-  const { url, publicUrl } = await res.json();
+  const { url, key, publicUrl } = await res.json();
   const put = await fetch(url, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
   if (!put.ok) throw new Error("UPLOAD_FAIL");
-  return publicUrl as string;
+  // El almacén de documentos es PRIVADO: se guarda la key (no URL pública)
+  return (key ?? publicUrl) as string;
 }
 
 export default function VerificationForm() {
@@ -33,7 +34,7 @@ export default function VerificationForm() {
           setMsg("Sube anverso y reverso del documento.");
           return;
         }
-        const [frontUrl, backUrl] = await Promise.all([uploadFile(front), uploadFile(back)]);
+        const [frontUrl, backUrl] = await Promise.all([uploadDoc(front), uploadDoc(back)]);
         await submitVerification({ docType, frontUrl, backUrl });
         setMsg("Recibido. Revisaremos tu documento en 24-48h.");
       } catch (e) {

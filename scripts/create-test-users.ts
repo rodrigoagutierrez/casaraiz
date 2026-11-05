@@ -1,9 +1,12 @@
 // Crea usuarios de prueba en Clerk y marca al SuperAdmin.
 // Uso: set -a && . ./.env.local && set +a && npx tsx scripts/create-test-users.ts
+// La contraseña NO vive en el repo (SOC2 CC6.1/A01: claves no versionadas):
+// se define en .env.local como TEST_USER_PASSWORD y solo se usa en la
+// instancia dev de Clerk, nunca en producción.
 import { clerkClient } from "@clerk/nextjs/server";
 
 const SUPERADMIN_EMAIL = "rgutierrez2090@gmail.com";
-const PASSWORD = "CasaRaiz2026Segura!";
+const PASSWORD = process.env.TEST_USER_PASSWORD;
 
 const TEST_USERS = [
   { email: "dueno@casaraizalquiler.com", first: "Dueño", last: "Prueba", role: "owner" },
@@ -11,6 +14,10 @@ const TEST_USERS = [
 ];
 
 async function main() {
+  if (!PASSWORD) {
+    console.error("TEST_USER_PASSWORD no definido en el entorno. Usa .env.local (nunca el repo).");
+    process.exit(1);
+  }
   const client = await clerkClient();
 
   // 1. SuperAdmin

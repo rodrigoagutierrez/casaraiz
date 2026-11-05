@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { auth } from "@clerk/nextjs/server";
+import { docsBucketConfigured, DOC_KEY_PREFIX, presignDocPut } from "@/modules/users/docs";
 
 // POST /api/upload { filename, contentType, contentLength? } -> { url, publicUrl } o 503 si falta config R2
 // Alcance mínimo: solo image/jpeg/png/webp, ≤5MB, key namespaced por usuario (SOC2 CC6.6).
@@ -23,7 +24,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { filename, contentType, contentLength } = await req.json() as { filename?: string; contentType?: string; contentLength?: number };
+  const { filename, contentType, contentLength, purpose } = await req.json() as {
+    filename?: string; contentType?: string; contentLength?: number; purpose?: string;
+  };
+  // Purpose "doc" = documento de identidad → bucket PRIVADO (SOC2 CC6.6).
+  // El resto (fotos de pisos/perfil) sigue en el bucket público de fotos.
+  const isDoc = purpose === "doc";
   // Normalizar alias (image/jpg -> image/jpeg)
   const ct = contentType === "image/jpg" ? "image/jpeg" : contentType;
   if (!filename || !ct || !(ALLOWED_UPLOAD_TYPES as readonly string[]).includes(ct)) {
@@ -35,13 +41,33 @@ export async function POST(req: NextRequest) {
 
   const safe = filename.replace(/[^a-zA-Z0-9.-]/g, "-").slice(0, 80) || "foto";
   const rand = crypto.randomUUID().slice(0, 8);
-  const key = `uploads/${userId}/${Date.now()}-${rand}-${safe}`;
+
   const client = new S3Client({
     region: "auto",
     endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
     forcePathStyle: true, // URL con host de cuenta (ya permitido por CSP), no virtual-hosted
     credentials: { accessKeyId: R2_ACCESS_KEY_ID, secretAccessKey: R2_SECRET_ACCESS_KEY },
   });
+
+  if (isDoc) {
+    // Documentos: bucket privado, sin URL pública. En BD se guarda la key; la
+    // lectura se hace con GET presigned solo para el superadmin.
+    const { R2_DOCS_BUCKET } = process.env;
+    if (!R2_DOCS_BUCKET) {
+      return NextResponse.json(
+        { error: "Almacén de documentos no configurado todavía. Prueba en unas horas." },
+        { status: 503 }
+      );
+    }
+    if (!docsBucketConfigured()) {
+      return NextResponse.json({ error: "R2 docs no configurado" }, { status: 503 });
+    }
+    const key = `${DOC_KEY_PREFIX}${userId}/${Date.now()}-${rand}-${safe}`;
+    const url = await presignDocPut(key, ct);
+    return NextResponse.json({ url, key, publicUrl: null });
+  }
+
+  const key = `uploads/${userId}/${Date.now()}-${rand}-${safe}`;
 
   const url = await getSignedUrl(
     client,

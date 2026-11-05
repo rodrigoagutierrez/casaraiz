@@ -77,7 +77,14 @@ export async function submitVerification(input: { docType: "dni" | "pasaporte"; 
   const { userId } = await auth();
   if (!userId) throw new Error("UNAUTHORIZED");
   const parsed = z
-    .object({ docType: z.enum(["dni", "pasaporte"]), frontUrl: z.string().url(), backUrl: z.string().url() })
+    .object({
+      docType: z.enum(["dni", "pasaporte"]),
+      // Referencia en el almacén de documentos: key privada ("docs/…") o
+      // URL legada (bucket público). Se almacena tal cual, se sirve solo con
+      // GET presigned para superadmin (modules/users/docs.ts).
+      frontUrl: z.string().min(1).max(600),
+      backUrl: z.string().min(1).max(600),
+    })
     .safeParse(input);
   if (!parsed.success) throw new Error("DATOS_INVALIDOS");
   const [me] = await db.select().from(users).where(eq(users.clerkId, userId)).limit(1);

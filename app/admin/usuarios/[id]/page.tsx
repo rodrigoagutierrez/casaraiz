@@ -4,12 +4,39 @@ import { db } from "@/shared/db/client";
 import { auditLogs, contacts, properties, subscriptions, users } from "@/shared/db/schema";
 import { desc, eq, or } from "drizzle-orm";
 import { stripe } from "@/modules/billing/stripe";
+import { getAdminIdentity } from "@/modules/auth/guard";
+import { isDocKey, presignDocGet } from "@/modules/users/docs";
+import { logAudit } from "@/modules/audit/log";
 import { UserEditForm, GrantForm, CustomPriceForm, CancelSubButton, VerificationReview } from "@/modules/admin/components/UserForms";
 
 export default async function UserDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const [u] = await db.select().from(users).where(eq(users.id, id)).limit(1);
   if (!u) notFound();
+
+  // Documentos de identidad: solo el superadmin los ve, y siempre via GET
+  // presigned de corta vida sobre el bucket PRIVADO (SOC2 CC6.6 + CC6.1).
+  // Nunca se sirven URLs públicas ni keys sin firma.
+  const admin = await getAdminIdentity();
+  const isSuperadmin = admin?.role === "superadmin";
+  let frontViewUrl: string | null = null;
+  let backViewUrl: string | null = null;
+  if (isSuperadmin && isDocKey(u.docFrontUrl) && isDocKey(u.docBackUrl)) {
+    try {
+      [frontViewUrl, backViewUrl] = await Promise.all([presignDocGet(u.docFrontUrl), presignDocGet(u.docBackUrl)]);
+      await logAudit({
+        actorId: null,
+        targetUserId: u.id,
+        action: "verification.docs_viewed",
+        entity: "user",
+        entityId: u.id,
+        meta: { byClerkId: admin.clerkId },
+      });
+    } catch {
+      frontViewUrl = null;
+      backViewUrl = null;
+    }
+  }
 
   const [subs, props, msgs, logs] = await Promise.all([
     db.select().from(subscriptions).where(eq(subscriptions.userId, id)).orderBy(desc(subscriptions.createdAt)),
@@ -72,7 +99,21 @@ export default async function UserDetail({ params }: { params: Promise<{ id: str
       {/* Verificación de identidad */}
       <section className={card}>
         <h2 className="font-semibold text-mar-900">Verificación de identidad</h2>
-        <VerificationReview userId={u.id} status={u.verificationStatus} docType={u.docType} front={u.docFrontUrl} back={u.docBackUrl} photo={u.photoUrl} />
+        {isSuperadmin ? (
+          <>
+            {u.docFrontUrl && !frontViewUrl && (
+              <p className="mt-2 rounded-xl bg-otono-100 p-3 text-xs text-otono-700">
+                Este documento está guardado con el formato antiguo (URL pública): no se puede servir de forma segura.
+                Pídele al usuario que reenvíe la verificación para migrarlo al almacén privado.
+              </p>
+            )}
+            <VerificationReview userId={u.id} status={u.verificationStatus} docType={u.docType} front={frontViewUrl} back={backViewUrl} photo={u.photoUrl} />
+          </>
+        ) : (
+          <p className="mt-2 rounded-xl bg-otono-100 p-3 text-sm text-otono-700">
+            Los documentos de identidad solo los consulta el superadmin (mínimo privilegio).
+          </p>
+        )}
       </section>
 
       {/* Suscripciones */}

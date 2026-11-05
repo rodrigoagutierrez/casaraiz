@@ -30,6 +30,7 @@ export type AuditAction =
   | "review.reminder_sent"
   | "verification.submitted"
   | "verification.decided"
+  | "verification.docs_viewed"
   | "doc.updated";
 
 export async function logAudit(input: {

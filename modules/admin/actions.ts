@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { db } from "@/shared/db/client";
 import { feeTiers, legalDocs, plans, siteSettings, subscriptions, users } from "@/shared/db/schema";
-import { requireAdmin } from "@/modules/auth/guard";
+import { requireAdmin, getAdminIdentity } from "@/modules/auth/guard";
 import { getUserByClerkId } from "@/modules/users/queries";
 import { logAudit } from "@/modules/audit/log";
 import { stripe, subPeriodEnd } from "@/modules/billing/stripe";
@@ -362,7 +362,12 @@ export async function saveTariffSettings(input: { legend: string; contactLabel: 
 }
 
 export async function decideVerification(userId: string, approved: boolean, reason: string) {
-  const { actorId } = await adminActor();
+  // La comparación de documentos de identidad solo la decide el superadmin
+  // (mínimo privilegio sobre el PII más sensible: SOC2 CC6.1).
+  const admin = await getAdminIdentity();
+  if (!admin || admin.role !== "superadmin") throw new Error("NO_SUPERADMIN");
+  const me = await getUserByClerkId(admin.clerkId);
+  const actorId = me?.id ?? null;
   if (!reason.trim()) throw new Error("El motivo es obligatorio");
   await db
     .update(users)
