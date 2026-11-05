@@ -27,6 +27,7 @@ export default function Footer({ version }: { version?: string }) {
         <div>
           <p className="font-semibold text-mar-900">{t["footer.casaRaiz"]}</p>
           <ul className="mt-3 space-y-2 text-mar-950/65">
+            <li><Link href="/quienes-somos" className="hover:underline">{t["footer.quienesSomos"]}</Link></li>
             <li><Link href="/precios" className="hover:underline">{t["footer.comoFunciona"]}</Link></li>
             <li><Link href="/comparativa" className="hover:underline">CasaRaiz vs Airbnb y Booking</Link></li>
             <li><a href="mailto:hola@casaraizalquiler.com" className="hover:underline">hola@casaraizalquiler.com</a></li>
