@@ -141,7 +141,7 @@ export default async function Home() {
             return (
               <Link
                 key={c.slug}
-                href={tieneOferta ? `/alquiler-temporal/${c.slug}` : "mailto:hola@casaraizalquiler.com?subject=Lista%20de%20espera%20para%20" + encodeURIComponent(c.nombre)}
+                href={tieneOferta ? `/alquiler-temporal/${c.slug}` : `/lista-espera?ciudad=${encodeURIComponent(c.nombre)}`}
                 className="rounded-2xl border border-mar-100 bg-white p-5 hover:border-mar-200 hover:shadow-lg flex flex-col"
               >
                 <p className="font-semibold text-mar-900">{c.nombre}</p>

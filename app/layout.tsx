@@ -18,11 +18,12 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   metadataBase: new URL("https://casaraizalquiler.com"),
   title: {
-    default: "CasaRaiz | Alquiler temporal sin comisión en España",
+    default: "CasaRaiz | Alquiler temporal sin comisión en Valencia",
     template: "%s | CasaRaiz",
   },
-  description: "Conectamos dueños e inquilinos para alquiler temporal en Valencia, sin comisiones. Inquilinos gratis, dueños con membresía anual.",
-  keywords: ["alquiler temporal", "sin comisión", "dueños directos", "España", "alquiler de temporada", "alternativa a Airbnb"],
+  description:
+    "Conectamos dueños e inquilinos para alquiler temporal en Valencia, sin comisiones. Inquilinos gratis, dueños con membresía mensual o anual.",
+  keywords: ["alquiler temporal", "sin comisión", "dueños directos", "Valencia", "alquiler de temporada", "alternativa a Airbnb"],
   alternates: { canonical: "/" },
   verification: process.env.GOOGLE_SITE_VERIFICATION
     ? { google: process.env.GOOGLE_SITE_VERIFICATION }

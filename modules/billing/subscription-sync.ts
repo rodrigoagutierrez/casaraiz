@@ -11,6 +11,9 @@ export async function upsertFromSubscription(sub: Stripe.Subscription) {
   const plan = (sub.metadata?.plan ?? "renter_monthly") as PlanId;
   if (!userId) return;
   const periodEnd = subPeriodEnd(sub);
+  // Tramo comprado (solo si el checkout lo envió; los planes legados quedan en null)
+  const tierMaxRaw = sub.metadata?.tierMax;
+  const tierMaxParsed = tierMaxRaw === undefined ? NaN : Number(tierMaxRaw);
 
   const values = {
     userId,
@@ -19,6 +22,9 @@ export async function upsertFromSubscription(sub: Stripe.Subscription) {
     plan,
     status: mapSubStatus(sub.status),
     currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : null,
+    ...(tierMaxRaw !== undefined
+      ? { tierMaxProps: tierMaxRaw === "inf" || !Number.isFinite(tierMaxParsed) ? null : tierMaxParsed }
+      : {}),
   };
 
   const existing = await db

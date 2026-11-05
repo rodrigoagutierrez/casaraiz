@@ -11,7 +11,7 @@ export default function SinComisionesPage() {
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="text-3xl font-bold text-mar-950">Sin comisiones ni tasas ocultas</h1>
       <p className="mt-2 text-mar-950/65">
-        En CasaRaiz no hay comisión por alquiler ni cargos sorpresa. El inquilino usa la plataforma gratis y el dueño paga solo su membresía anual. El precio del piso es el que acuerdas directamente con el dueño.
+        En CasaRaiz no hay comisión por alquiler ni cargos sorpresa. El inquilino usa la plataforma gratis y el dueño paga solo su membresía (mensual o anual). El precio del piso es el que acuerdas directamente con el dueño.
       </p>
 
       <section className="mt-10 rounded-2xl border border-mar-100 bg-white p-6">
@@ -27,7 +27,7 @@ export default function SinComisionesPage() {
       <section className="mt-10 rounded-2xl border border-mar-100 bg-white p-6">
         <h2 className="text-xl font-semibold text-mar-900 mb-4">¿Cómo se financia CasaRaiz?</h2>
         <ul className="space-y-3 text-sm text-mar-950/70">
-          <li>El dueño paga una membresía anual (149 €/año, hasta 15 pisos activos).</li>
+          <li>El dueño paga una membresía por tramos: 19 €/mes hasta 2 pisos o 29 €/mes de 3 a 5 (o el anual equivalente, con 2 meses gratis).</li>
           <li>Los inquilinos no pagan nada por buscar, contactar o reservar.</li>
           <li>La fianza de 2 meses la acuerdas directamente con el dueño, según la ley.</li>
         </ul>

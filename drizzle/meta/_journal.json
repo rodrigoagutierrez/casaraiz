@@ -99,6 +99,20 @@
       "when": 1793696864522,
       "tag": "0013_polite_wasp",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1793790382110,
+      "tag": "0014_worried_rocket_raccoon",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1793923200000,
+      "tag": "0018_tier_cap",
+      "breakpoints": true
     }
   ]
 }

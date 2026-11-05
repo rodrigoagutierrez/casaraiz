@@ -1,4 +1,6 @@
 // Crea SOLO el price anual de dueño en modo live y lo guarda en plans.stripe_price_id.
+// NOTA: el checkout ya no usa este price fijo (crea precio inline por tramo: mensual x10).
+// Se mantiene por compatibilidad/administración; precio = 2 meses gratis (190 €/año).
 // Uso: set -a && . ./.env.local && set +a && npx tsx scripts/create-live-yearly-price.ts
 import Stripe from "stripe";
 import { neon } from "@neondatabase/serverless";
@@ -27,7 +29,7 @@ async function main() {
   });
   const price = await stripe.prices.create({
     product: product.id,
-    unit_amount: 14900,
+    unit_amount: 19000,
     currency: "eur",
     recurring: { interval: "year" },
     tax_behavior: "inclusive",

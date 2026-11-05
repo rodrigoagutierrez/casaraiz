@@ -82,9 +82,12 @@ Regla: código nuevo va en su módulo; las rutas solo importan de `@/modules/*` 
 - **Inquilinos gratis**: `POST /api/contacts` NO exige membresía (solo login). Publicar (`POST /api/properties`) SÍ exige plan de dueño.
 - **Precio de pisos en €/noche** (`priceCents`); filtros `min/max` en céntimos/noche.
 - **NRA obligatorio (RD 1312/2024)**: publicar exige `registroNumero`; activar (`PATCH` a `active`) sin él devuelve `FALTA_REGISTRO`. Visible en ficha (badge + `Offer.identifier` en JSON-LD).
-- **Capacidad de publicación**: `getPublishCapacity(userId)` en `modules/billing/plans.ts`. El plan mensual usa los tramos de `fee_tiers`; el anual es fijo (15).
-- **Tarifas por tramos**: `fee_tiers` (minProps, maxProps, amountCents, label). `amountCents=null` = "a consultar". Se editan en `/admin/tarifas`.
-- **Checkout mensual dinámico**: `app/api/checkout/route.ts` calcula el tramo según los pisos del dueño y crea un price inline (no usa price fijo).
+- **Capacidad de publicación**: `getPublishCapacity(userId)` en `modules/billing/plans.ts`. El mensual usa los tramos de `fee_tiers`; el anual usa el tramo comprado (`subscriptions.tierMaxProps`, guardado desde `subscription_data.metadata.tierMax`; los planes legados sin tramo conservan `plans.maxListings` = 15).
+- **Tarifas por tramos**: `fee_tiers` (minProps, maxProps, amountCents, label) — **1-2 pisos = 1900, 3-5 = 2900, 6+ = null** (sin solape). `amountCents=null` = "a consultar". Se editan en `/admin/tarifas`.
+- **Anual = 2 meses gratis**: el checkout `owner_yearly` crea precio inline `amountCents × 10` con `recurring: interval=year` (no usa `STRIPE_PRICE_OWNER_YEARLY`). Mismo alcance por tramo que el mensual (190 €/año 1-2 pisos, 290 €/año 3-5).
+- **Cobro de membresía**: Stripe cobra al final de cada periodo; para evitar la renovación hay que **cancelar la suscripción** (portal). El copy dice "se cobra al final del periodo; cancela para no renovar" (nunca "sin renovaciones automáticas" a secas).
+- **Lista de espera**: `/lista-espera` (formulario email + ciudad + tipo) → `POST /api/waitlist` → contacto Brevo (`v3/contacts`, reintento sin atributos si no existen) + aviso con `sendEmail`. Enlaces desde home, `/alquiler-temporal`, `/buscar` y FAQ (antes `mailto:`).
+- **Checkout dinámico por tramos**: `app/api/checkout/route.ts` calcula el tramo según los pisos del dueño y crea el price inline (mensual o anual), sin price fijo.
 - **Garantía CasaRaiz (ruta A, opcional)**: canon = % del total con mín/tope (`site_settings garantia_*`, `modules/billing/guarantee.ts`). Opt-in en `BookingBox`, cobro único vía `POST /api/garantia/checkout`, marca `pagada` el webhook (`metadata.tipo=garantia`). La aseguradora colaboradora cubre; la fianza legal (2 meses) sigue obligatoria y aparte.
 - **Reservas**: tabla `bookings` (status `pending|confirmed|declined|canceled`, checkin/checkout, guests).
 - **Valoraciones**: tabla `reviews` con `kind` `to_owner|to_renter`. Criterios: `servicio, comunicacion, entorno` (dueño) / `actitud` (inquilino). Solo tras checkout confirmado, ventana 30 días (`reviewWindow`), se anima en las 24h.

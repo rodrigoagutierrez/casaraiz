@@ -3,17 +3,16 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { db } from "@/shared/db/client";
 import { properties, users } from "@/shared/db/schema";
 import { count, eq } from "drizzle-orm";
-import { PLANS, stripe, type PlanId } from "@/modules/billing/stripe";
+import { stripe, type PlanId } from "@/modules/billing/stripe";
 import type Stripe from "stripe";
 import { getOrCreateUser } from "@/modules/users/queries";
-import { getActivePriceId } from "@/modules/billing/plans";
 import { tierForCount } from "@/modules/billing/fees";
 import { logAudit } from "@/modules/audit/log";
 import { getSiteUrl } from "@/shared/utils/site-url";
 
 // POST /api/checkout { plan } -> { url }
-// owner_monthly: precio dinámico por tramos según pisos del dueño.
-// owner_yearly: precio fijo del plan.
+// owner_monthly y owner_yearly: precio inline por tramo según pisos del dueño
+// (anual = mensual x10, 2 meses gratis); el tramo comprado se guarda en metadata.
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
@@ -34,30 +33,30 @@ export async function POST(req: NextRequest) {
 
   const user = await getOrCreateUser(userId, email, "owner");
 
-  let lineItem: Stripe.Checkout.SessionCreateParams.LineItem;
-  let tierLabel = "";
-  if (plan === "owner_monthly") {
-    const [{ n }] = await db.select({ n: count() }).from(properties).where(eq(properties.ownerId, user.id));
-    const tier = await tierForCount(Math.max(n, 1));
-    if (!tier || tier.amountCents === null) {
-      return NextResponse.json({ error: "CONTACT_SALES" }, { status: 403 });
-    }
-    tierLabel = tier.label;
-    lineItem = {
-      price_data: {
-        currency: "eur",
-        unit_amount: tier.amountCents,
-        recurring: { interval: "month" },
-        product_data: { name: `CasaRaiz Dueño mensual — ${tier.label}` },
-        tax_behavior: "inclusive",
-      },
-      quantity: 1,
-    };
-  } else {
-    const price = (await getActivePriceId(plan)) ?? process.env[PLANS[plan].priceEnv];
-    if (!price) return NextResponse.json({ error: "PRECIO_NO_CONFIGURADO" }, { status: 503 });
-    lineItem = { price, quantity: 1 };
+  // El tramo se calcula siempre por los pisos del dueño (igual en mensual y anual).
+  const [{ n }] = await db.select({ n: count() }).from(properties).where(eq(properties.ownerId, user.id));
+  const tier = await tierForCount(Math.max(n, 1));
+  if (!tier || tier.amountCents === null) {
+    return NextResponse.json({ error: "CONTACT_SALES" }, { status: 403 });
   }
+  const tierLabel = tier.label;
+
+  // Anual = mensual x10 (2 meses gratis), mismo alcance por tramo. Precio inline, sin price fijo en Stripe.
+  const lineItem: Stripe.Checkout.SessionCreateParams.LineItem = {
+    price_data: {
+      currency: "eur",
+      unit_amount: plan === "owner_yearly" ? tier.amountCents * 10 : tier.amountCents,
+      recurring: { interval: plan === "owner_yearly" ? "year" : "month" },
+      product_data: {
+        name:
+          plan === "owner_yearly"
+            ? `CasaRaiz Dueño anual — ${tier.label} (2 meses gratis)`
+            : `CasaRaiz Dueño mensual — ${tier.label}`,
+      },
+      tax_behavior: "inclusive",
+    },
+    quantity: 1,
+  };
 
   let customerId = user.stripeCustomerId;
   if (!customerId) {
@@ -74,7 +73,14 @@ export async function POST(req: NextRequest) {
     success_url: `${site}/membresia/ok?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${site}/precios`,
     metadata: { userId: user.id, plan, clerkId: userId },
-    subscription_data: { metadata: { userId: user.id, plan, clerkId: userId } },
+    subscription_data: {
+      metadata: {
+        userId: user.id,
+        plan,
+        clerkId: userId,
+        tierMax: tier.maxProps === null ? "inf" : String(tier.maxProps),
+      },
+    },
     // Tarjeta + SEPA para recurrente; Bizum solo one-off (no admite recurrente)
     payment_method_types: ["card"],
   });

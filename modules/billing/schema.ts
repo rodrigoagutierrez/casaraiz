@@ -14,6 +14,8 @@ export const subscriptions = pgTable("subscriptions", {
   plan: planEnum("plan").notNull(),
   status: subStatusEnum("status").notNull().default("incomplete"),
   currentPeriodEnd: timestamp("current_period_end"),
+  // Tramo comprado en el anual (tope de pisos publicables); null = sin tope o plan legado
+  tierMaxProps: integer("tier_max_props"),
   kind: text("kind").notNull().default("standard"), // "standard" | "seasonal"
   origin: text("origin").notNull().default("stripe"),
   adminNote: text("admin_note"),

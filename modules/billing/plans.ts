@@ -5,14 +5,11 @@ import { properties } from "@/modules/properties/schema";
 import { and, asc, eq, gt, isNull, or } from "drizzle-orm";
 import type { PlanId } from "./stripe";
 
-// El checkout y /precios usan el price activo en DB (gestionado desde /admin/precios).
+// Referencia del plan en DB (gestionado desde /admin/precios). El checkout NO usa
+// price fijo: crea el precio inline por tramo (ver app/api/checkout/route.ts).
 export async function getActivePlan(plan: PlanId) {
   const [p] = await db.select().from(plans).where(eq(plans.plan, plan)).limit(1);
   return p;
-}
-
-export async function getActivePriceId(plan: PlanId): Promise<string | undefined> {
-  return (await getActivePlan(plan))?.stripePriceId ?? undefined;
 }
 
 export async function getPublicPlans() {
@@ -27,7 +24,7 @@ export type Capacity = { hasRights: boolean; limit: number | null; used: number;
 export async function getPublishCapacity(userId: string): Promise<Capacity> {
   const now = new Date();
   const subs = await db
-    .select({ plan: subscriptions.plan })
+    .select({ plan: subscriptions.plan, tierMaxProps: subscriptions.tierMaxProps })
     .from(subscriptions)
     .where(
       and(
@@ -53,8 +50,10 @@ export async function getPublishCapacity(userId: string): Promise<Capacity> {
     if (s.plan === "owner_monthly") {
       l = monthlyLimit;
     } else {
+      // Anual: tope del tramo comprado (tier_max_props). Los planes legados (sin tramo
+      // guardado) conservan el tope histórico del plan (15).
       const pl = planRows.find((x) => x.plan === s.plan);
-      l = pl?.maxListings ?? 0;
+      l = s.tierMaxProps ?? pl?.maxListings ?? 0;
     }
     if (l === null) {
       limit = null;

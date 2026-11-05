@@ -9,10 +9,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/preguntas-frecuentes" },
 };
 
-const FAQS = [
+type Faq = { q: string; a: string; cta?: { href: string; label: string } };
+
+const FAQS: Faq[] = [
   {
     q: "¿Qué es CasaRaiz?",
-    a: "CasaRaiz es un marketplace de alquiler temporal (contrato de temporada, LAU art. 3) en Valencia que conecta dueños e inquilinos directamente, sin comisiones de intermediación. Los inquilinos usan la plataforma gratis; los dueños pagan una membresía anual.",
+    a: "CasaRaiz es un marketplace de alquiler temporal (contrato de temporada, LAU art. 3) en Valencia que conecta dueños e inquilinos directamente, sin comisiones de intermediación. Los inquilinos usan la plataforma gratis; los dueños pagan una membresía mensual o anual, por tramos según sus pisos.",
   },
   {
     q: "¿Es gratis para los inquilinos?",
@@ -20,7 +22,7 @@ const FAQS = [
   },
   {
     q: "¿Cuánto cobra CasaRaiz al dueño?",
-    a: "El dueño paga una membresía según sus pisos publicados: 19 €/mes (1-3 pisos), 29 €/mes (3-5 pisos) o 149 €/año (hasta 15 pisos). Más de 5 pisos: plan a medida. No hay comisión por alquiler ni por reserva.",
+    a: "El dueño paga una membresía según sus pisos publicados: 19 €/mes hasta 2 pisos o 29 €/mes de 3 a 5. En anual: 190 €/año (hasta 2 pisos) o 290 €/año (de 3 a 5), con 2 meses gratis. Más de 5 pisos: plan a medida. El cobro se hace solo al final de cada periodo y no hay comisión por alquiler ni por reserva.",
   },
   {
     q: "¿Qué es el alquiler de temporada?",
@@ -40,7 +42,7 @@ const FAQS = [
   },
   {
     q: "¿Puedo cancelar mi membresía?",
-    a: "Sí, sin permanencia. Cancelas cuando quieras y mantienes el acceso hasta el fin del periodo pagado, sin renovaciones posteriores. Desistimiento de 14 días naturales desde la contratación (art. 102 TRLGDCU).",
+    a: "Sí, sin permanencia. El cobro se hace solo al final de cada periodo de membresía: usas el periodo completo y, si no quieres renovar, cancelas la suscripción antes de que termine. Mantienes el acceso hasta el fin del periodo pagado. Desistimiento de 14 días naturales desde la contratación (art. 102 TRLGDCU).",
   },
   {
     q: "¿CasaRaiz cobra comisión por reserva?",
@@ -48,7 +50,8 @@ const FAQS = [
   },
   {
     q: "¿Dónde está disponible CasaRaiz?",
-    a: "Por ahora en Valencia y sus barrios (Ruzafa, El Cabanyal, Benimaclet, El Carmen y más). Próximamente en más ciudades: únete a la lista de espera escribiendo a hola@casaraizalquiler.com.",
+    a: "Por ahora en Valencia y sus barrios (Ruzafa, El Cabanyal, Benimaclet, El Carmen y más). Próximamente en más ciudades: únete a la lista de espera y te avisamos.",
+    cta: { href: "/lista-espera", label: "Unirme a la lista de espera" },
   },
 ];
 
@@ -74,7 +77,17 @@ export default function FaqPage() {
         {FAQS.map((f) => (
           <details key={f.q} className="rounded-2xl border border-mar-100 bg-white p-5">
             <summary className="cursor-pointer font-semibold text-mar-900">{f.q}</summary>
-            <p className="mt-2 text-sm text-mar-950/70">{f.a}</p>
+            <p className="mt-2 text-sm text-mar-950/70">
+              {f.a}
+              {f.cta && (
+                <>
+                  {" "}
+                  <Link href={f.cta.href} className="font-medium text-mar-700 underline">
+                    {f.cta.label}
+                  </Link>
+                </>
+              )}
+            </p>
           </details>
         ))}
       </div>

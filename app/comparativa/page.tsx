@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 };
 
 const FILAS = [
-  { concepto: "Comisión al inquilino", casa: "0 € (gratis)", airbnb: "hasta ~14%", booking: "0 € (lo paga el dueño)" },
-  { concepto: "Coste para el dueño", casa: "Membresía anual 149 €/año", airbnb: "~3% por reserva", booking: "~15% por reserva" },
+  { concepto: "Comisión al inquilino", casa: "0 € (gratis)", airbnb: "14–16% de tarjeta de servicio", booking: "0 € (lo paga el dueño)" },
+  { concepto: "Coste para el dueño", casa: "Membresía desde 19 €/mes (o 190 €/año)", airbnb: "~15,5% por reserva (14–16%)", booking: "~15% por reserva (10–25%)" },
   { concepto: "Contacto directo", casa: "Sí, dueño ↔ inquilino", airbnb: "No (mediado)", booking: "No (mediado)" },
   { concepto: "Precio final", casa: "Sin recargos ocultos", airbnb: "Tarifas de servicio añadidas", booking: "Comisión incluida en el precio" },
   { concepto: "Verificación", casa: "DNI/pasaporte del usuario", airbnb: "Verificación de perfil", booking: "Verificación del establecimiento" },
@@ -23,11 +23,15 @@ const FAQ = [
   },
   {
     q: "¿En qué se diferencia de Airbnb?",
-    a: "Airbnb añade una tarifa de servicio al huésped (hasta ~14%) y cobra comisión al anfitrión. En CasaRaiz no hay comisión por reserva: solo la membresía del dueño.",
+    a: "Airbnb cobra al anfitrión una tarifa única de ~15,5% (14–16%) y añade al huésped otra tarifa de servicio de 14–16% (el modelo de reparto al 3% se está eliminando). En CasaRaiz no hay comisión por reserva: solo la membresía del dueño y el inquilino no paga nada.",
   },
   {
     q: "¿Y de Booking?",
-    a: "Booking carga la comisión al establecimiento (~15%), que normalmente acaba repercutida en el precio. Aquí el precio que ves es el precio real.",
+    a: "Booking carga al establecimiento una comisión estándar del 15% (10–25% según contrato; los programas Preferred la aumentan), que normalmente acaba repercutida en el precio. Aquí el precio que ves es el precio real.",
+  },
+  {
+    q: "¿Y frente a una inmobiliaria?",
+    a: "Las agencias suelen cobrar el equivalente a un mes de renta más el 21% de IVA por contrato: en un piso de 800 €/mes serían unos 968 €. En CasaRaiz pagas solo tu membresía: 190 €/año hasta 2 pisos o 290 €/año de 3 a 5.",
   },
   {
     q: "¿Es seguro alquilar sin intermediario?",
@@ -81,8 +85,11 @@ export default function ComparativaPage() {
         </table>
       </div>
 
-      <p className="mt-3 text-xs text-mar-950/50">
-        * Comisiones orientativas según tarifas públicas de cada plataforma (pueden variar). CasaRaiz no cobra comisión por reserva.
+      <p className="mt-3 text-xs leading-relaxed text-mar-950/50">
+        * Comisiones orientativas consultadas el 5 de noviembre de 2026 según fuentes oficiales: Centro de Ayuda Airbnb
+        «Airbnb service fees» (tarifa única del anfitrión ~15,5%, rango 14–16%), Booking.com Partner Hub «Understanding
+        your commission» (15% estándar, 10–25% según contrato) y Consumo/DSCA para inmobiliarias (1 mes de renta + 21%
+        IVA por contrato). Pueden variar por contrato. CasaRaiz no cobra comisión por reserva.
       </p>
 
       <section className="mt-10">

@@ -25,8 +25,8 @@ export function PlanButton({ plan, children }: { plan: PlanId; children: React.R
       if (json.url) {
         trackEvent("begin_checkout", {
           currency: "EUR",
-          value: plan === "owner_yearly" ? 149 : 19,
-          items: [{ item_id: plan, item_name: plan === "owner_yearly" ? "Dueño anual" : "Dueño mensual", price: plan === "owner_yearly" ? 149 : 19 }],
+          value: plan === "owner_yearly" ? 190 : 19,
+          items: [{ item_id: plan, item_name: plan === "owner_yearly" ? "Dueño anual" : "Dueño mensual", price: plan === "owner_yearly" ? 190 : 19 }],
         });
         window.location.href = json.url as string;
       }

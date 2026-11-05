@@ -52,7 +52,7 @@ export function TierEditor({ tier }: { tier: FeeTier | null }) {
         <input type="number" min={1} className={`${input} mt-1`} value={eur} placeholder="A consultar" onChange={(e) => setEur(e.target.value)} />
       </label>
       <label className="mt-2 block text-xs text-mar-900">Etiqueta
-        <input className={`${input} mt-1`} value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Hasta 3 pisos" />
+        <input className={`${input} mt-1`} value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Hasta 2 pisos" />
       </label>
       {msg && <p className="mt-1 text-xs text-mar-900">{msg}</p>}
       <div className="mt-3 flex gap-2">

@@ -5,7 +5,7 @@ import { and, desc, eq, isNotNull } from "drizzle-orm";
 import PropertiesMap from "@/modules/properties/components/PropertiesMap";
 
 export const metadata: Metadata = {
-  title: "Mapa de alquileres sin comisión en España",
+  title: "Mapa de alquileres sin comisión en Valencia",
   description: "Explora los pisos de dueños directos sobre el mapa.",
   alternates: { canonical: "/mapa" },
 };
@@ -30,7 +30,7 @@ export default async function Mapa() {
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
       <h1 className="text-3xl font-bold text-mar-950">Mapa de pisos</h1>
-      <p className="mt-1 text-sm text-mar-950/55">{pins.length} pisos de dueños directos en España. Toca un precio para ver la ficha.</p>
+      <p className="mt-1 text-sm text-mar-950/55">{pins.length} pisos de dueños directos en Valencia. Toca un precio para ver la ficha.</p>
       <div className="mt-5">
         <PropertiesMap pins={pins} />
       </div>

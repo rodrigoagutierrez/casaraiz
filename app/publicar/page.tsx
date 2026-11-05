@@ -156,7 +156,7 @@ export default function PublicarPage() {
     return (
       <main className="mx-auto max-w-2xl px-6 py-12 text-center">
         <h1 className="text-3xl font-bold text-mar-950">Necesitas plan de dueño</h1>
-        <p className="mt-3 text-mar-950/65">Publica con membresía anual de 149 €/año (hasta 15 pisos).</p>
+        <p className="mt-3 text-mar-950/65">Publica con membresía desde 19 €/mes (hasta 2 pisos) o 190 €/año con 2 meses gratis.</p>
         <Link href="/precios" className="mt-6 inline-block rounded-full bg-mar-900 px-6 py-3 font-medium text-white hover:bg-mar-800">
           Ver planes
         </Link>

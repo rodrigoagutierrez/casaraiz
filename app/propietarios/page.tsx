@@ -22,6 +22,7 @@ type Plan = {
   precio: string;
   desc: string;
   button: string;
+  badge: string;
 };
 
 type FAQ = {
@@ -37,18 +38,28 @@ export default async function PropietariosPage() {
       t: t["propietarios.plan1.t"],
       precio: t["propietarios.plan1.precio"],
       desc: t["propietarios.plan1.desc"],
+      badge: t["propietarios.badge.mensual"],
       button: "Elegir mensual",
     },
     {
       t: t["propietarios.plan2.t"],
       precio: t["propietarios.plan2.precio"],
       desc: t["propietarios.plan2.desc"],
+      badge: t["propietarios.badge.mensual"],
       button: "Elegir mensual",
     },
     {
       t: t["propietarios.plan3.t"],
       precio: t["propietarios.plan3.precio"],
       desc: t["propietarios.plan3.desc"],
+      badge: t["propietarios.badge.anual"],
+      button: "Elegir anual",
+    },
+    {
+      t: t["propietarios.plan4.t"],
+      precio: t["propietarios.plan4.precio"],
+      desc: t["propietarios.plan4.desc"],
+      badge: t["propietarios.badge.anual"],
       button: "Elegir anual",
     },
   ];
@@ -113,10 +124,19 @@ export default async function PropietariosPage() {
       {/* Planes */}
       <section className="mx-auto max-w-6xl px-6 pt-16">
         <h2 className="text-2xl font-semibold text-mar-900 mb-8">{t["propietarios.planes.t"]}</h2>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {planes.map((p) => (
-            <div key={p.t} className="rounded-2xl border border-mar-100 bg-white p-6 flex flex-col">
-              <p className="font-semibold text-mar-900 text-lg">{p.t}</p>
+            <div key={`${p.t}-${p.precio}`} className="rounded-2xl border border-mar-100 bg-white p-6 flex flex-col">
+              <span
+                className={`self-start rounded-full px-3 py-1 text-xs font-medium ${
+                  p.precio.includes("/año") || p.precio.includes("/year")
+                    ? "bg-mar-100 text-mar-700"
+                    : "bg-otono-100 text-otono-700"
+                }`}
+              >
+                {p.badge}
+              </span>
+              <p className="mt-3 font-semibold text-mar-900 text-lg">{p.t}</p>
               <p className="mt-2 text-3xl font-bold text-mar-950">
                 {p.precio}<span className="text-base font-normal text-mar-950/55 ml-1"></span>
               </p>

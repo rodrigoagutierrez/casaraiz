@@ -15,7 +15,7 @@ export function organizationLd() {
     url: "https://casaraizalquiler.com",
     logo: "https://casaraizalquiler.com/logo.png",
     sameAs: [],
-    description: "Marketplace de alquiler temporal en España sin comisiones.",
+    description: "Marketplace de alquiler temporal en Valencia sin comisiones.",
   };
 }
 

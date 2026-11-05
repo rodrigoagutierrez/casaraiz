@@ -4,14 +4,14 @@ import { feeTiers, siteSettings } from "@/shared/db/schema";
 import { eq } from "drizzle-orm";
 
 const TIERS = [
-  { minProps: 1, maxProps: 3, amountCents: 1900, label: "Hasta 3 pisos" },
-  { minProps: 4, maxProps: 10, amountCents: 4900, label: "De 4 a 10 pisos" },
-  { minProps: 11, maxProps: null, amountCents: null, label: "Más de 10 pisos: plan a medida" },
+  { minProps: 1, maxProps: 2, amountCents: 1900, label: "Hasta 2 pisos" },
+  { minProps: 3, maxProps: 5, amountCents: 2900, label: "De 3 a 5 pisos" },
+  { minProps: 6, maxProps: null, amountCents: null, label: "Más de 5 pisos: plan a medida" },
 ];
 
 const SETTINGS = [
-  { key: "tariff_legend", value: "Precios con IVA incluido. Sin permanencia: cancela cuando quieras. El tramo se calcula por tus pisos publicados." },
-  { key: "tariff_contact_label", value: "¿Más de 10 propiedades? Te hacemos plan a medida" },
+  { key: "tariff_legend", value: "Precios con IVA incluido. Sin permanencia: el cobro se hace al final de cada periodo y puedes cancelar la suscripción cuando quieras. El tramo se calcula por tus pisos publicados." },
+  { key: "tariff_contact_label", value: "¿Más de 5 propiedades? Te hacemos plan a medida" },
   { key: "tariff_contact_url", value: "mailto:hola@casaraizalquiler.com?subject=Plan%20a%20medida" },
 ];
 

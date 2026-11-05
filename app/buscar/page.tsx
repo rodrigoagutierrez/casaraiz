@@ -14,7 +14,7 @@ import { getUserByClerkId } from "@/modules/users/queries";
 import { getFavoriteIds } from "@/modules/properties/favorites";
 
 export const metadata: Metadata = {
-  title: "Buscar alquiler sin comisión en España",
+  title: "Buscar alquiler sin comisión en Valencia",
   description: "Filtra por ciudad, zona, habitaciones y precio. Contacto directo con dueños.",
   alternates: { canonical: "/buscar" },
 };
@@ -85,14 +85,14 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
-      <h1 className="text-3xl font-bold text-mar-950">Encuentra tu temporal en España</h1>
+      <h1 className="text-3xl font-bold text-mar-950">Encuentra tu temporal en Valencia</h1>
       <Suspense>
         <CategoryRow />
         <FiltersBar />
       </Suspense>
       <p className="mt-4 text-sm text-mar-950/55">
         {rows.length} resultado{rows.length === 1 ? "" : "s"}
-        {city ? ` en ${city}` : " en España"}
+        {city ? ` en ${city}` : " en Valencia"}
         {barrio ? ` · zona ${barrio}` : ""}
         {desde || hasta ? ` · ${desde || "…"} → ${hasta || "…"}` : ""}
         {huespedes ? ` · ${huespedes} huésp.` : ""}
@@ -108,6 +108,12 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
         <div className="mt-6 rounded-2xl border border-mar-100 bg-white p-8 text-center">
           <p className="font-medium text-mar-900">Próximamente en {city}</p>
           <p className="mt-1 text-sm text-mar-950/55">Aún no tenemos pisos activos en esa ciudad, pero pronto llegaremos.</p>
+          <Link
+            href={`/lista-espera?ciudad=${encodeURIComponent(city)}`}
+            className="mt-3 inline-block rounded-full bg-otono-600 px-5 py-2 text-sm font-medium text-white hover:bg-otono-700"
+          >
+            Avisadme cuando lleguéis
+          </Link>
         </div>
       ) : (
         <div className="mt-6 rounded-2xl border border-mar-100 bg-white p-8 text-center">
