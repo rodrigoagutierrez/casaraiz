@@ -56,6 +56,7 @@ modules/        # CÓDIGO REAL por dominio
   admin/        actions + componentes del panel
   content/      barrios (Valencia), ciudades, legal-docs-seed
   notifications/email.ts   # Brevo (real si hay BREVO_API_KEY, si no log)
+  notifications/notify.ts  # avisos email (reserva/contacto/chat) vía after() — nunca en el camino crítico
 shared/
   db/           client (Neon) + schema (re-exporta todos los módulos)
   ui/           Header (navbar sticky + CompactSearch + i18n), Footer
@@ -72,6 +73,7 @@ Regla: código nuevo va en su módulo; las rutas solo importan de `@/modules/*` 
 - Migraciones en `drizzle/`. Comandos: `npm run db:generate` y `npm run db:migrate`.
 - PostGIS: `CREATE EXTENSION IF NOT EXISTS postgis` ya aplicado; `lat`/`lng` se guardan como text (geo real pendiente).
 - Tablas: `users`, `properties`, `bookings`, `reviews`, `contacts`, `favorites`, `conversations`, `messages`, `subscriptions`, `plans`, `fee_tiers`, `site_settings`, `legal_docs`, `audit_logs`.
+- **OJO `db.transaction()` NO existe en `neon-http`** (lanza "No transactions support in neon-http driver"): toda reserva fallaba por esto. El solape de reservas se garantiza con el constraint `bookings_no_overlap` (EXCLUDE gist, migración 0020; violación = `23P01`, mapear a 409). Si algún día se cambia a driver WS/pg, se puede volver a FOR UPDATE.
 - `users`: `verification_status` = `none|pending|verified|rejected` + `doc_type`, `doc_front_url`, `doc_back_url`; `stripeCustomerId`; rol Clerk en `publicMetadata.role` (`superadmin` para el titular).
 - `properties.priceCents` = **€/noche** (no mensual). Campos: `entorno`, `maxHuespedes`, `disponibleDesde/Hasta`, `registroNumero` (NRA obligatorio para activar), `registroTipo` (`temporada|vut`), `referenciaCatastral`.
 - `subscriptions.kind` = `standard|seasonal` (ofertas de temporada con `currentPeriodEnd` limitado).
