@@ -96,7 +96,10 @@ export default async function PropietariosPage() {
               <Link href="/publicar" className="rounded-full bg-otono-600 px-8 py-3 text-xl font-medium text-white hover:bg-otono-700">
                 {t["propietarios.cta"]}
               </Link>
-              <Link href="/precios" className="rounded-full border border-white/30 px-8 py-3 text-lg font-medium hover:bg-white/10">
+              <Link
+                href="/precios"
+                className="rounded-full border border-white/40 px-8 py-3 text-lg font-medium text-white hover:bg-white/10 hover:text-white"
+              >
                 Ver planes
               </Link>
             </div>
