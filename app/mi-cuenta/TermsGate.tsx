@@ -28,7 +28,7 @@ export default function TermsGate() {
   }
 
   return (
-    <section className="mt-6 rounded-2xl border border-otono-200 bg-otono-50 p-5">
+    <section className="mt-6 rounded-2xl border border-otono-200 bg-otono-100 p-5">
       <p className="font-semibold text-mar-900">Acepta los términos para continuar</p>
       <p className="mt-1 text-sm text-mar-950/70">
         Antes de verificar tu identidad, contactar con dueños o reservar, acepta nuestros Términos y
