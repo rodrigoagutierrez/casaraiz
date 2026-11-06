@@ -361,7 +361,7 @@ export async function saveTariffSettings(input: { legend: string; contactLabel: 
   revalidatePath("/precios");
 }
 
-export async function decideVerification(userId: string, approved: boolean, reason: string) {
+export async function decideVerification(userId: string, approved: boolean, reason: string, manual?: boolean) {
   // La comparación de documentos de identidad solo la decide el superadmin
   // (mínimo privilegio sobre el PII más sensible: SOC2 CC6.1).
   const admin = await getAdminIdentity();
@@ -369,6 +369,11 @@ export async function decideVerification(userId: string, approved: boolean, reas
   const me = await getUserByClerkId(admin.clerkId);
   const actorId = me?.id ?? null;
   if (!reason.trim()) throw new Error("El motivo es obligatorio");
+  // Excepción manual: verificar a alguien SIN documentos solo cabe como acto
+  // explícito del superadmin (deshabilitado por defecto; el panel lo marca).
+  const [target] = await db.select({ front: users.docFrontUrl, back: users.docBackUrl }).from(users).where(eq(users.id, userId)).limit(1);
+  if (!target) throw new Error("USUARIO_NO_EXISTE");
+  if (!target.front && !target.back && !manual) throw new Error("SIN_DOCUMENTOS");
   await db
     .update(users)
     .set({ verificationStatus: approved ? "verified" : "rejected", dniVerified: approved })
@@ -379,7 +384,7 @@ export async function decideVerification(userId: string, approved: boolean, reas
     action: "verification.decided",
     entity: "user",
     entityId: userId,
-    meta: { approved },
+    meta: { approved, manual: manual ?? false, withoutDocs: !target.front && !target.back },
     reason,
   });
   revalidatePath(`/admin/usuarios/${userId}`);

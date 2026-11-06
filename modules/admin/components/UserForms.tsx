@@ -144,13 +144,13 @@ export function VerificationReview({ userId, status, docType, front, back, photo
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
-  async function decide(approved: boolean) {
+  async function decide(approved: boolean, manual = false) {
     const { decideVerification } = await import("../actions");
     setMsg(null);
     start(async () => {
       try {
-        await decideVerification(userId, approved, reason);
-        setMsg(approved ? "Verificado." : "Rechazado con motivo registrado.");
+        await decideVerification(userId, approved, reason, manual);
+        setMsg(approved ? (manual ? "Verificado (excepción manual, en el audit log)." : "Verificado.") : "Rechazado con motivo registrado.");
         setReason("");
       } catch (e) {
         setMsg(`Error: ${e instanceof Error ? e.message : "desconocido"}`);
@@ -158,7 +158,29 @@ export function VerificationReview({ userId, status, docType, front, back, photo
     });
   }
 
-  if (!front && !back) return <p className="mt-2 text-sm text-mar-950/55">Sin documentos subidos.</p>;
+  if (!front && !back) {
+    // Excepción: el superadmin puede verificar sin documentos (usuario de
+    // confianza, contacto previo, etc.). Queda marcado en el audit log.
+    return (
+      <div className="mt-2">
+        <p className="text-sm text-mar-950/55">Sin documentos subidos.</p>
+        <input
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Motivo de la excepción (obligatorio, queda registrado)"
+          className={`${input} mt-2`}
+        />
+        <button
+          onClick={() => decide(true, true)}
+          disabled={pending || !reason.trim()}
+          className={`${btnDark} mt-2 rounded-full bg-otono-600 px-5 py-1.5 text-xs text-white hover:bg-otono-700 disabled:opacity-50`}
+        >
+          {pending ? "Guardando..." : "Verificar sin documentos (excepción, exige motivo)"}
+        </button>
+        {msg && <p className="mt-1 text-xs text-mar-950/70">{msg}</p>}
+      </div>
+    );
+  }
 
   return (
     <div className="mt-3">
