@@ -11,8 +11,8 @@ import { useI18n } from "@/modules/i18n/provider";
 // de medición, así que el banner puede ignorarse con tranquilidad.
 //
 // Se lee con useSyncExternalStore: el servidor no conoce localStorage, así que
-// en SSR/hidratación el snapshot es "" (no se pinta) y tras la hidratación
-// React re-renderiza si hay decisión guardada (sin mismatch).
+// en SSR/hidratación se asume decisión tomada (no se pinta) y tras la
+// hidratación React re-renderiza con el valor real de localStorage (sin mismatch).
 const KEY = "casaraiz-consent";
 
 // Decisión tomada en esta pestaña (si el storage está bloqueado, vive solo aquí)
@@ -41,8 +41,12 @@ function getSnapshot() {
   return readConsent();
 }
 
+// El servidor no puede leer localStorage: asume "decidido" para no pintar el
+// banner en el HTML. Tras la hidratación React consulta getSnapshot() y, si no
+// hay decisión, el banner aparece (visitantes nuevos) sin que los que ya
+// eligieron lo vean parpadear en cada carga.
 function getServerSnapshot() {
-  return "";
+  return "granted";
 }
 
 function notify() {
