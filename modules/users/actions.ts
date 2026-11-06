@@ -72,6 +72,27 @@ export async function updateMyPhone(raw: string) {
   revalidatePath("/mi-cuenta");
 }
 
+// Aceptación explícita de Términos y Política de privacidad. Clerk gestiona el
+// alta (no controlamos su formulario); esta acción deja constancia de la
+// aceptación expresa post-registro (checkbox en /mi-cuenta). Idempotente.
+export async function acceptTerms() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("UNAUTHORIZED");
+  const [me] = await db.select().from(users).where(eq(users.clerkId, userId)).limit(1);
+  if (!me) throw new Error("SIN_PERFIL");
+  if (me.termsAcceptedAt) return;
+  await db.update(users).set({ termsAcceptedAt: new Date() }).where(eq(users.id, me.id));
+  await logAudit({
+    actorId: me.id,
+    targetUserId: me.id,
+    action: "user.terms_accepted",
+    entity: "user",
+    entityId: me.id,
+    meta: { docs: ["terminos", "privacidad"] },
+  });
+  revalidatePath("/mi-cuenta");
+}
+
 // Subir DNI o pasaporte para verificación (las fotos llegan ya subidas vía /api/upload)
 export async function submitVerification(input: { docType: "dni" | "pasaporte"; frontUrl: string; backUrl: string }) {
   const { userId } = await auth();
@@ -89,6 +110,8 @@ export async function submitVerification(input: { docType: "dni" | "pasaporte"; 
   if (!parsed.success) throw new Error("DATOS_INVALIDOS");
   const [me] = await db.select().from(users).where(eq(users.clerkId, userId)).limit(1);
   if (!me) throw new Error("SIN_PERFIL");
+  // Sin aceptar T&C + privacidad no se puede verificar (ni, por tanto, usar la plataforma)
+  if (!me.termsAcceptedAt) throw new Error("SIN_TERMINOS");
   // "Todos los datos cargados": sin foto de perfil no se admite a revisión
   if (!me.photoUrl) throw new Error("FALTA_FOTO");
   await db

@@ -1,4 +1,4 @@
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // Almacén PRIVADO de documentos de identidad (DNI/pasaporte): bucket R2 sin
@@ -51,4 +51,29 @@ export async function presignDocGet(key: string, expiresIn = 300): Promise<strin
 // Las URLs http(s) antiguas apuntan al bucket público: no se re-sirven.
 export function isDocKey(v: string | null | undefined): v is string {
   return !!v && !v.startsWith("http");
+}
+
+// Borrado físico de documentos del bucket privado (RGPD art. 17 — la política de
+// privacidad promete que «los documentos de identidad se borran tras la
+// verificación»). Best-effort: si un objeto no se puede borrar se loguea y se
+// devuelve false para que el caller lo registre en el audit log.
+export async function deleteDocObjects(keys: (string | null | undefined)[]): Promise<boolean> {
+  const targets = keys.filter((k): k is string => isDocKey(k));
+  if (targets.length === 0) return true;
+  if (!docsBucketConfigured()) {
+    console.error("deleteDocObjects: DOCS_BUCKET_NO_CONFIGURADO");
+    return false;
+  }
+  const client = docsClient();
+  const bucket = process.env.R2_DOCS_BUCKET!;
+  let allOk = true;
+  for (const key of targets) {
+    try {
+      await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
+    } catch (e) {
+      allOk = false;
+      console.error("deleteDocObjects fail:", key, e);
+    }
+  }
+  return allOk;
 }

@@ -22,5 +22,8 @@ export const users = pgTable("users", {
   contactEmail: text("contact_email"),
   // Última visita a /reservas|/duenos: las decisiones posteriores pintan el badge
   bookingsSeenAt: timestamp("bookings_seen_at"),
+  // Aceptación expresa de T&C + privacidad (checkbox post-registro en /mi-cuenta;
+  // Clerk gestiona el alta, nosotros dejamos constancia de la aceptación — RGPD/TRLGDCU)
+  termsAcceptedAt: timestamp("terms_accepted_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

@@ -6,6 +6,7 @@ import { db } from "@/shared/db/client";
 import { feeTiers, legalDocs, plans, siteSettings, subscriptions, users } from "@/shared/db/schema";
 import { requireAdmin, getAdminIdentity } from "@/modules/auth/guard";
 import { getUserByClerkId } from "@/modules/users/queries";
+import { deleteDocObjects } from "@/modules/users/docs";
 import { logAudit } from "@/modules/audit/log";
 import { stripe, subPeriodEnd } from "@/modules/billing/stripe";
 import { saveGuaranteeSettings as persistGuaranteeSettings } from "@/modules/billing/guarantee";
@@ -374,9 +375,21 @@ export async function decideVerification(userId: string, approved: boolean, reas
   const [target] = await db.select({ front: users.docFrontUrl, back: users.docBackUrl }).from(users).where(eq(users.id, userId)).limit(1);
   if (!target) throw new Error("USUARIO_NO_EXISTE");
   if (!target.front && !target.back && !manual) throw new Error("SIN_DOCUMENTOS");
+  const hadDocs = !!(target.front || target.back);
+  // RGPD art. 17: la política de privacidad promete que «los documentos de
+  // identidad se borran tras la verificación» → al aprobar se borran físicamente
+  // del bucket privado (best-effort) y se anulan las referencias en BD.
+  let docsDeleted: boolean | null = null;
+  if (approved && hadDocs) {
+    docsDeleted = await deleteDocObjects([target.front, target.back]).catch(() => false);
+  }
   await db
     .update(users)
-    .set({ verificationStatus: approved ? "verified" : "rejected", dniVerified: approved })
+    .set({
+      verificationStatus: approved ? "verified" : "rejected",
+      dniVerified: approved,
+      ...(approved ? { docFrontUrl: null, docBackUrl: null } : {}),
+    })
     .where(eq(users.id, userId));
   await logAudit({
     actorId,
@@ -384,7 +397,17 @@ export async function decideVerification(userId: string, approved: boolean, reas
     action: "verification.decided",
     entity: "user",
     entityId: userId,
-    meta: { approved, manual: manual ?? false, withoutDocs: !target.front && !target.back },
+    meta: {
+      approved,
+      manual: manual ?? false,
+      withoutDocs: !hadDocs,
+      // Si el borrado en R2 falla, las keys quedan aquí para reintentarlo a mano.
+      ...(approved && hadDocs
+        ? docsDeleted
+          ? { docsDeleted: true }
+          : { docsDeleted: false, docsPendingDelete: [target.front, target.back].filter(Boolean) }
+        : {}),
+    },
     reason,
   });
   revalidatePath(`/admin/usuarios/${userId}`);

@@ -12,6 +12,7 @@ const ERRORS: Record<string, string> = {
   FECHAS_INVALIDAS: "Revisa las fechas.",
   ES_TU_PISO: "Es tu propio piso.",
   NO_VERIFICADO: "Tu cuenta aún no está verificada. Solo los usuarios verificados pueden reservar.",
+  SIN_TERMINOS: "Acepta los Términos y la Política de privacidad en Mi cuenta antes de reservar.",
 };
 
 type GarCfg = { nombre: string; pct: number; minCents: number; maxCents: number | null; texto: string };

@@ -36,7 +36,10 @@ Si el alquiler constituye hospedaje turístico, el dueño debe darse de alta en 
 
 9. Garantía CasaRaiz (opcional): el inquilino puede contratar un canon único no reembolsable (% del total, con mínimo y tope publicados) que cubre impagos y daños a través de nuestra aseguradora colaboradora. CasaRaiz actúa como distribuidor colaborador; cobertura, exclusiones y reclamaciones según la póliza. No sustituye la fianza legal (2 mensualidades).
 
-10. Baja y expulsión por fraude, anuncios falsos o acoso, sin reembolso.`,
+10. Baja y expulsión por fraude, anuncios falsos o acoso, sin reembolso.
+
+11. Reclamaciones y resolución de litigios
+Si no quedas conforme con CasaRaiz, puedes pedir nuestra hoja de reclamaciones escribiendo a hola@casaraizalquiler.com y presentarla ante la Administración de Consumo de la Generalitat Valenciana (formulario oficial en sede electrónica de la GVA, SIA 210597). La antigua Plataforma europea de resolución de litigios en línea (ODR) dejó de operar el 20/07/2025 (Reglamento (UE) 2024/3228); el portal actual de la Comisión Europea con las vías de resolución es consumer-redress.ec.europa.eu. Para reclamaciones sobre privacidad, ante la AEPD (ver Política de privacidad). Todo ello sin perjuicio de acudir a los tribunales competentes.`,
   },
   {
     slug: "privacidad",
@@ -99,7 +102,7 @@ CasaRaiz usa cookies propias y de terceros:
 - Analítica (medición de uso): solo con tu consentimiento.
 - Publicidad: no usamos cookies publicitarias propias.
 
-Puedes aceptar, rechazar o configurar las cookies en el banner y cambiar tu elección cuando quieras. Más información: hola@casaraizalquiler.com.`,
+Puedes aceptar o rechazar las cookies de analítica en el banner de tu primera visita; sin tu aceptación no se instalan (modo denegado por defecto). Las cookies técnicas (sesión, idioma, seguridad) son necesarias y no requieren consentimiento. Para cambiar de opinión, borra las cookies de este sitio desde la configuración de tu navegador y se te volverá a preguntar. Más información: hola@casaraizalquiler.com.`,
   },
   {
     slug: "politica-resenas",

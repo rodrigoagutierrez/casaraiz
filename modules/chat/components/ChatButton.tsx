@@ -22,6 +22,11 @@ export default function ChatButton({ propertyId, verified }: { propertyId: strin
         router.push("/sign-in");
         return;
       }
+      // SIN_TERMINOS o NO_VERIFICADO: ambos se resuelven en /mi-cuenta
+      if (res.status === 403) {
+        router.push("/mi-cuenta");
+        return;
+      }
       if (res.status === 400) return; // es tu propio piso
       const json = await res.json();
       if (json.data?.id) {

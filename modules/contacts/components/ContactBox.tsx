@@ -8,7 +8,7 @@ import { trackEvent } from "@/shared/lib/analytics";
 export default function ContactBox({ propertyId, verified }: { propertyId: string; verified?: boolean }) {
   const { isSignedIn } = useUser();
   const [message, setMessage] = useState("");
-  const [state, setState] = useState<"idle" | "sending" | "done" | "need_membership" | "need_verification" | "error">("idle");
+  const [state, setState] = useState<"idle" | "sending" | "done" | "need_membership" | "need_verification" | "need_terms" | "error">("idle");
 
   if (!isSignedIn) {
     return (
@@ -55,6 +55,10 @@ export default function ContactBox({ propertyId, verified }: { propertyId: strin
       });
       if (res.status === 403) {
         const json = await res.json().catch(() => ({}));
+        if (json.error === "SIN_TERMINOS") {
+          setState("need_terms");
+          return;
+        }
         setState(json.error === "NO_VERIFICADO" ? "need_verification" : "need_membership");
         return;
       }
@@ -88,6 +92,12 @@ export default function ContactBox({ propertyId, verified }: { propertyId: strin
         <p className="mt-2 rounded-xl bg-otono-100 p-3 text-sm text-otono-700">
           Verifica tu identidad para contactar.{" "}
           <Link href="/mi-cuenta" className="font-semibold underline">Ir a verificación</Link>
+        </p>
+      )}
+      {state === "need_terms" && (
+        <p className="mt-2 rounded-xl bg-otono-100 p-3 text-sm text-otono-700">
+          Acepta los Términos y la Política de privacidad para contactar.{" "}
+          <Link href="/mi-cuenta" className="font-semibold underline">Ir a Mi cuenta</Link>
         </p>
       )}
       {state === "error" && <p className="mt-2 text-sm text-otono-700">No se pudo enviar. Prueba de nuevo.</p>}

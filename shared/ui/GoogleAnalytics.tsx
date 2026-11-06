@@ -22,6 +22,21 @@ export default function GoogleAnalytics({
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
+          // Consent Mode v2: denegado por defecto ANTES del config (art. 22.2
+          // LSSI): sin consentimiento no se escriben cookies de medición.
+          gtag('consent', 'default', {
+            analytics_storage: 'denied',
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied'
+          });
+          // Si ya se aceptó en el banner (guardado en localStorage), se restaura
+          // antes de arrancar la config para que las visitas previas cuenten.
+          try {
+            if (localStorage.getItem('casaraiz-consent') === 'granted') {
+              gtag('consent', 'update', { analytics_storage: 'granted' });
+            }
+          } catch (e) {}
           gtag('js', new Date());
           gtag('config', '${measurementId}', { page_path: window.location.pathname });
         `}

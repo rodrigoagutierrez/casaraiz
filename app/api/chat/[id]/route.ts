@@ -36,6 +36,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!conv || (conv.renterId !== me.id && conv.ownerId !== me.id)) {
     return NextResponse.json({ error: "NO_AUTORIZADO" }, { status: 403 });
   }
+  // Aceptación expresa de T&C + privacidad (checkbox post-registro en /mi-cuenta)
+  if (!me.termsAcceptedAt) {
+    return NextResponse.json({ error: "SIN_TERMINOS" }, { status: 403 });
+  }
   // Sin verificar: solo consulta pública (GET sigue permitido para leer)
   if (me.verificationStatus !== "verified") {
     return NextResponse.json({ error: "NO_VERIFICADO" }, { status: 403 });

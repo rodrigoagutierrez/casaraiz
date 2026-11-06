@@ -28,6 +28,10 @@ export async function POST(req: NextRequest) {
 
   const me = await getUserByClerkId(userId);
   if (!me) return NextResponse.json({ error: "SIN_PERFIL" }, { status: 404 });
+  // Aceptación expresa de T&C + privacidad (checkbox post-registro en /mi-cuenta)
+  if (!me.termsAcceptedAt) {
+    return NextResponse.json({ error: "SIN_TERMINOS" }, { status: 403 });
+  }
   // Sin verificar: solo consulta pública (ni abrir chat)
   if (me.verificationStatus !== "verified") {
     return NextResponse.json({ error: "NO_VERIFICADO" }, { status: 403 });

@@ -11,6 +11,7 @@ import VerificationForm from "./VerificationForm";
 import ProfilePhotoForm from "./ProfilePhotoForm";
 import PhoneForm from "./PhoneForm";
 import ThingsToKnowEditor from "./ThingsToKnowEditor";
+import TermsGate from "./TermsGate";
 import { DEFAULT_THINGS_TO_KNOW } from "@/modules/users/thingsToKnow";
 
 import type { Metadata } from "next";
@@ -53,6 +54,8 @@ export default async function MiCuenta() {
         )}
       </p>
 
+      {!me.termsAcceptedAt && <TermsGate />}
+
       <section className="mt-6 rounded-2xl border border-mar-100 bg-white p-5">
         <p className="font-semibold text-mar-900">Tu perfil</p>
         <p className="mt-1 text-sm text-mar-950/55">
@@ -92,7 +95,13 @@ export default async function MiCuenta() {
             {me.verificationStatus === "rejected" && (
               <p className="mt-2 text-sm text-otono-700">No pudimos verificar tu documento. Vuelve a intentarlo con fotos nítidas.</p>
             )}
-            <VerificationForm />
+            {me.termsAcceptedAt ? (
+              <VerificationForm />
+            ) : (
+              <p className="mt-2 text-sm text-otono-700">
+                Acepta los Términos y la Política de privacidad (arriba) para enviar tu documento a verificación.
+              </p>
+            )}
           </>
         )}
       </section>

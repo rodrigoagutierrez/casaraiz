@@ -50,6 +50,16 @@ export default function Footer({ version }: { version?: string }) {
             <li><Link href="/legal/aviso-legal" className="hover:underline">Aviso legal</Link></li>
             <li><Link href="/legal/cookies" className="hover:underline">Cookies</Link></li>
             <li><Link href="/legal/politica-resenas" className="hover:underline">Política de reseñas</Link></li>
+            <li>
+              <a href="https://www.gva.es/es/inicio/procedimientos?id_proc=316" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                Hoja de reclamaciones (GVA)
+              </a>
+            </li>
+            <li>
+              <a href="https://consumer-redress.ec.europa.eu/" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                Resolución de litigios en línea (UE)
+              </a>
+            </li>
           </ul>
         </div>
       </div>

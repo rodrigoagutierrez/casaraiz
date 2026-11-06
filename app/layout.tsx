@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import Header from "@/shared/ui/Header";
 import Footer from "@/shared/ui/Footer";
 import GoogleAnalytics from "@/shared/ui/GoogleAnalytics";
+import CookieBanner from "@/shared/ui/CookieBanner";
 import { I18nProvider } from "@/modules/i18n/provider";
 import { getLocale } from "@/modules/i18n/server";
 import pkg from "../package.json";
@@ -61,6 +62,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Header />
             <div className="flex-1">{children}</div>
             <Footer version={pkg.version} />
+            <CookieBanner />
           </I18nProvider>
         </ClerkProvider>
       <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? ""} nonce={nonce} />

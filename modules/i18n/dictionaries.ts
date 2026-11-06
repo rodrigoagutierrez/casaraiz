@@ -123,6 +123,12 @@ export const es = {  // Header / nav
   "footer.conformidad": "Conformidad anunciante",
   "footer.copy": "© CasaRaiz — alquiler directo sin comisiones",
 
+  // Cookies (banner de consentimiento)
+  "cookie.texto": "Usamos cookies de analítica solo con tu consentimiento. Puedes aceptarlas o rechazarlas; tu elección se guarda en este dispositivo.",
+  "cookie.politica": "Política de cookies",
+  "cookie.aceptar": "Aceptar",
+  "cookie.rechazar": "Rechazar",
+
   // Idioma
   "lang.es": "Español",
   "lang.en": "English",
@@ -256,6 +262,12 @@ export const en: Dict = {
   "footer.privacidad": "Privacy (GDPR)",
   "footer.conformidad": "Advertiser compliance",
   "footer.copy": "© CasaRaiz — direct rental, no commissions",
+
+  // Cookies (consent banner)
+  "cookie.texto": "We use analytics cookies only with your consent. You can accept or reject them; your choice is stored on this device.",
+  "cookie.politica": "Cookie policy",
+  "cookie.aceptar": "Accept",
+  "cookie.rechazar": "Reject",
 
   // Idioma
   "lang.es": "Español",
